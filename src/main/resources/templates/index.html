@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Login Form</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    
+    <style>
+      body {
+        background-color: #f2f2f2;
+      }
+      </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>User Login</h1>
+      <form id="login-form" method="post">
+        <label for="userId"><b>Username</b></label>
+        <input type="text" placeholder="Enter User Id" name="userId" id="user-id" required />
+        
+        <label for="password"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="password" id="password" required />
+        
+        <button id="login">Login</button>
+        <label> <input type="checkbox" name="remember" id="remember" /> Remember me </label>
+      </form>
+      
+      <p><img src="/images/roulette/star.png" width="15" height="15" />
+        <a href="#" id="sign-up">Sign up</a></p>
+    </div>
+    <p th:text="${time}"></p>
+  </body>
+  
+  <script th:inline="javascript">
+  </script>
+</html>

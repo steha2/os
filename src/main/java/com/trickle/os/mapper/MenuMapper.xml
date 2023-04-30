@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MenuMapper">
+<select id="getRoot" resultType="MenuVo">
+SELECT * FROM MENU_ROOT ORDER BY ID ASC
+</select>
+
+<select id="getRootByType" resultType="MenuVo">
+SELECT * FROM MENU_ROOT WHERE TYPE = #{type} ORDER BY ID ASC 
+</select>
+
+<select id="getDepth1" resultType="MenuVo">
+SELECT * FROM MENU_DEPTH1
+</select>
+<select id="getDepth2" resultType="MenuVo">
+SELECT * FROM MENU_DEPTH2
+</select>
+
+<select id="getRootName" resultType="String">
+SELECT NAME FROM MENU_ROOT WHERE ID = #{id} 
+</select>
+
+<select id="getDepth1Name" resultType="String">
+SELECT NAME FROM MENU_DEPTH1 WHERE ID = #{id}
+</select>
+
+<select id="getDepth2Name" resultType="String">
+SELECT NAME FROM MENU_DEPTH2 WHERE ID = #{id}
+</select>
+
+<insert id="addRoot" >
+ <selectKey keyProperty="id" resultType="int" order="BEFORE">
+	SELECT MENU_SEQ.NEXTVAL FROM DUAL
+ </selectKey>
+INSERT INTO MENU_ROOT
+(ID, NAME, TYPE)
+VALUES(#{id}, #{name}, #{type})
+</insert>
+
+<insert id="addDepth1" >
+ <selectKey keyProperty="id" resultType="int" order="BEFORE">
+	SELECT MENU_SEQ.NEXTVAL FROM DUAL
+ </selectKey>
+INSERT INTO MENU_DEPTH1
+(ID, NAME, PARENT_ID)
+VALUES(#{id}, #{name}, #{parentId})
+</insert>
+
+<insert id="addDepth2" >
+ <selectKey keyProperty="id" resultType="int" order="BEFORE">
+	SELECT MENU_SEQ.NEXTVAL FROM DUAL
+ </selectKey>
+INSERT INTO MENU_DEPTH2
+(ID, NAME, PARENT_ID)
+VALUES(#{id}, #{name}, #{parentId})
+</insert>
+
+<update id="updateRoot">
+UPDATE MENU_ROOT SET NAME = #{name} WHERE ID = #{id}
+</update>
+
+<update id="updateDepth1">
+UPDATE MENU_DEPTH1 SET NAME = #{name} WHERE ID = #{id}
+</update>
+
+<update id="updateDepth2">
+UPDATE MENU_DEPTH2 SET NAME = #{name} WHERE ID = #{id}
+</update>
+
+<update id="getRootMenu">
+SELECT * FROM MENU_DEPTH2
+</update>
+
+</mapper>

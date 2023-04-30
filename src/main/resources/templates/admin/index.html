@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Admin Form</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+      <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <style>
+  .ui-menu { width: 200px; }
+  .ui-widget-header { padding: 0.2em; }
+  .depth1-div, .depth1-ul, .addMenuButton {  
+    width: 150px;
+  }
+
+  caption{
+    font-size: 25px;
+    font-weight: bold;
+  }
+  .addMenuButton {
+    font-weight: bold;
+    margin: 1px 0px 10px 1px;
+  }
+
+  #itemList td:hover {
+    background: rgb(204, 243, 237);
+    cursor : pointer;
+
+  }
+
+  .addMenuButton:hover{
+    background: #b5c1eb;
+  }
+
+  .depth1-div {  
+    display: inline-block;
+     vertical-align:top ;
+     margin-right : 10px
+
+    }
+    th{
+      background: #c0c2c5;
+    }
+
+    td{
+      background: #f2f3ef;
+    }
+    #itemList{      
+       float: left;
+       margin-right:20px;
+       width:800px;
+  }
+    table {
+      margin-top: 10px;
+      width:350px;
+      border:1px solid black;
+    }
+    input{
+      height:20px;
+      width:80%;
+    }
+
+    textarea{
+      width:80%
+    }
+  </style>
+</head>
+<body>
+<div id="tabs"></div>
+<table id="itemList">
+  <caption>Item List</caption>
+  <tbody>
+  </tbody>
+</table>
+  <table id="formTable">
+    <caption>상품 등록</caption>
+    <form>
+    <tr>
+      <td width="100"><label for="userId">User Id:</label></td>
+      <td><input type="text" id="userId" name="userId" value="admin"></td>
+    </tr>
+    <tr>
+      <td>Path Name:</td>
+      <td><input type="text" id="pathName" readonly></td>
+    </tr>
+    <tr>
+      <td>Path:</td>
+      <td><input type="text" name="path" id="path" readonly></td>
+    </tr>
+    <tr>
+      <td><label for="id">Id:</label></td>
+      <td><input type="text" id="id" name="id" readonly value="New Item"></td>
+    </tr>
+    <tr>
+      <td><label for="name">Name:</label></td>
+      <td><input type="text" id="name" name="name"></td>
+    </tr>
+    <tr>
+      <td><label for="imagePath">Image Path:</label></td>
+      <td><input type="text" id="imagePath" name="imagePath"></td>
+    </tr>
+    <tr>
+      <td><label for="price">Price:</label></td>
+      <td><input type="number" id="price" name="price" value="10000" min="0" step="1000"></td>
+    </tr>
+    <tr>
+      <td><label for="discount">Discount(%):</label></td>
+      <td><input type="number" id="discount" name="discount" value="0" max="100"></td>
+    </tr>
+    <tr>
+      <td><label for="stockNum">StockNum:</label></td>
+      <td><input type="number" id="numStock" name="numStock" value="100" min="0" step="10"></td>
+    </tr> 
+    <tr>
+      <td><label for="score">Score:</label></td>
+      <td><input type="text" id="score" name="score" value="0"></td>
+    </tr>
+    <tr>
+      <td><label for="content">Content:</label></td>
+      <td><textarea id="content" name="content">아이템 내용</textarea></td>
+    </tr>
+  </form>
+  
+  <tr>
+    <td><button onclick=updateMenuName()>메뉴명 변경</button></td>
+      <td><button id="submitButton" onclick=updateItem()></button>
+        <button id="deleteButton" onclick=deleteItem()>상품 삭제</button>
+  </td></tr>
+  </table>
+
+  <div id="dialog-div" title="메뉴 등록"></div>
+  <div id="dialog-div2" title="메뉴 수정"></div>
+</body>
+
+  <script th:inline="javascript">
+    const tabsWrap = $("#tabs");
+    let selectedTabId = null;
+    let selectedPath, selectedPathName;
+    function selectPath(path, pathName){
+      $("form").get(0).reset();
+      $("#path").val(path);
+      selectedPath = path;
+      selectedPathName = pathName;
+      $("#pathName").val(pathName);
+      $("#formTable caption").text("상품 등록");
+      $("#submitButton").text("상품 등록");
+      $("#deleteButton").css("visibility","hidden");
+      updateItemList(path);
+    }
+
+    function deleteItem() {  
+      let formData = $("form").serializeArray();
+      const id = formData.find(f=>f.name=="id").value;
+      if(confirm("Delelte Item Id: " + id)){
+        $.ajax({url:"/deleteItem",data:{id:id}}).done((data) => {
+          alert(data);
+          selectPath(selectedPath, selectedPathName);
+        })
+        .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+      }
+    }
+
+    function updateItemList(path){
+      const tbody = $("#itemList tbody").empty();
+      $.getJSON("/getItems",{path:path}).done((data) => {
+        const cols = ["path", "id", "name", "numSold", "numStock", "regDate"];
+        const header = $("<tr>");
+        cols.forEach(col => header.append($("<th>").text(camelToSnake(col))));
+          tbody.append(header);
+          data.forEach(item=>{
+          let $tr = $("<tr>").click(()=>{
+            for(let key in item) {
+              $("#"+key).val(item[key]);
+            }
+            $("#formTable caption").text("상품 수정");
+            $("#submitButton").text("상품 수정");
+            $("#deleteButton").css("visibility","visible");
+          });
+          cols.forEach(col => $tr.append($("<td>").html(item[col])));
+          tbody.append($tr);
+        });
+      }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+    }
+ 
+    function camelToSnake(str) {
+      return str.replace(/[A-Z]/g, letter => `_${letter.toUpperCase()}`).toUpperCase();
+    }
+
+  function updateMenuName() {
+    const path = $("#path").val();
+    if(path.length){
+      const dialog = $("#dialog-div2").empty().append($("#path-label").val(),
+                     "<br>",path,"<br><input id='menuName'>").dialog({
+      autoOpen: false, modal: true,
+      buttons: {
+        "수정": () => {
+          const name = $("#menuName").val().trim();
+          if(name.length === 0) return;
+          $.ajax({url: "/updateMenuName", data:{path:path,name:name}})
+          .done((data) => { 
+            createMenus();
+          }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+          dialog.dialog("close");
+        },
+        "취소": () => dialog.dialog("close")
+      },
+    });
+    dialog.dialog("open");
+    }
+  }
+
+  function updateItem(){
+    let formData = $("form").serializeArray();
+    let isUpdate = true;
+    const idf = formData.find(f=>f.name=="id");
+    if (idf.value === "New Item") {
+      idf.value = 0;
+      isUpdate = false;
+    }
+    let isEmpty = false;
+    for (let prop in formData) {
+      if (formData[prop].value === "" && formData[prop].name !== "imagePath") {
+        isEmpty = true;
+        break;
+      }
+    }
+    if(!isEmpty) {
+      $.ajax({url:isUpdate ? "/updateItem" : "/addItem",type:"post",data: formData})
+        .done((data) => {
+          if(data){
+            updateItemList(selectedPath);
+            alert("성공");
+          }else{
+            alert("실패");
+          }
+        })
+        .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+    }else{
+      alert("실패, 빈 필드 있음");
+    }
+  }
+
+  function openDialog(path, pathName){
+      const dialog = $("#dialog-div").empty().append(pathName,"<br>",path,"<br><input id='menuName'>").dialog({
+      autoOpen: false, modal: true,
+      buttons: {
+        "등록": () => {
+          const name = $("#menuName").val().trim();
+          if(name.length === 0) return;
+          $.ajax({url: "/addMenu", data:{path:path,name:name}})
+          .done((data) => { 
+            createMenus();
+          }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+          dialog.dialog("close");
+        },
+        "취소": () => dialog.dialog("close")
+      },
+    });
+    dialog.dialog("open");
+  }
+
+  function createOpenDialogButton(path, pathName){
+    return $("<button class='addMenuButton'>").text("+").click(()=>{
+      openDialog(path,pathName);
+    });
+  }
+
+  function createMenus() {
+	  $.getJSON("/getMenus")
+      .done((data) => {
+        tabsWrap.empty();
+        const tabs = $("<div>");
+        tabsWrap.append(tabs);
+        const tabsUl = $("<ul id='tabs-ul'></ul>");
+        tabs.append(tabsUl);
+          for(let i = 0; i<=data.length; i++){
+           const root = data[i];
+           if(i==0 && selectedTabId === null) selectPath("/"+root.id,"/"+root.name);
+           const li = $("<li>").click(()=>{
+            selectedTabId = i;
+            if(i === data.length) {
+              openDialog("","New Root (Name,Type)");
+            }else {
+              selectPath("/"+root.id,"/"+root.name);
+            }
+          }).append(`<a href="#tabs-${i}">${root == null ? "+" : root.name}</a>`);
+           tabsUl.append(li);
+           const rootDiv = $(`<div id="tabs-${i}">`);
+           tabs.append(rootDiv);
+           if(i === data.length) continue;
+           if(root.childs) root.childs.forEach(d1=>{
+            const depth1Div = $("<div class='depth1-div'>");
+            rootDiv.append(depth1Div);
+            const ul1 = $("<ul class='depth1-ul'>");
+            depth1Div.append(ul1);
+             const div1 = $("<div>");
+             const li1 = $("<li class='ui-widget-header'>");
+             li1.click(()=> selectPath(`/${root.id}/${d1.id}`,`/${root.name}/${d1.name}`));
+             ul1.append(li1);
+             li1.append(div1);
+             div1.html(d1.name);
+             if(d1.childs) d1.childs.forEach(d2=>{
+               const li2 = $("<li>");
+               li2.click(()=> selectPath(`/${root.id}/${d1.id}/${d2.id}`,`/${root.name}/${d1.name}/${d2.name}`));
+               const div2 = $("<div>");
+               li2.append(div2);
+               div2.html(d2.name);
+               ul1.append(li2);
+             })
+             depth1Div.append(createOpenDialogButton(`/${root.id}/${d1.id}`,`/${root.name}/${d1.name}`));
+             ul1.menu();
+            })
+            rootDiv.append(createOpenDialogButton(`/${root.id}`,`/${root.name}`));
+         };
+         tabs.tabs();
+         if(selectedTabId) tabs.tabs('option', 'active', selectedTabId)
+      }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+    }
+    
+  $(() => {
+    createMenus();
+    const b = $("<button>test</button>").click(()=>{
+      
+    });
+    $("body").append("<br>",b);
+  });
+  </script>
+</html>

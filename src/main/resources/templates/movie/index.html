@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Login Form</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    
+    <style>
+      body {
+        background-color: #f2f2f2;
+      }
+
+      label {
+        font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+      }
+      
+      label:nth-of-type(1),
+      label:nth-of-type(2) {
+        font-size: 18px;
+      }
+      
+      .container {
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        width: 300px;
+        margin: auto;
+        margin-top: 150px;
+      }
+      
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        font-size: 17px;
+        cursor: pointer;
+        width: 100%;
+      }
+      
+      button:hover {
+        background-color: #45a049;
+      }
+      
+      .container > p {
+        text-align: center;
+        font-size: 14px;
+        color: grey;
+      }
+      
+      span.psw {
+        float: right;
+        padding-top: 16px;
+      }
+
+      #sign-up {
+        font-size: 20px;
+        font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+        text-decoration: solid;
+      }
+      
+      /* Change styles for span and cancel button on extra small screens */
+      @media screen and (max-width: 300px) {
+        span.psw {
+          display: block;
+          float: none;
+        }
+      }
+      </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>User Login</h1>
+      <form id="login-form" method="post">
+        <label for="userId"><b>Username</b></label>
+        <input type="text" placeholder="Enter User Id" name="userId" id="user-id" required />
+        
+        <label for="password"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="password" id="password" required />
+        
+        <button id="login">Login</button>
+        <label> <input type="checkbox" name="remember" id="remember" /> Remember me </label>
+      </form>
+      
+      <p><img src="/images/roulette/star.png" width="15" height="15" />
+        <a href="#" id="sign-up">Sign up</a></p>
+    </div>
+    <p th:text="${time}"></p>
+  </body>
+  
+  <script th:inline="javascript">
+  </script>
+</html>

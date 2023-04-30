@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <title>홈</title>
+  </head>
+  <body >
+    <div class="grid-container">
+      <nav class="nav">
+        <ul></ul>
+      </nav>
+      <div class="content">
+        <iframe id="content-frame" src="/admin/index"></iframe>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    function createNavLink(text, src) {
+      const navLink = $("<a href='#' class='nav-link'></a>");
+      navLink.text(text);
+      navLink.click(() => {
+        $("#content-frame").prop("src",src);
+        return false;
+      });
+	  $(".nav ul").append(navLink);
+	}
+
+    $(() => {
+      createNavLink("admin", "/admin/index");
+      createNavLink("SHOP", "/shop/index");
+    });
+  </script>
+  <style>
+  	.nav-link{
+  		margin-right:15px;
+  	}
+  	
+    #content-frame {
+      width: 100%;
+      height: 100%;
+      background: #f5fff1;
+      border: 0px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      grid-template-columns: auto;
+      grid-template-areas: "nav" "content";
+      height: 100vh;
+    }
+
+    .nav {
+      grid-area: nav;
+      background-color: lightgray;
+    }
+
+    .content {
+      grid-area: content;
+      background: #fffff0;
+    }
+
+    body {
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</html>

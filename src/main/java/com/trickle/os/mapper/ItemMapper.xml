@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ItemMapper">
+<select id="getItem" resultType="ItemVo">
+	SELECT * FROM ITEMS WHERE ID = #{id} 
+</select>
+
+<select id="getItems" resultType="ItemVo">
+	SELECT * FROM ITEMS	WHERE PATH LIKE '${path}%'
+</select>
+
+<update id="updateItem">
+UPDATE ITEMS SET 
+NAME = #{name}, IMAGE_PATH = #{imagePath}, PRICE = #{price},
+DISCOUNT = #{discount}, SCORE = #{score}, CONTENT = #{content},
+NUM_STOCK = #{numStock}
+WHERE ID = #{id}
+</update>
+
+<delete id="deleteItem">
+DELETE FROM ITEMS WHERE ID = #{id}
+</delete>
+
+<select id="getTotalRows" resultType="int">
+  SELECT count(*) FROM ITEMS
+  WHERE PATH LIKE '${path}%'
+  <if test="search != null and search != ''">
+    AND SEARCH '%${search}%'
+  </if>
+</select>
+
+<select id="getPagingItems" parameterType="map" resultType="ItemVo">
+   SELECT ${columns} FROM (
+   SELECT ${columns} FROM (
+   SELECT ${columns}, ROWNUM AS RN FROM (
+   SELECT ${columns} FROM ITEMS
+   ORDER BY ID DESC
+   ) ) 
+   WHERE RN >= #{paging.startRow}) 
+   WHERE ROWNUM <![CDATA[<=]]> #{paging.endRow}
+</select>
+
+<insert id="addItem" >
+ <selectKey keyProperty="id" resultType="int" order="BEFORE">
+	SELECT ITEM_SEQ.NEXTVAL FROM DUAL
+ </selectKey>
+INSERT INTO ITEMS(ID, NAME, CONTENT, PATH, IMAGE_PATH, NUM_STOCK, PRICE, DISCOUNT, USER_ID, REG_DATE)
+VALUES(#{id}, #{name}, #{content}, #{path}, #{imagePath}, #{numStock}, #{price}, #{discount}, #{userId}, SYSDATE )
+</insert>
+</mapper>
