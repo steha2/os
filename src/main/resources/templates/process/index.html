@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>Login Form</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+  <style>
+    body {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container" >
+    <form method="post" action="/process/ocr" enctype="multipart/form-data">
+      OCR 이미지 <input id="imageFile" type="file" name="imageFile">
+      <input type="submit">
+    </form>
+    <button onclick="send()">전송</button>
+  </div>
+</body>
+
+<script th:inline="javascript">
+  function send() {
+    var formData = new FormData($('form')[0]);
+    console.log(formData);
+    if (formData.imageFile) {
+      $.ajax({ url:"/process/ocr", type:"post", data: formData })
+        .done((data) => {
+          if (data) {
+            alert(data);
+          } else {
+            alert("실패");
+          }
+        })
+        .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+    }
+  }
+</script>
+
+</html>

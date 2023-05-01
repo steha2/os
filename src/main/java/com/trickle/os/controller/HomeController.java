@@ -26,13 +26,18 @@ public class HomeController {
 		return "/os-home";
 	}
 	
-	@GetMapping(value = {"/admin/index", "/admin/"})
+	@GetMapping(value = {"/admin/index", "/admin"})
 	public String admin(Model model) {
 		return "/admin/index";
 	}
 	
-	@GetMapping(value = {"/shop/index", "/shop/"})
+	@GetMapping(value = {"/shop/index", "/shop"})
 	public String shop(Model model) {
 		return "/shop/index";
+	}	
+	
+	@GetMapping(value = {"/process/index", "/process"})
+	public String process(Model model) {
+		return "/process/index";
 	}
 }

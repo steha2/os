@@ -12,5 +12,5 @@ import lombok.RequiredArgsConstructor;
 public class ResponseController{
 	private final ItemDao itemDao;
 	private final MenuDao menuDao;
-
+	
 }

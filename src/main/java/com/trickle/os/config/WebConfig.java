@@ -31,5 +31,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/css/**").addResourceLocations("classpath:/static/css/").setCachePeriod(cachePeriod); 
         registry.addResourceHandler("/font/**").addResourceLocations("classpath:/static/font/").setCachePeriod(cachePeriod);
         registry.addResourceHandler("/html/**").addResourceLocations("classpath:/static/html/").setCachePeriod(cachePeriod);
+        registry.addResourceHandler("/resources/**").addResourceLocations("file:/D:/resources/").setCachePeriod(cachePeriod);
     }
 }
