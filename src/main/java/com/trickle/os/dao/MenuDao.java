@@ -37,6 +37,17 @@ private final SqlSession sqlSession;
 		});
 		return root;
 	}
+	public MenuVo getDepth1(long id) {
+		return sqlSession.selectOne("MenuMapper.getDepth1ById", id);
+	}
+	
+	public MenuVo getDepth2(long id) {
+		return sqlSession.selectOne("MenuMapper.getDepth2ById", id);
+	}
+
+	public MenuVo getRootById(long id) {
+		return sqlSession.selectOne("MenuMapper.getRootById", id);
+	}
 	
 	public int addRoot(MenuVo menu) {
 		return sqlSession.insert("MenuMapper.addRoot", menu);
@@ -76,4 +87,5 @@ private final SqlSession sqlSession;
 		};
 		return pathName; 
 	}
+
 }

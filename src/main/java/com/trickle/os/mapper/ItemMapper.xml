@@ -7,6 +7,10 @@
 	SELECT * FROM ITEMS WHERE ID = #{id} 
 </select>
 
+<select id="getItemByName" resultType="ItemVo">
+	SELECT * FROM ITEMS WHERE NAME = #{name} AND ROWNUM = 1
+</select>
+
 <select id="getItems" resultType="ItemVo">
 	SELECT * FROM ITEMS	WHERE PATH LIKE '${path}%'
 </select>
@@ -42,11 +46,11 @@ DELETE FROM ITEMS WHERE ID = #{id}
    WHERE ROWNUM <![CDATA[<=]]> #{paging.endRow}
 </select>
 
-<insert id="addItem" >
+<insert id="addItem">
  <selectKey keyProperty="id" resultType="int" order="BEFORE">
 	SELECT ITEM_SEQ.NEXTVAL FROM DUAL
  </selectKey>
-INSERT INTO ITEMS(ID, NAME, CONTENT, PATH, IMAGE_PATH, NUM_STOCK, PRICE, DISCOUNT, USER_ID, REG_DATE)
-VALUES(#{id}, #{name}, #{content}, #{path}, #{imagePath}, #{numStock}, #{price}, #{discount}, #{userId}, SYSDATE )
+	INSERT INTO ITEMS(ID, NAME, CONTENT, PATH, IMAGE_PATH, NUM_STOCK, PRICE, DISCOUNT, USER_ID, REG_DATE)
+	VALUES(#{id}, #{name}, #{content}, #{path}, '${path}/${id}${imagePath}', #{numStock}, #{price}, #{discount}, #{userId}, SYSDATE )
 </insert>
 </mapper>

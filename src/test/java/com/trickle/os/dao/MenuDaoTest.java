@@ -16,8 +16,8 @@ class MenuDaoTest {
 	ItemDao id;
 	@Autowired
 	ItemController ic;
-	@Test
 	
+	@Test
 	void test() {
 //		md.getMenus().forEach(System.out::println);
 		System.out.println(md.getRootByType("shop"));
@@ -28,5 +28,7 @@ class MenuDaoTest {
 		System.out.println(itemPaging);
 //		System.out.println(itemPaging.getColumns());
 		System.out.println(ic.getPagingItems(1, 9, "/1/1/2", ""));
+		
+		System.out.println(md.getDepth2(2));
 	}
 }

@@ -11,9 +11,18 @@ SELECT * FROM MENU_ROOT ORDER BY ID ASC
 SELECT * FROM MENU_ROOT WHERE TYPE = #{type} ORDER BY ID ASC 
 </select>
 
-<select id="getDepth1" resultType="MenuVo">
-SELECT * FROM MENU_DEPTH1
+<select id="getDepth1ById" resultType="MenuVo">
+SELECT * FROM MENU_DEPTH1 WHERE ID = #{id}
 </select>
+
+<select id="getDepth2ById" resultType="MenuVo">
+SELECT * FROM MENU_DEPTH2 WHERE ID = #{id}
+</select>
+
+<select id="getRootById" resultType="MenuVo">
+SELECT * FROM MENU_ROOT WHERE ID = #{id}
+</select>
+
 <select id="getDepth2" resultType="MenuVo">
 SELECT * FROM MENU_DEPTH2
 </select>

@@ -1,26 +1,25 @@
 package com.trickle.os.test;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import com.google.common.collect.ImmutableMap;
-
-import lombok.extern.log4j.Log4j;
-
-@Log4j
 public class CrawlingExample {
-	private ChromeDriver driver;
+	private WebDriver driver;
 
 	List<String> titles = new ArrayList<String>();
 	List<String> srcs = new ArrayList<String>();
@@ -28,7 +27,7 @@ public class CrawlingExample {
 	
 	static String URL = "https://search.naver.com/search.naver?sm=tab_sug.top&where=image&query=";
 
-	static 	int LENGTH = 10; //반복수 [검색어 + i] 로 검색
+	static 	int LENGTH = 1; //반복수 [검색어 + i] 로 검색
 	static 	String DIRNAME = "화장품";
 	static  String[] SEARCHS = { "화장품" } ; //검색어
 	
@@ -93,17 +92,22 @@ public class CrawlingExample {
 		System.setProperty("webdriver.chrome.driver", "D:\\cd\\chromedriver.exe");
 		// 크롬 드라이버 셋팅 (드라이버 설치한 경로 입력)
 
-		ChromeOptions options = new ChromeOptions();
-		java.util.logging.Logger.getLogger("org.openqa.selenium").setLevel(Level.OFF);
-		options.setCapability("goog:loggingPrefs", ImmutableMap.of("browser", "OFF"));
-		driver = new ChromeDriver(options); // 브라우저 선택
+	    ChromeOptions options = new ChromeOptions();
+	    options.addArguments("--remote-allow-origins=*");
 
+//	    options.addArguments("--disable-popup-blocking");       //팝업안띄움
+//	    options.addArguments("--headless");                       //브라우저 안띄움
+//	    options.addArguments("--disable-gpu");			//gpu 비활성화
+//	    options.addArguments("--blink-settings=imagesEnabled=false"); //이미지 다운 안받음
+	    driver = new ChromeDriver(options);
+
+	    
 		try {
 			System.out.println(getDataList(search));
 			System.out.println("+++++++++++++++result+++++++++++++++");
 			System.out.println(titles);
 			System.out.println(srcs);
-			File save = new File("resources/images");
+			File save = new File("D:/resources/images");
 
 			for(String f : dir.split("/")) {
 				File f1 = new File(save,f);

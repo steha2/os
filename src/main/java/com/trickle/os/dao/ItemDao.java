@@ -22,7 +22,7 @@ private final SqlSession sqlSession;
 		return sqlSession.selectOne("ItemMapper.getItem", id);
 	}
 	
-	public int addItem(ItemVo item) {
+	public long addItem(ItemVo item) {
 		return sqlSession.insert("ItemMapper.addItem", item);
 	}
 
@@ -44,5 +44,9 @@ private final SqlSession sqlSession;
 
 	public int getTotalRows(ItemPaging paging) {
 		return sqlSession.selectOne("ItemMapper.getTotalRows", paging);
+	}
+
+	public ItemVo getItemByName(String name) {
+		return sqlSession.selectOne("ItemMapper.getItemByName", name);
 	}
 }
