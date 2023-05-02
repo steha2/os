@@ -16,8 +16,9 @@
       </div>
     </div>
   </body>
-
-  <script>
+  
+  <script th:inline="javascript">
+    const roots = /*[[${roots}]]*/ null;
     function createNavLink(text, src) {
       const navLink = $("<a href='#' class='nav-link'></a>");
       navLink.text(text);
@@ -30,8 +31,10 @@
 
     $(() => {
       createNavLink("admin", "/admin/index");
-      createNavLink("SHOP", "/shop/index");
       createNavLink("process", "/process/index");
+      roots.forEach(root => {
+         createNavLink(`${root.name}`, `/page/${root.id}`);
+      });
     });
   </script>
   <style>

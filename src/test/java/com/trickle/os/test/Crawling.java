@@ -20,9 +20,9 @@ import org.openqa.selenium.chrome.ChromeOptions;
 public class Crawling {
 	private ChromeDriver driver;
 
-	private List<String> titles = new ArrayList<String>();
+	private List<String> titles;
 	
-	private List<String> srcs = new ArrayList<String>();
+	private List<String> srcs;
 
 	private static final String NAVER_SEARCH_URL = "https://search.naver.com/search.naver?sm=tab_sug.top&where=image&query=";
 
@@ -90,6 +90,9 @@ public class Crawling {
 	    options.addArguments("--remote-allow-origins=*");
 	    driver = new ChromeDriver(options);
 
+	    titles = new ArrayList<>();
+	    srcs = new ArrayList<>();
+	    
 		driver.get(NAVER_SEARCH_URL + search); // 브라우저에서 url로 이동한다.
 		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
 

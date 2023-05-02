@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T-Market</title>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
+<link rel="stylesheet" type="text/css" href="/css/page.css">
+
+<script src="/js/menu.js"></script>
+<script src="/js/item.js"></script>
+<style>
+#item-grid{
+  background: #a5c23e;
+}
+
+.content {
+  height: auto;
+  overflow-y: auto;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 150px auto;
+  grid-template-areas:
+      "navi1 navi1"
+      "navi2 items";
+  min-height: auto;
+}
+
+.itemCell{
+
+}
+
+#itemNavi1{
+  grid-area: navi1;
+  display: flex;
+  flex-direction: column;
+  background: #619981;
+  height: 50px;
+}
+
+#itemNavi2{
+  grid-area: navi2;
+  display: flex;
+  flex-direction: row;
+  background: #bdeed9;
+}
+
+#itemNavi2Wrap {
+  float: left;
+  background: #cfbb82;
+}
+
+#itemsDiv{
+  grid-area: items;
+  float: left;
+  background: #959c7c;
+}
+</style>
+</head>
+<body>
+  <div class="container">
+  <div id="header">
+    <div id="title"></div>
+    <table>
+      <tr>
+        <td style="width:200px;">
+          <div id="category"><i id="search-icon" class='fas fa-list-ul'></i> 전체 카테고리</div><div id="menuDiv"></div>
+        </td>
+        <td style="width:500px;">
+          <div id="navi">
+            특가 상품 | 상품 순위 | 즐겨찾기 | 쿠폰 
+          </div>
+        </td>
+        <td style="width:300px; text-align: right;">
+          <div class="search-box">
+            <input type="text" class="search-input" placeholder="Search">
+            <button class="search-btn"><i class="fas fa-search"></i></button>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="content">
+  <div id="itemNavi1">I t e m N a v i - !1</div>
+  <div id="itemNavi2Wrap">
+    <div id="itemNavi2">I t e m N a v i - !2</div>
+  </div>
+  <div id="itemsDiv"></div>
+  </div>
+</div>
+</body>
+
+<script th:inline="javascript">
+  const root = /*[[${root}]]*/ null;
+  const size = { rows:2, cols:2, iw:150, ih:200, cw:200, ch:250};
+  $("#title").append(createTitle(root.name, "100%", 150, 45));
+  createMenu();
+  $("#menuDiv").css("top",$("#category").offset().top+$("#category").height());
+  createItemsDiv();
+  function createItemsDiv(nowPage=1){
+    const itemsDiv = $("#itemsDiv").empty();
+    $.getJSON("/getPagingItems",{nowPage:nowPage,rowCount:size.rows*size.cols})
+    .done((data=>{
+      const grid = new ItemGrid(root.id, size);
+      grid.setItems(data);
+      itemsDiv.append(grid.div);
+      console.log(data);
+    })).fail(()=>console.log("Ajax Fail"));
+  }
+  
+</script>
+
+</html>

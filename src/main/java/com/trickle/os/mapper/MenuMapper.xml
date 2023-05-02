@@ -8,7 +8,7 @@ SELECT * FROM MENU_ROOT ORDER BY ID ASC
 </select>
 
 <select id="getRootByType" resultType="MenuVo">
-SELECT * FROM MENU_ROOT WHERE TYPE = #{type} ORDER BY ID ASC 
+SELECT * FROM MENU_ROOT WHERE TYPE = #{type} ORDER BY TYPE, ID 
 </select>
 
 <select id="getDepth1ById" resultType="MenuVo">
@@ -21,6 +21,10 @@ SELECT * FROM MENU_DEPTH2 WHERE ID = #{id}
 
 <select id="getRootById" resultType="MenuVo">
 SELECT * FROM MENU_ROOT WHERE ID = #{id}
+</select>
+
+<select id="getDepth1" resultType="MenuVo">
+SELECT * FROM MENU_DEPTH1
 </select>
 
 <select id="getDepth2" resultType="MenuVo">
@@ -41,7 +45,7 @@ SELECT NAME FROM MENU_DEPTH2 WHERE ID = #{id}
 
 <insert id="addRoot" >
  <selectKey keyProperty="id" resultType="int" order="BEFORE">
-	SELECT MENU_SEQ.NEXTVAL FROM DUAL
+	SELECT ROOT_SEQ.NEXTVAL FROM DUAL
  </selectKey>
 INSERT INTO MENU_ROOT
 (ID, NAME, TYPE)

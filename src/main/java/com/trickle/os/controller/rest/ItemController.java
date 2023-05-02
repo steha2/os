@@ -1,11 +1,8 @@
 package com.trickle.os.controller.rest;
 
-import java.util.List;
+import java.util.*;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.trickle.os.dao.ItemDao;
 import com.trickle.os.util.ItemPaging;
@@ -49,5 +46,27 @@ public class ItemController {
 		ItemPaging itemPaging = new ItemPaging(path, search);
 		itemPaging.setPaging(nowPage, rowCount, 5, itemDao.getTotalRows(itemPaging));
 		return itemDao.getPagingItems(itemPaging);
+	}
+	
+	@GetMapping("/getSearchItems")
+	public List<ItemVo> getSearchItems(Map<String,Object> params){
+		int nowPage = getInt(params.get("nowPage"), 1);
+		int rowCount = getInt(params.get("rowCount"), 10);
+		ItemPaging itemPaging = new ItemPaging(params.get("path"), params);
+		itemPaging.setPaging(nowPage, rowCount, 5, itemDao.getTotalRows(itemPaging));
+		return itemDao.getPagingItems(itemPaging);
+	}
+	
+	@GetMapping("/getCategoryItems")
+	public List<ItemVo> getCategoryItems(Map<String,Object> params){
+		int nowPage = getInt(params.get("nowPage"), 1);
+		int rowCount = getInt(params.get("rowCount"), 10);
+		ItemPaging itemPaging = new ItemPaging(params.get("path"), params);
+		itemPaging.setPaging(nowPage, rowCount, 5, itemDao.getTotalRows(itemPaging));
+		return itemDao.getPagingItems(itemPaging);
+	}
+	
+	public int getInt(Object value, int defaultValue) {
+		return value == null ? defaultValue : Integer.parseInt(value.toString());
 	}
 }

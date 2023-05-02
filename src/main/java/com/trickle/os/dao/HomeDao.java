@@ -16,4 +16,8 @@ public class HomeDao{
 	public String getTime() {
 		return sqlSession.selectOne("HomeMapper.getTime");
 	}
+
+	public String getRootNameById(int rootId) {
+		return sqlSession.selectOne("HomeMapper.getRootNameById", rootId);
+	}
 }

@@ -1,10 +1,15 @@
 package com.trickle.os.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.trickle.os.dao.HomeDao;
+import com.trickle.os.dao.MenuDao;
+import com.trickle.os.vo.MenuVo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -12,17 +17,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HomeController {
 
+	private final MenuDao menuDao;
 	private final HomeDao homeDao;
 	
 	@GetMapping("/")
-	public String home(Model model) {
+	public String home2(Model model) {
 		model.addAttribute("time",homeDao.getTime());
 		System.out.println(model.getAttribute("time"));
 		return "/index";
 	}
 	
 	@GetMapping("/os-home")
-	public String home2(Model model) {
+	public String home(Model model) {
+		model.addAttribute("roots", menuDao.getRoots());
 		return "/os-home";
 	}
 	
@@ -31,10 +38,12 @@ public class HomeController {
 		return "/admin/index";
 	}
 	
-	@GetMapping(value = {"/shop/index", "/shop"})
-	public String shop(Model model) {
-		return "/shop/index";
-	}	
+	@GetMapping("/page/{rootId}")
+	public String openPage(@PathVariable int rootId, Model model) {
+		MenuVo root = menuDao.getRootById(rootId);
+		model.addAttribute("root", menuDao.getRootById(rootId));
+		return "/page/"+root.getType()+"/index-"+rootId;
+	}
 	
 	@GetMapping(value = {"/process/index", "/process"})
 	public String process(Model model) {

@@ -27,24 +27,58 @@ WHERE ID = #{id}
 DELETE FROM ITEMS WHERE ID = #{id}
 </delete>
 
-<select id="getTotalRows" resultType="int">
+<select id="getTotalRows2" resultType="int">
   SELECT count(*) FROM ITEMS
   WHERE PATH LIKE '${path}%'
-  <if test="search != null and search != ''">
-    AND SEARCH '%${search}%'
+<!--   <if test="search != null and search != ''"> -->
+<!--     AND NAME LIKE '%${nameSearch}%' -->
+<!--   </if> -->
+</select>
+
+<select id="getTotalRows" parameterType="map" resultType="int">
+  SELECT count(*) FROM ITEMS
+  WHERE PATH LIKE '${path}%'
+  <if test="searchMap != null">
+    <foreach collection="searchMap" item="value" index="key">
+      AND ${key} LIKE '%${value}%'
+    </foreach>
   </if>
 </select>
+
 
 <select id="getPagingItems" parameterType="map" resultType="ItemVo">
    SELECT ${columns} FROM (
    SELECT ${columns} FROM (
    SELECT ${columns}, ROWNUM AS RN FROM (
    SELECT ${columns} FROM ITEMS
+   WHERE PATH LIKE '${path}%'
+  <if test="searchMap != null">
+    <foreach collection="searchMap" item="value" index="key">
+    	AND ${key} LIKE '%${value}%'
+    </foreach>
+   </if>
    ORDER BY ID DESC
    ) ) 
    WHERE RN >= #{paging.startRow}) 
    WHERE ROWNUM <![CDATA[<=]]> #{paging.endRow}
 </select>
+
+<select id="getSearchItems" parameterType="map" resultType="ItemVo">
+   SELECT ${columns} FROM (
+   SELECT ${columns} FROM (
+   SELECT ${columns}, ROWNUM AS RN FROM (
+   SELECT ${columns} FROM ITEMS
+   WHERE PATH LIKE '${path}%'
+  <if test="search != null and search != ''">
+    AND NAME LIKE '%${nameSearch}%'
+  </if>
+   ORDER BY ID DESC
+   ) ) 
+   WHERE RN >= #{paging.startRow}) 
+   WHERE ROWNUM <![CDATA[<=]]> #{paging.endRow}
+</select>
+
+
 
 <insert id="addItem">
  <selectKey keyProperty="id" resultType="int" order="BEFORE">

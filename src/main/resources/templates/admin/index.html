@@ -190,14 +190,17 @@
     }
 
   function updateMenuName() {
-    const path = $("#path").val();
+    const path = selectedPath;
+    const pathName = selectedPathName;
+    console.log(path)
     if(path.length){
-      const dialog = $("#dialog-div2").empty().append($("#path-label").val(),
-                     "<br>",path,"<br><input id='menuName'>").dialog({
+      const dialog = $("#dialog-div2").empty().append(pathName,
+                     "<br>",path,"<br><input id='menuName2'>").dialog({
       autoOpen: false, modal: true,
       buttons: {
         "수정": () => {
-          const name = $("#menuName").val().trim();
+          const name = $("#menuName2").val().trim();
+          console.log(name);
           if(name.length === 0) return;
           $.ajax({url: "/updateMenuName", data:{path:path,name:name}})
           .done((data) => { 
@@ -244,11 +247,13 @@
   }
 
   function openDialog(path, pathName){
-      const dialog = $("#dialog-div").empty().append(pathName,"<br>",path,"<br><input id='menuName'>").dialog({
+    console.log("pathName",pathName)
+      const dialog = $("#dialog-div2").empty()
+      .append(pathName,"<br>",path,"<br><input id='menuName1'>").dialog({
       autoOpen: false, modal: true,
       buttons: {
         "등록": () => {
-          const name = $("#menuName").val().trim();
+          const name = $("#menuName1").val().trim();
           if(name.length === 0) return;
           $.ajax({url: "/addMenu", data:{path:path,name:name}})
           .done((data) => { 

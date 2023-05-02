@@ -7,5 +7,8 @@
 SELECT SYSDATE FROM DUAL 
 </select>
 
+<select id="getRootNameById" resultType="String">
+SELECT NAME FROM MENU_ROOT WHERE ID = #{id}
+</select> 
 
 </mapper>

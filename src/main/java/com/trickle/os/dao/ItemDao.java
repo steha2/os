@@ -43,10 +43,16 @@ private final SqlSession sqlSession;
 	}
 
 	public int getTotalRows(ItemPaging paging) {
-		return sqlSession.selectOne("ItemMapper.getTotalRows", paging);
+		Integer result = sqlSession.selectOne("ItemMapper.getTotalRows", paging);
+		return result == null ? 0 : result;
 	}
 
 	public ItemVo getItemByName(String name) {
 		return sqlSession.selectOne("ItemMapper.getItemByName", name);
+	}
+
+	public List<ItemVo> getSearchItems(ItemPaging paging) {
+		List<ItemVo> result;
+		return sqlSession.selectList("ItemMapper.getPagingItems",paging);
 	}
 }

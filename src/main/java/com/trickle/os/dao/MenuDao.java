@@ -70,7 +70,7 @@ private final SqlSession sqlSession;
 	}
 	
 	public int updateDepth2(MenuVo menu) {
-		return sqlSession.insert("MenuMapper.addupdateDepth2Depth2", menu);
+		return sqlSession.insert("MenuMapper.updateDepth2", menu);
 	}
 
 	public String getPathName(String path) {

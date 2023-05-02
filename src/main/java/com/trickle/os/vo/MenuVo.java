@@ -11,7 +11,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class MenuVo implements Comparable<MenuVo>  {
-	private String name, type;
+	private String name, type, style;
 	private long id, parentId;
 	private List<MenuVo> childs;
 	private List<ItemVo> items;
