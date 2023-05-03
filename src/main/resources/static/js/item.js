@@ -41,7 +41,6 @@ class ItemGrid {
       "box-sizing": "border-box",
     });
     cell.item = item;
-    console.log(item);
     cell.image = $(`<img class='itemImg' src='/resources/images/${item.imagePath}'/>`);
     cell.image.css({width:this.iw, height:this.ih});
     

@@ -9,10 +9,7 @@
     
     #config-div {
       background: rgb(226, 209, 209);
-    }
-
-    #page-div {
-
+      float: right;
     }
 
     .itemCell{
@@ -22,7 +19,12 @@
 </head>
 <body>
   <table>
-    <tr><td>
+    <tr>  
+      <td>
+        <!-- <div id="page-div" th:include="|/page/${root.type}/index-${root.id}.html|"></div> -->
+        <iframe id="page-frame" th:src="|/page/${root.id}|" onload=calcHeight() frameborder="0"></iframe>
+      </td>
+      <td>
       <div th:text="|id:${root.id} name:${root.name} type:${root.type}|"></div>
       <div id="config-div" >
       <form id="style-form" method="post" action="/updateStyle">
@@ -32,9 +34,9 @@
       <button onclick="saveStyle()">Save Style</button>
       <button onclick="rollBack()">Roll Back</button>
       </div>
-       
-    </td></tr>
-    <tr><td><div id="page-div" th:include="|/page/${root.type}/index-${root.id}.html|"></div></td></tr>
+    </td>
+     
+    </tr>
   </table>
   
 </body>
@@ -60,5 +62,14 @@
   $(()=>{
     setAreaText(root1.style);
   });
+
+  function calcHeight(){
+    setTimeout(()=>{
+      const frame = document.getElementById('page-frame');
+      frame.width = 1100;
+      frame.style.overflow = "hidden";
+      frame.height=frame.contentWindow.document.body.scrollHeight+30;
+    },50);
+  }
 </script>
 </html>

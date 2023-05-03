@@ -60,7 +60,7 @@ DELETE FROM ITEMS WHERE ID = #{id}
    ORDER BY ID DESC
    ) ) 
    WHERE RN >= #{paging.startRow}) 
-   WHERE ROWNUM <![CDATA[<=]]> #{paging.endRow}
+   WHERE ROWNUM <![CDATA[<=]]> #{paging.rowCount}
 </select>
 
 <select id="getSearchItems" parameterType="map" resultType="ItemVo">
@@ -75,7 +75,7 @@ DELETE FROM ITEMS WHERE ID = #{id}
    ORDER BY ID DESC
    ) ) 
    WHERE RN >= #{paging.startRow}) 
-   WHERE ROWNUM <![CDATA[<=]]> #{paging.endRow}
+   WHERE ROWNUM <![CDATA[<=]]> #{paging.rowCount}
 </select>
 
 

@@ -9,17 +9,21 @@
   <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
   <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <script src="/js/util/paging.js"></script>
   <style>
   .ui-menu { width: 200px; }
   .ui-widget-header { padding: 0.2em; }
   .depth1-div, .depth1-ul, .addMenuButton {  
     width: 150px;
   }
+  #pagingBar {
+    width:100%;
+  }
 
   caption{
     font-size: 25px;
     font-weight: bold;
-  }
+  } 
   .addMenuButton {
     font-weight: bold;
     margin: 1px 0px 10px 1px;
@@ -74,6 +78,7 @@
   <tbody>
   </tbody>
 </table>
+
   <table id="formTable">
     <caption>상품 등록</caption>
     <form>
@@ -136,7 +141,7 @@
 
   <script th:inline="javascript">
     const tabsWrap = $("#tabs");
-
+    const ROW_COUNT = 10;
     let selectedTabId = null;
     let selectedPath, selectedPathName;
 
@@ -164,14 +169,16 @@
       }
     }
 
-    function updateItemList(path){
+    function updateItemList(path, nowPage=1, rowCount = ROW_COUNT){
       const tbody = $("#itemList tbody").empty();
-      $.getJSON("/getItems",{path:path}).done((data) => {
+      $.getJSON("/getPagingItems",{path:path,nowPage:nowPage,rowCount:rowCount}).done((data) => {
+        console.log(data);
+        // data = JSON.parse(data);
         const cols = ["path", "id", "name", "numSold", "numStock", "regDate"];
         const header = $("<tr>");
         cols.forEach(col => header.append($("<th>").text(camelToSnake(col))));
           tbody.append(header);
-          data.forEach(item=>{
+          data.items.forEach(item=>{
           let $tr = $("<tr>").click(()=>{
             for(let key in item) {
               $("#"+key).val(item[key]);
@@ -180,12 +187,18 @@
             $("#submitButton").text("상품 수정");
             $("#deleteButton").css("visibility","visible");
           });
+          
           cols.forEach(col => $tr.append($("<td>").html(item[col])));
           tbody.append($tr);
         });
+        let pagingTr = $("<tr>");
+        let pagingTd = $(`<td colspan='${cols.length}'></td>`)
+        pagingTr.append(pagingTd);
+        tbody.append(pagingTr);
+        pagingTd.append(createPaging(data.paging,(page)=>updateItemList(path,page,rowCount),(rowCount)=>updateItemList(path,nowPage,rowCount)));
       }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
     }
- 
+
     function camelToSnake(str) {
       return str.replace(/[A-Z]/g, letter => `_${letter.toUpperCase()}`).toUpperCase();
     }
@@ -326,6 +339,9 @@
       }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
     }
     
+
+
+
   $(() => {
     createMenus();
     const b = $("<button>test</button>").click(()=>{

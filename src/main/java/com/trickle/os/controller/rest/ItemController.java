@@ -3,13 +3,16 @@ package com.trickle.os.controller.rest;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.trickle.os.dao.ItemDao;
-import com.trickle.os.util.Debug;
 import com.trickle.os.util.ItemPaging;
 import com.trickle.os.vo.ItemVo;
 
@@ -54,7 +57,7 @@ public class ItemController {
 			 @RequestParam(required = false, defaultValue = "") String search) throws JsonProcessingException{
 		
 		ItemPaging itemPaging = new ItemPaging(path, search);
-		itemPaging.setPaging(nowPage, rowCount, 5, itemDao.getTotalRows(itemPaging));
+		itemPaging.setPaging(nowPage, rowCount, 10, itemDao.getTotalRows(itemPaging));
 		
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode data = mapper.createObjectNode();

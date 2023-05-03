@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <meta charset="utf-8">
@@ -19,9 +20,19 @@
   background: #a5c23e;
 }
 
+table {
+  border-collapse: collapse;
+}
+
+table td, table th {
+  padding:0px;
+  border: none;
+  margin: 0px;
+}
+
 .content {
   height: auto;
-  overflow-y: auto;
+  overflow-y: hidden;
   display: grid;
   grid-template-rows: auto 1fr;
   grid-template-columns: 150px auto;
@@ -48,7 +59,7 @@
 
 #itemNavi2Wrap {
   float: left;
-  background: #cfbb82;
+  background: #cf8e82;
 }
 
 #itemsDiv{
@@ -72,7 +83,7 @@
             특가 상품 | 상품 순위 | 즐겨찾기 | 쿠폰 
           </div>
         </td>
-        <td style="width:300px; text-align: right;">
+        <td style="width:300px; text-align: right; padding:2px 3px 0px 0px;">
           <div class="search-box">
             <input type="text" class="search-input" placeholder="Search">
             <button class="search-btn"><i class="fas fa-search"></i></button>
@@ -97,29 +108,25 @@
 <script th:inline="javascript">
   const root = /*[[${root}]]*/ null;
   let style = JSON.parse(root.style);
+  const ROW_COUNT = style.rows * style.cols;
   const itemsDiv = $("#itemsDiv");
-  function createItemsDiv(nowPage=1, isAdd){
+  function createItemsDiv(path=root.path, nowPage=1, rowCount=ROW_COUNT, isAdd=style.isAdd){
     if(!isAdd) itemsDiv.empty();
-    $.get("/getPagingItems",{nowPage:nowPage,rowCount:style.rows*style.cols})
+    $.get("/getPagingItems",{path:path,nowPage:nowPage,rowCount:rowCount})
     .done((data=>{
       data = JSON.parse(data);
-      console.log(data);
       const grid = new ItemGrid(root.id, style);
       const items = data.items;
       grid.setItems(items);
       if(!isAdd){
-        $("#paging").empty().append(createPaging(data.paging));
+        $("#paging").empty().append(createPaging(data.paging, 
+        (page)=>createItemsDiv(path,page,rowCount), (rowCount)=>createItemsDiv(path,nowPage,rowCount)));
       }
       itemsDiv.append(grid.div);
     })).fail(()=>console.log("Ajax Fail"));
   }
 
   function moveDetail(itemId) {
-    const newUrl = "#d" + itemId;
-    const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-    if (baseUrl + newUrl !== window.location.href) {
-      history.pushState(null, null, newUrl);
-    }
     $.getJSON("/getItemDetail", { id: itemId })
       .done((responseJson) => $("#itemDivWrap").empty().append(createItemDetail(responseJson)))
       .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
@@ -129,27 +136,11 @@
     return $("<pre id='itemDetail'></pre>").html(JSON.stringify(item, null, 2));
   }
 
-  $(window).on("popstate", (event) => {
-    const loc = location.href;
-    const sharpIndex = loc.lastIndexOf("#");
-    const historyNumber = loc.substring(sharpIndex + 2, loc.length);
-    if (sharpIndex == -1) {
-      createItemsDiv();
-    } else {
-      const pageType = loc.charAt(sharpIndex + 1);
-      if (pageType == "p") {
-        createItemsDiv(historyNumber);
-      } else if (pageType == "d") {
-        moveDetail(historyNumber);
-      }
-    }
-  });
-
   $(()=>{
     $("#title").append(createTitle(root.name, "100%", 150, 45));
-    createMenu();
     $("#menuDiv").css("top",$("#category").offset().top+$("#category").height());
     createItemsDiv();
+    createMenu((path)=>createItemsDiv(path,1,$("#rowCountSelect").val()))
   });
 </script>
 

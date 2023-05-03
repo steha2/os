@@ -1,20 +1,24 @@
-function createMenu(){
-  $.getJSON("/getRootMenu",{type:"shop"}).done((data) => {
+function createMenu(menuClick){
+  $.getJSON("/getRootMenu",{type:"shop"}).done((root) => {
     const menuUl = $("<ul>");
-    console.log(data);
     $("#menudiv").empty().append(menuUl);
-    data.childs.forEach(d1 => {
+    root.childs.forEach(d1 => {
       const li1 = $("<li>");
+      li1.attr("path","/"+root.id+"/"+d1.id); 
       li1.append(`<div>${d1.name}</div>`);
       const ul2 = $("<ul>");
       if(d1.childs) d1.childs.forEach(d2=>{
         li1.append(ul2)
         const li2 = $(`<li><div>${d2.name}</div></li>`);
+        li2.attr("path",li1.attr("path")+"/"+d2.id);
+        console.log(d2);
         ul2.append(li2);
       });
       menuUl.append(li1);
     });
-    menuUl.menu();
+    menuUl.menu({delay:0, select: (event,ui)=>{
+       menuClick($(ui.item[0]).attr("path"));
+    }});
     $("#menuDiv").append(menuUl);
   }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));;
 }

@@ -8,10 +8,7 @@
   </head>
   <body >
     <div class="grid-container">
-      <div class="navi">
-      	<span id="navi-1"></span>
-        Admin:<select id="admin-select"><option>----------</option></select>
-        Page:<select id="page-select"><option>----------</option></select>
+      <div id="navi">
       </div>
       <div class="content-frame-div">
         <iframe id="content-frame" src="/admin/index"></iframe>
@@ -28,33 +25,32 @@
         $("#content-frame").prop("src",src);
         return false;
       });
-	  $("#navi-1").append(navLink);
+	  $("#navi").append(navLink);
 	}
 
     $(() => {
+      const optionDefault = "-----------";
       createNavLink("admin", "/admin/index");
       createNavLink("process", "/process/index");
+      const adminSelect = $("<select>");
+      const pageSelect = $("<select>");
+      const adminLabel = $("<label>").text(" Admin : ").click(()=>selectChange("/admin/page/",adminSelect.val())).css("cursor","pointer");
+      const pageLabel = $("<label>").text(" Page : ").click(()=>selectChange("/page/",pageSelect.val())).css("cursor","pointer");
+      $("#navi").append(adminLabel,adminSelect,pageLabel,pageSelect);
       roots.forEach(root => {
-    	 const option = $("<option>");
-    	 option.attr("value",root.id);
-    	 option.text(root.name);
-    	 $("#admin-select").append(option);
-    	 $("#page-select").append(option.clone());
+    	  const option = $("<option>");
+    	  option.attr("value",root.id);
+    	  option.text(root.name);
+    	  adminSelect.append(option);
+    	  pageSelect.append(option.clone());
       });
       
-      $("#admin-select").change(()=>{
-		 const val = $("#admin-select option:selected").attr("value");
-		 if(val !== undefined) {
-      $("#content-frame").prop("src","/admin/page/"+val);
-     }
-	  });
-      $("#page-select").change(()=>{
-		  const val = $("#page-select option:selected").attr("value");
-		  if(val !== undefined) {
-        $("#content-frame").prop("src","/page/"+val);
+      adminSelect.change(()=>selectChange("/admin/page/",adminSelect.val()))
+      pageSelect.change(()=>selectChange("/page/",pageSelect.val()))
+      function selectChange(src1,src2){
+        if(src2 !== optionDefault) $("#content-frame").prop("src",src1+src2);
       }
 	  });
-    });
   </script>
   <style>
   	.navi-link{
@@ -80,7 +76,8 @@
       height: 100vh;
     }
 
-    .navi {
+    #navi {
+      padding: 5px;
       grid-area: navi;
       background-color: lightgray;
     }

@@ -35,7 +35,7 @@ public class Paging {
 	@Override
 	public String toString() {
 		return "Paging [totalRows=" + totalRows + ", maxPage=" + maxPage + ", totalPages=" + totalPages
-				+ ", nowPagePage=" + nowPage + ", rowCount=" + rowCount + ", startPage=" + startPage + ", endPage="
+				+ ", nowPage=" + nowPage + ", rowCount=" + rowCount + ", startPage=" + startPage + ", endPage="
 				+ endPage + ", getStartRow()=" + getStartRow() + ", getEndRow()=" + getEndRow() + "]";
 	}
 }

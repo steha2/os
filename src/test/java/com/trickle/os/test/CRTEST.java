@@ -10,7 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.trickle.os.dao.ItemDao;
 import com.trickle.os.dao.MenuDao;
-import com.trickle.os.vo.*;
+import com.trickle.os.vo.ItemVo;
+import com.trickle.os.vo.MenuVo;
+import com.trickle.os.vo.RootVo;
 @SpringBootTest
 class CRTEST {
 
@@ -23,7 +25,7 @@ class CRTEST {
 	@Test
 	void test() {
 		
-		MenuVo d2 = md.getDepth2(     22    ); //검색어 
+		MenuVo d2 = md.getDepth2(     3    ); //검색어 
 		MenuVo d1 = md.getDepth1(d2.getParentId());
 		RootVo root = md.getRootById(d1.getParentId());
 		
@@ -59,7 +61,7 @@ class CRTEST {
 				String s2 = s1.split("&")[0];
 				String ext = s2.substring(s2.lastIndexOf("."));
 	
-				if(ext.contains("jpg") || ext.contains("png") || ext.contains("jpeg") || ext.contains("gif")) {
+				if(ext.endsWith("jpg") || ext.endsWith("png") || ext.endsWith("jpeg") || ext.endsWith("gif")) {
 					ItemVo item = new ItemVo();
 					item.setContent(t);
 					item.setName(t);

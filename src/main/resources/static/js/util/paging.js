@@ -1,26 +1,50 @@
-function createPaging(paging, link) {
-  let pagingBar = $("<div id='pagingBar'></div>");
-  pagingBar.css({textAlign:"center"});
+function createPaging(paging, link, selectChange) {
+  let pagingBar = $("<table id='pagingBar'></table>");
+  let $tr = $("<tr>");
+  pagingBar.append($tr).css({textAlign:"center",height:35});
+  let $td1 = $("<td>").css("width","100%");
+  let $td2 = $("<td>");
+  $tr.append($td1,$td2);
   let startPage = paging.startPage;
   let endPage = paging.endPage;
-  
+  if(ROW_COUNT) {
+    let select = $("<select id='rowCountSelect'>").css({width:50,"margin-right":5,height:25});
+    for(i=ROW_COUNT; i<=ROW_COUNT*5; i+=ROW_COUNT){
+      $td2.append(select);
+      let option = $(`<option value='${i}'>${i}</option>`); 
+      select.append(option);
+    }
+    select.val(paging.rowCount).attr("selected","selected");
+    if(selectChange) select.change(()=>{
+      console.log(select.val());
+      selectChange(select.val());
+    });
+  }
+  // select.val(rowCount).attr("selected","selected");
+
   let createLink = (page, text) => {
     let linkButton = $("<a class='pagingLink'>" + (text ? text : page) + "</a>");
-    linkButton.css("margin","1px 3px 3px 1px");
-    linkButton.attr("href","#p"+page);
+    linkButton.css({"margin":"3px 4px 3px 4px","border-radius": "8px", "font-weight":"bold"
+     ,background:"rgba(110,123,232,0.3)",padding:"4px",fontSize:18,cursor:"pointer"});
+    if(typeof link === 'function') {
+      linkButton.click(()=>link(page));
+    } else {
+      linkButton.attr("href",link+page);  
+    }
     return linkButton;
   }
-  if (startPage > 1) pagingBar.append(createLink(startPage - 1, "◀ 이전"));
+  if (startPage > 1) $td1.append(createLink(startPage - 1, "◀"));
   for (let p = startPage; p <= endPage; p++) {
     let pageLink = createLink(p);
-    if (p == paging.currentPage) {
+    if (p == paging.nowPage) {
         pageLink.attr("id", "activePage");
+        pageLink.css("cursor","default").css("color","blue");
         pageLink.removeAttr("href");
     }
-    pagingBar.append(pageLink);
+    $td1.append(pageLink);
   }
   if (endPage < paging.totalPages) {
-    pagingBar.append(createLink(endPage + 1, "다음 ▶"));
+    $td1.append(createLink(endPage + 1, "▶"));
   }
 return pagingBar;
 }
