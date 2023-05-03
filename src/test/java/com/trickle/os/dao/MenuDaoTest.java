@@ -4,7 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.trickle.os.controller.rest.ItemController;
+import com.trickle.os.dao.ItemDao;
+import com.trickle.os.dao.MenuDao;
 import com.trickle.os.util.ItemPaging;
 
 @SpringBootTest
@@ -27,7 +30,12 @@ class MenuDaoTest {
 		itemPaging.setPaging(1, 9, 5, id.getTotalRows(itemPaging));
 		System.out.println(itemPaging);
 //		System.out.println(itemPaging.getColumns());
-		System.out.println(ic.getPagingItems(1, 9, "/1/1/2", ""));
+		try {
+			System.out.println(ic.getPagingItems(1, 9, "/1/1/2", ""));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		System.out.println(md.getDepth2(2));
 	}

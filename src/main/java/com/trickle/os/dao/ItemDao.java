@@ -52,7 +52,6 @@ private final SqlSession sqlSession;
 	}
 
 	public List<ItemVo> getSearchItems(ItemPaging paging) {
-		List<ItemVo> result;
 		return sqlSession.selectList("ItemMapper.getPagingItems",paging);
 	}
 }

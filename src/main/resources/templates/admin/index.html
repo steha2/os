@@ -28,7 +28,6 @@
   #itemList td:hover {
     background: rgb(204, 243, 237);
     cursor : pointer;
-
   }
 
   .addMenuButton:hover{
@@ -131,14 +130,16 @@
   </td></tr>
   </table>
 
-  <div id="dialog-div" title="메뉴 등록"></div>
+  <div id="dialog-div1" title="메뉴 등록"></div>
   <div id="dialog-div2" title="메뉴 수정"></div>
 </body>
 
   <script th:inline="javascript">
     const tabsWrap = $("#tabs");
+
     let selectedTabId = null;
     let selectedPath, selectedPathName;
+
     function selectPath(path, pathName){
       $("form").get(0).reset();
       $("#path").val(path);
@@ -248,7 +249,7 @@
 
   function openDialog(path, pathName){
     console.log("pathName",pathName)
-      const dialog = $("#dialog-div2").empty()
+      const dialog = $("#dialog-div1").empty()
       .append(pathName,"<br>",path,"<br><input id='menuName1'>").dialog({
       autoOpen: false, modal: true,
       buttons: {
@@ -283,7 +284,7 @@
         tabs.append(tabsUl);
           for(let i = 0; i<=data.length; i++){
            const root = data[i];
-           if(i==0 && selectedTabId === null) selectPath("/"+root.id,"/"+root.name);
+           if(i==0 && selectedTabId === null && i<data.length) selectPath("/"+root.id,"/"+root.name);
            const li = $("<li>").click(()=>{
             selectedTabId = i;
             if(i === data.length) {

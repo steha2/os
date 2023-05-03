@@ -19,3 +19,11 @@ function scaleDown(originalImage, maxWidth, maxHeight) {
   ctx.drawImage(originalImage, 0, 0, originalWidth, originalHeight);
   return canvas.toDataURL();
 }
+
+function sliceText(text, n=10) {
+  if (text.length <= n) {
+    return text;
+  } else {
+    return text.slice(0, n) + "...";
+  }
+}

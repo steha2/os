@@ -3,11 +3,11 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="MenuMapper">
-<select id="getRoot" resultType="MenuVo">
+<select id="getRoot" resultType="RootVo">
 SELECT * FROM MENU_ROOT ORDER BY ID ASC
 </select>
 
-<select id="getRootByType" resultType="MenuVo">
+<select id="getRootByType" resultType="RootVo">
 SELECT * FROM MENU_ROOT WHERE TYPE = #{type} ORDER BY TYPE, ID 
 </select>
 
@@ -19,7 +19,7 @@ SELECT * FROM MENU_DEPTH1 WHERE ID = #{id}
 SELECT * FROM MENU_DEPTH2 WHERE ID = #{id}
 </select>
 
-<select id="getRootById" resultType="MenuVo">
+<select id="getRootById" resultType="RootVo">
 SELECT * FROM MENU_ROOT WHERE ID = #{id}
 </select>
 
@@ -48,8 +48,8 @@ SELECT NAME FROM MENU_DEPTH2 WHERE ID = #{id}
 	SELECT ROOT_SEQ.NEXTVAL FROM DUAL
  </selectKey>
 INSERT INTO MENU_ROOT
-(ID, NAME, TYPE)
-VALUES(#{id}, #{name}, #{type})
+(ID, NAME, TYPE, STYLE)
+VALUES(#{id}, #{name}, #{type}, #{style})
 </insert>
 
 <insert id="addDepth1" >
@@ -70,20 +70,20 @@ INSERT INTO MENU_DEPTH2
 VALUES(#{id}, #{name}, #{parentId})
 </insert>
 
-<update id="updateRoot">
+<update id="updateRootName">
 UPDATE MENU_ROOT SET NAME = #{name} WHERE ID = #{id}
 </update>
 
-<update id="updateDepth1">
+<update id="updateDepth1Name">
 UPDATE MENU_DEPTH1 SET NAME = #{name} WHERE ID = #{id}
 </update>
 
-<update id="updateDepth2">
+<update id="updateDepth2Name">
 UPDATE MENU_DEPTH2 SET NAME = #{name} WHERE ID = #{id}
 </update>
 
-<update id="getRootMenu">
-SELECT * FROM MENU_DEPTH2
+<update id="updateStyle">
+UPDATE MENU_ROOT SET STYLE = #{style} WHERE ID = #{id}
 </update>
 
 </mapper>

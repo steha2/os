@@ -1,8 +1,10 @@
 body {
   font-family: "NanumSquare", sans-serif;
-  display: flex;
   justify-content: center;
   /* align-items: center; */
+  display: flex;
+
+  background-color: #ebe2e6;
 }
 .container {
   width: 1000px;
@@ -10,7 +12,6 @@ body {
 .ui-menu {
   width: 150px;
 }
-
 
 #header,
 .content {

@@ -1,12 +1,13 @@
 class ItemGrid {
-  constructor(rootId, size){
+  constructor(rootId, style){
     this.rootId = rootId;
-    this.rows = size.rows || 3;
-    this.cols = size.cols || 3;
-    this.iw = size.iw || 200;
-    this.ih = size.ih || this.iw;
-    this.cw = size.cw || 250;
-    this.ch = size.ch || this.cw;
+    this.rows = style.rows || 3;
+    this.cols = style.cols || 3;
+    this.iw = style.iw || 200;
+    this.ih = style.ih || this.iw;
+    this.cw = style.cw || 250;
+    this.ch = style.ch || this.cw;
+    this.style = style;
     this.create();
   }
   
@@ -15,8 +16,8 @@ class ItemGrid {
     this.detailDiv = $("<div id='detail-div'></div>");
     this.detailDiv.css({
       position:"absolute",
-      width: this.cellSize * this.rows / 2,
-      height: this.cellSize * this.cols / 2,
+      width: this.cw * this.rows / 2,
+      height: this.ch * this.cols / 2,
       border:"1px solid",
       visibility:"hidden",
       background:"rgba(100,250,160,0.8)",
@@ -26,11 +27,12 @@ class ItemGrid {
     $(this.div).append(this.detailDiv);
   }
 
-  addItemCell = (cell) => {
-    this.items.push(cell.item);
-    cell.image.css({width:this.imgSize, height:this.imgSize})
+  addItemCell = (item) => {
+    this.items.push(item);
+    const cell = {};
+    cell.div = $("<div class='itemCell'></div>");
     cell.div.css({
-      width:this.cellSize, height:this.cellSize,
+      width:this.cw, height:this.ch,
       "padding": "10px 5px 5px 5px",
       "margin": "10px",
       "outline": "1px solid",
@@ -38,11 +40,19 @@ class ItemGrid {
       "text-align": "center",
       "box-sizing": "border-box",
     });
+    cell.item = item;
+    console.log(item);
+    cell.image = $(`<img class='itemImg' src='/resources/images/${item.imagePath}'/>`);
+    cell.image.css({width:this.iw, height:this.ih});
+    
+    cell.div.append(cell.image).append(`<br>${sliceText(item.name,this.style.sliceText)}<br>￦ ${item.price.toLocaleString()} `);
+    
     this.div.append(cell.div);
+
     cell.div.click(()=>{
       if(this.isOpenDetail) this.openDetail(cell);
     });
-    if(this.items.length % this.cols === 0) this.div.append("<br>");
+    // if(this.items.length % this.cols === 0) this.div.append("<br>");
   }
 
   setLocation = (left, top) => {
@@ -91,15 +101,6 @@ class ItemGrid {
   setItems = (items) => {
      this.items = [];
      this.div.empty();
-     items.forEach(i => this.addItemCell(new ItemCell(i)));
-  }
-}
-
-class ItemCell {
-  constructor(item) {
-    this.image = $(`<img class='itemImg' src='/resources/images/${item.imagePath}'/>`);
-    this.div = $("<div class='itemCell'></div>");
-    this.div.append(this.image).append(`<br>${item.name}<br>${item.price}`);
-    this.item = item;
+     items.forEach(i => this.addItemCell(i));
   }
 }

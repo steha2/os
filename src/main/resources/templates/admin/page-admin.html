@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page-Admin</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <style>
+    
+    #config-div {
+      background: rgb(226, 209, 209);
+    }
+
+    #page-div {
+
+    }
+
+    .itemCell{
+      background: #90c79e;
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <tr><td>
+      <div th:text="|id:${root.id} name:${root.name} type:${root.type}|"></div>
+      <div id="config-div" >
+      <form id="style-form" method="post" action="/updateStyle">
+        <input type="hidden" name="id" th:value="${root.id}">
+        <textarea id="style-area" name="style" rows="10" cols="30"></textarea>
+      </form>
+      <button onclick="saveStyle()">Save Style</button>
+      <button onclick="rollBack()">Roll Back</button>
+      </div>
+       
+    </td></tr>
+    <tr><td><div id="page-div" th:include="|/page/${root.type}/index-${root.id}.html|"></div></td></tr>
+  </table>
+  
+</body>
+<script th:inline="javascript">
+  const root1 = /*[[${root}]]*/ null;
+  const oldStyle = root1.style;
+  function saveStyle(){
+     const style1 = $("#style-area").val();
+     try {
+       const jsonStyle = JSON.parse(style1);
+       root1.style = JSON.stringify(jsonStyle);
+       $("#style-form").submit();
+     } catch {
+       alert("올바르지 않은 JSON 형식");
+     }
+  }
+  function rollBack(){
+    setAreaText(oldStyle);
+  }
+  function setAreaText(style){
+    $("#style-area").val(JSON.stringify(JSON.parse(style),null,2));
+  }
+  $(()=>{
+    setAreaText(root1.style);
+  });
+</script>
+</html>

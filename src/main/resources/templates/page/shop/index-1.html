@@ -12,6 +12,8 @@
 
 <script src="/js/menu.js"></script>
 <script src="/js/item.js"></script>
+<script src="/js/util/utils.js"></script>
+<script src="/js/util/paging.js"></script>
 <style>
 #item-grid{
   background: #a5c23e;
@@ -27,10 +29,6 @@
       "navi1 navi1"
       "navi2 items";
   min-height: auto;
-}
-
-.itemCell{
-
 }
 
 #itemNavi1{
@@ -88,29 +86,71 @@
   <div id="itemNavi2Wrap">
     <div id="itemNavi2">I t e m N a v i - !2</div>
   </div>
-  <div id="itemsDiv"></div>
+    <table id="itemDivWrap">
+      <tr><td><div id="itemsDiv"></div></td></tr>
+      <tr><td><div id="paging"></div></td></tr>
+    </table>
   </div>
 </div>
 </body>
 
 <script th:inline="javascript">
   const root = /*[[${root}]]*/ null;
-  const size = { rows:2, cols:2, iw:150, ih:200, cw:200, ch:250};
-  $("#title").append(createTitle(root.name, "100%", 150, 45));
-  createMenu();
-  $("#menuDiv").css("top",$("#category").offset().top+$("#category").height());
-  createItemsDiv();
-  function createItemsDiv(nowPage=1){
-    const itemsDiv = $("#itemsDiv").empty();
-    $.getJSON("/getPagingItems",{nowPage:nowPage,rowCount:size.rows*size.cols})
+  let style = JSON.parse(root.style);
+  const itemsDiv = $("#itemsDiv");
+  function createItemsDiv(nowPage=1, isAdd){
+    if(!isAdd) itemsDiv.empty();
+    $.get("/getPagingItems",{nowPage:nowPage,rowCount:style.rows*style.cols})
     .done((data=>{
-      const grid = new ItemGrid(root.id, size);
-      grid.setItems(data);
-      itemsDiv.append(grid.div);
+      data = JSON.parse(data);
       console.log(data);
+      const grid = new ItemGrid(root.id, style);
+      const items = data.items;
+      grid.setItems(items);
+      if(!isAdd){
+        $("#paging").empty().append(createPaging(data.paging));
+      }
+      itemsDiv.append(grid.div);
     })).fail(()=>console.log("Ajax Fail"));
   }
-  
+
+  function moveDetail(itemId) {
+    const newUrl = "#d" + itemId;
+    const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+    if (baseUrl + newUrl !== window.location.href) {
+      history.pushState(null, null, newUrl);
+    }
+    $.getJSON("/getItemDetail", { id: itemId })
+      .done((responseJson) => $("#itemDivWrap").empty().append(createItemDetail(responseJson)))
+      .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+  }
+
+  function createItemDetail(item) {
+    return $("<pre id='itemDetail'></pre>").html(JSON.stringify(item, null, 2));
+  }
+
+  $(window).on("popstate", (event) => {
+    const loc = location.href;
+    const sharpIndex = loc.lastIndexOf("#");
+    const historyNumber = loc.substring(sharpIndex + 2, loc.length);
+    if (sharpIndex == -1) {
+      createItemsDiv();
+    } else {
+      const pageType = loc.charAt(sharpIndex + 1);
+      if (pageType == "p") {
+        createItemsDiv(historyNumber);
+      } else if (pageType == "d") {
+        moveDetail(historyNumber);
+      }
+    }
+  });
+
+  $(()=>{
+    $("#title").append(createTitle(root.name, "100%", 150, 45));
+    createMenu();
+    $("#menuDiv").css("top",$("#category").offset().top+$("#category").height());
+    createItemsDiv();
+  });
 </script>
 
 </html>

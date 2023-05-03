@@ -2,6 +2,7 @@ package com.trickle.os.test;
 
 import java.io.File;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.trickle.os.dao.ItemDao;
 import com.trickle.os.dao.MenuDao;
-import com.trickle.os.vo.ItemVo;
-import com.trickle.os.vo.MenuVo;
-
-import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
+import com.trickle.os.vo.*;
 @SpringBootTest
 class CRTEST {
 
@@ -24,20 +22,20 @@ class CRTEST {
 	//이미지를 검색해서 DB에 넣는다.
 	@Test
 	void test() {
-		MenuVo d2 = md.getDepth2(2); 
+		
+		MenuVo d2 = md.getDepth2(     22    ); //검색어 
 		MenuVo d1 = md.getDepth1(d2.getParentId());
-		MenuVo root = md.getRootById(d1.getParentId());
+		RootVo root = md.getRootById(d1.getParentId());
 		
 //		String pathName = "/"+root.getName()+"/"+d1.getName()+"/"+d2.getName();
 		String path= "/"+root.getId()+"/"+d1.getId()+"/"+d2.getId();
 		String search = d2.getName();
 		int count = 10;
 		
-		Crawling cr = new Crawling();
 
 		for(int c=0; c<count; c++) {
-			
-			cr.parse(search);
+			Crawling cr = new Crawling();
+			cr.parse(search+(c==0?"":(""+c)));
 			List<String> ts = cr.getTitles();
 			List<String> ss = cr.getSrcs();
 			
@@ -62,26 +60,28 @@ class CRTEST {
 				String ext = s2.substring(s2.lastIndexOf("."));
 	
 				if(ext.contains("jpg") || ext.contains("png") || ext.contains("jpeg") || ext.contains("gif")) {
-				   continue;
+					ItemVo item = new ItemVo();
+					item.setContent(t);
+					item.setName(t);
+					item.setPrice(getRandomPrice(5000, 200000, 100));
+					item.setNumStock(100);
+					item.setScore(""+getRandomPrice(1,5,1));
+					item.setImagePath(ext);
+					item.setPath(path);
+					item.setUserId("Admin");
+					id.addItem(item);
+					System.out.println("ITEMID:" + item.getId());
+					Crawling.saveImg(s, new File(saveFile, item.getId() + ext));
 				}
-				
-				ItemVo item = new ItemVo();
-				item.setContent(t);
-				item.setName(t);
-				item.setPrice(10000);
-				item.setNumStock(100);
-				item.setImagePath(ext);
-				item.setPath(path);
-				item.setUserId("Admin");
-				id.addItem(item);
-				System.out.println("ITEMID:" + item.getId());
-				Crawling.saveImg(s, new File(saveFile, item.getId() + ext));
-				
 			}
-			
+			cr.getDriver().close();
+			cr.getDriver().quit();
 		}
-		
-		cr.getDriver().close();
-		cr.getDriver().quit();
 	}
+	
+    public static int getRandomPrice(int min, int max, int q) {
+        Random rand = new Random();
+        int randomPrice = rand.nextInt((max - min) / q + 1) * q + min;
+        return randomPrice;
+    }
 }

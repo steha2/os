@@ -1,15 +1,12 @@
 package com.trickle.os.controller;
 
-import java.util.List;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import com.trickle.os.dao.HomeDao;
 import com.trickle.os.dao.MenuDao;
-import com.trickle.os.vo.MenuVo;
+import com.trickle.os.vo.RootVo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,9 +35,15 @@ public class HomeController {
 		return "/admin/index";
 	}
 	
+	@GetMapping("/admin/page/{rootId}")
+	public String openAdminPage(@PathVariable long rootId, Model model) {
+		model.addAttribute("root", menuDao.getRootById(rootId));
+		return "/admin/page-admin";
+	}
+	
 	@GetMapping("/page/{rootId}")
-	public String openPage(@PathVariable int rootId, Model model) {
-		MenuVo root = menuDao.getRootById(rootId);
+	public String openPage(@PathVariable long rootId, Model model) {
+		RootVo root = menuDao.getRootById(rootId);
 		model.addAttribute("root", menuDao.getRootById(rootId));
 		return "/page/"+root.getType()+"/index-"+rootId;
 	}
@@ -48,5 +51,11 @@ public class HomeController {
 	@GetMapping(value = {"/process/index", "/process"})
 	public String process(Model model) {
 		return "/process/index";
+	}
+	
+	@PostMapping("/updateStyle")
+	public String updateStyle(RootVo root, Model model) {
+		menuDao.updateStyle(root);
+		return openAdminPage(root.getId(), model);
 	}
 }

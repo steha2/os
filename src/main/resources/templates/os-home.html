@@ -8,10 +8,12 @@
   </head>
   <body >
     <div class="grid-container">
-      <nav class="nav">
-        <ul></ul>
-      </nav>
-      <div class="content">
+      <div class="navi">
+      	<span id="navi-1"></span>
+        Admin:<select id="admin-select"><option>----------</option></select>
+        Page:<select id="page-select"><option>----------</option></select>
+      </div>
+      <div class="content-frame-div">
         <iframe id="content-frame" src="/admin/index"></iframe>
       </div>
     </div>
@@ -20,26 +22,47 @@
   <script th:inline="javascript">
     const roots = /*[[${roots}]]*/ null;
     function createNavLink(text, src) {
-      const navLink = $("<a href='#' class='nav-link'></a>");
+      const navLink = $("<a href='#' class='navi-link'></a>");
       navLink.text(text);
       navLink.click(() => {
         $("#content-frame").prop("src",src);
         return false;
       });
-	  $(".nav ul").append(navLink);
+	  $("#navi-1").append(navLink);
 	}
 
     $(() => {
       createNavLink("admin", "/admin/index");
       createNavLink("process", "/process/index");
       roots.forEach(root => {
-         createNavLink(`${root.name}`, `/page/${root.id}`);
+    	 const option = $("<option>");
+    	 option.attr("value",root.id);
+    	 option.text(root.name);
+    	 $("#admin-select").append(option);
+    	 $("#page-select").append(option.clone());
       });
+      
+      $("#admin-select").change(()=>{
+		 const val = $("#admin-select option:selected").attr("value");
+		 if(val !== undefined) {
+      $("#content-frame").prop("src","/admin/page/"+val);
+     }
+	  });
+      $("#page-select").change(()=>{
+		  const val = $("#page-select option:selected").attr("value");
+		  if(val !== undefined) {
+        $("#content-frame").prop("src","/page/"+val);
+      }
+	  });
     });
   </script>
   <style>
-  	.nav-link{
-  		margin-right:15px;
+  	.navi-link{
+  		margin:7px;
+  	}
+  	
+  	#navi-ul {
+  	   
   	}
   	
     #content-frame {
@@ -53,16 +76,16 @@
       display: grid;
       grid-template-rows: auto 1fr;
       grid-template-columns: auto;
-      grid-template-areas: "nav" "content";
+      grid-template-areas: "navi" "content";
       height: 100vh;
     }
 
-    .nav {
-      grid-area: nav;
+    .navi {
+      grid-area: navi;
       background-color: lightgray;
     }
 
-    .content {
+    .content-frame-div {
       grid-area: content;
       background: #fffff0;
     }

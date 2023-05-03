@@ -84,7 +84,7 @@ DELETE FROM ITEMS WHERE ID = #{id}
  <selectKey keyProperty="id" resultType="int" order="BEFORE">
 	SELECT ITEM_SEQ.NEXTVAL FROM DUAL
  </selectKey>
-	INSERT INTO ITEMS(ID, NAME, CONTENT, PATH, IMAGE_PATH, NUM_STOCK, PRICE, DISCOUNT, USER_ID, REG_DATE)
-	VALUES(#{id}, #{name}, #{content}, #{path}, '${path}/${id}${imagePath}', #{numStock}, #{price}, #{discount}, #{userId}, SYSDATE )
+	INSERT INTO ITEMS(ID, NAME, CONTENT, PATH, IMAGE_PATH, NUM_STOCK, PRICE, DISCOUNT, USER_ID, REG_DATE, SCORE)
+	VALUES(#{id}, #{name}, #{content}, #{path}, '${path}/${id}${imagePath}', #{numStock}, #{price}, #{discount}, #{userId}, SYSDATE, #{score} )
 </insert>
 </mapper>

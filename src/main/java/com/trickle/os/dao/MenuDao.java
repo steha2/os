@@ -8,6 +8,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.trickle.os.vo.MenuVo;
+import com.trickle.os.vo.RootVo;
 
 @Repository
 public class MenuDao {
@@ -17,15 +18,15 @@ private final SqlSession sqlSession;
 		this.sqlSession = new SqlSessionTemplate(sqlSessionFactory);
 	}
 	
-	public MenuVo getRootByType(String type) {
+	public RootVo getRootByType(String type) {
 		return sqlSession.selectOne("MenuMapper.getRootByType", type);
 	}
 	
-	public List<MenuVo> getRoots(){
+	public List<RootVo> getRoots(){
 		return sqlSession.selectList("MenuMapper.getRoot");
 	}
 	
-	public MenuVo addChilds(MenuVo root) {
+	public RootVo addChilds(RootVo root) {
 		List<MenuVo> depth1 = sqlSession.selectList("MenuMapper.getDepth1");
 		List<MenuVo> depth2 = sqlSession.selectList("MenuMapper.getDepth2");
 		depth1.forEach(d1->{
@@ -45,12 +46,12 @@ private final SqlSession sqlSession;
 		return sqlSession.selectOne("MenuMapper.getDepth2ById", id);
 	}
 
-	public MenuVo getRootById(long id) {
+	public RootVo getRootById(long id) {
 		return sqlSession.selectOne("MenuMapper.getRootById", id);
 	}
 	
-	public int addRoot(MenuVo menu) {
-		return sqlSession.insert("MenuMapper.addRoot", menu);
+	public int addRoot(RootVo root) {
+		return sqlSession.insert("MenuMapper.addRoot", root);
 	}
 
 	public int addDepth1(MenuVo menu) {
@@ -61,16 +62,16 @@ private final SqlSession sqlSession;
 		return sqlSession.insert("MenuMapper.addDepth2", menu);
 	}
 
-	public int updateRoot(MenuVo menu) {
-		return sqlSession.insert("MenuMapper.updateRoot", menu);
+	public int updateRootName(MenuVo root) {
+		return sqlSession.insert("MenuMapper.updateRootName", root);
 	}
 
-	public int updateDepth1(MenuVo menu) {
-		return sqlSession.insert("MenuMapper.updateDepth1", menu);
+	public int updateDepth1Name(MenuVo menu) {
+		return sqlSession.insert("MenuMapper.updateDepth1Name", menu);
 	}
 	
-	public int updateDepth2(MenuVo menu) {
-		return sqlSession.insert("MenuMapper.updateDepth2", menu);
+	public int updateDepth2Name(MenuVo menu) {
+		return sqlSession.insert("MenuMapper.updateDepth2Name", menu);
 	}
 
 	public String getPathName(String path) {
@@ -85,7 +86,11 @@ private final SqlSession sqlSession;
 				pathName += "/"+sqlSession.selectOne("MenuMapper.getDepth2Name",id);
 			}
 		};
-		return pathName; 
+		return pathName;
+	}
+
+	public int updateStyle(RootVo root) {
+		return sqlSession.update("MenuMapper.updateStyle", root);
 	}
 
 }
