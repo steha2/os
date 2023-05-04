@@ -11,16 +11,15 @@ function createMenu(menuClick){
         li1.append(ul2)
         const li2 = $(`<li><div>${d2.name}</div></li>`);
         li2.attr("path",li1.attr("path")+"/"+d2.id);
-        console.log(d2);
         ul2.append(li2);
       });
       menuUl.append(li1);
     });
     menuUl.menu({delay:0, select: (event,ui)=>{
-       menuClick($(ui.item[0]).attr("path"));
+      menuClick($(ui.item[0]).attr("path"));
     }});
     $("#menuDiv").append(menuUl);
-  }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));;
+  }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
 }
 
 function createTitle(title, width, height, fontSize) {

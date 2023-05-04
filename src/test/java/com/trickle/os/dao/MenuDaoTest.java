@@ -30,12 +30,7 @@ class MenuDaoTest {
 		itemPaging.setPaging(1, 9, 5, id.getTotalRows(itemPaging));
 		System.out.println(itemPaging);
 //		System.out.println(itemPaging.getColumns());
-		try {
-			System.out.println(ic.getPagingItems(1, 9, "/1/1/2", ""));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//			System.out.println(ic.getPagingItems(1, 9, "/1/1/2", ""));
 		
 		System.out.println(md.getDepth2(2));
 	}

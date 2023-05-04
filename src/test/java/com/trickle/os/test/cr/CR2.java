@@ -1,35 +1,23 @@
-package com.trickle.os.test;
+package com.trickle.os.test.cr;
 
 import java.io.File;
 import java.util.List;
 import java.util.Random;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import com.trickle.os.dao.ItemDao;
-import com.trickle.os.dao.MenuDao;
-import com.trickle.os.vo.ItemVo;
-import com.trickle.os.vo.MenuVo;
-import com.trickle.os.vo.RootVo;
-@SpringBootTest
-class CRTEST {
+import com.trickle.os.dao.*;
+import com.trickle.os.vo.*;
+class CR2 {
 
-	@Autowired
-	MenuDao md;
-	@Autowired
-	ItemDao id;
-	
 	//이미지를 검색해서 DB에 넣는다.
-	@Test
-	void test() {
+	public static void main(String[] args) {
+		MenuDao md = new MenuDao (new MyBatisConn().sqlSessionFactory());
+		ItemDao id = new ItemDao (new MyBatisConn().sqlSessionFactory());
 		
-		MenuVo d2 = md.getDepth2(    43    ); //검색어 
-		
-		
+		int count = 5;
+		MenuVo d2 = md.getDepth2(    46   ); //검색어 
 		String add = "";
-
 		
 		MenuVo d1 = md.getDepth1(d2.getParentId());
 		RootVo root = md.getRootById(d1.getParentId());
@@ -39,10 +27,8 @@ class CRTEST {
 		String search = d2.getName();
 		
 		
-		int count = 5;
-		
 		for(int c=0; c<count; c++) {
-			Crawling cr = new Crawling();
+			NaverCrawling cr = new NaverCrawling();
 			cr.parse(search+add+(c==0?"":(""+c)));
 			List<String> ts = cr.getTitles();
 			List<String> ss = cr.getSrcs();
@@ -56,7 +42,7 @@ class CRTEST {
 			}
 			
 			for (int i = 0; i < ts.size(); i++) {
-				String t = Crawling.removeSpChar(ts.get(i));
+				String t = NaverCrawling.removeSpChar(ts.get(i));
 				String s = ss.get(i);
 				
 				if(id.getItemByName(t) != null || !s.startsWith("http")) continue;
@@ -79,7 +65,7 @@ class CRTEST {
 					item.setUserId("Admin");
 					id.addItem(item);
 					System.out.println("ITEMID:" + item.getId());
-					Crawling.saveImg(s, new File(saveFile, item.getId() + ext));
+					NaverCrawling.saveImg(s, new File(saveFile, item.getId() + ext));
 				}
 			}
 			cr.getDriver().close();

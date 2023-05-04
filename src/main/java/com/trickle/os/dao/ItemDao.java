@@ -12,7 +12,7 @@ import com.trickle.os.vo.ItemVo;
 
 @Repository
 public class ItemDao {
-private final SqlSession sqlSession;
+	private final SqlSession sqlSession;
 	
 	public ItemDao(SqlSessionFactory sqlSessionFactory) {
 		this.sqlSession = new SqlSessionTemplate(sqlSessionFactory);
@@ -39,7 +39,7 @@ private final SqlSession sqlSession;
 	}
 	
 	public List<ItemVo> getPagingItems(ItemPaging paging){
-		return sqlSession.selectList("ItemMapper.getPagingItems",paging);
+		return sqlSession.selectList("PagingMapper.getPagingItems",paging);
 	}
 
 	public int getTotalRows(ItemPaging paging) {
@@ -49,9 +49,5 @@ private final SqlSession sqlSession;
 
 	public ItemVo getItemByName(String name) {
 		return sqlSession.selectOne("ItemMapper.getItemByName", name);
-	}
-
-	public List<ItemVo> getSearchItems(ItemPaging paging) {
-		return sqlSession.selectList("ItemMapper.getPagingItems",paging);
 	}
 }

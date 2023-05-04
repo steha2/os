@@ -17,6 +17,7 @@ public class RootVo implements Comparable<RootVo>{
 	
 	public void addMenu(MenuVo menu) {
 		if(childs == null) childs = new ArrayList<>();
+		menu.setPath(getPath()+"/"+menu.getId());
 		childs.add(menu);
 	}
 	
@@ -28,6 +29,10 @@ public class RootVo implements Comparable<RootVo>{
 	@Override
 	public int compareTo(RootVo o) {
 		return (int) (id - o.id);
+	}
+	
+	public String getPath() {
+		return "/"+id;
 	}
 }
 

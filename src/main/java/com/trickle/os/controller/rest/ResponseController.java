@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class ResponseController{
-	private final ItemDao itemDao;
-	private final MenuDao menuDao;
 	
 	String a() {
 		RestTemplate rt = new RestTemplate();

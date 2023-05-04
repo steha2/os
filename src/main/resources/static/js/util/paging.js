@@ -1,22 +1,22 @@
 function createPaging(paging, link, selectChange) {
   let pagingBar = $("<table id='pagingBar'></table>");
   let $tr = $("<tr>");
-  pagingBar.append($tr).css({textAlign:"center",height:35});
-  let $td1 = $("<td>").css("width","100%");
+  pagingBar.append($tr).css("width","100%");
+  let $td1 = $("<td>").css({textAlign:"center",height:35,width:"100%"});
   let $td2 = $("<td>");
   $tr.append($td1,$td2);
   let startPage = paging.startPage;
   let endPage = paging.endPage;
-  if(ROW_COUNT) {
+  const defaultRowCount = paging.defaultRowCount || null;
+  if(defaultRowCount !== null) {
     let select = $("<select id='rowCountSelect'>").css({width:50,"margin-right":5,height:25});
-    for(i=ROW_COUNT; i<=ROW_COUNT*5; i+=ROW_COUNT){
+    for(i=defaultRowCount; i<=defaultRowCount*5; i+=defaultRowCount){
       $td2.append(select);
       let option = $(`<option value='${i}'>${i}</option>`); 
       select.append(option);
     }
     select.val(paging.rowCount).attr("selected","selected");
     if(selectChange) select.change(()=>{
-      console.log(select.val());
       selectChange(select.val());
     });
   }

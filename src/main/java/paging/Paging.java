@@ -1,34 +1,34 @@
-package com.trickle.os.util;
+package paging;
 
 import lombok.Getter;
 
 @Getter
 public class Paging {
-	private int totalRows; // DB의 총 ROW 수
-	private int maxPage; // 한번에 보여줄 페이징링크 숫자 최대치
-	private int totalPages; // (int) Math.ceil((double) totalCount / count);
-	private int nowPage; //현재 페이지
-	private int rowCount; //한번에 보여줄 ROW 개수
-	private int startPage; //페이징 링크 시작 번호
-	private int endPage; //페이징 링크 끝 번호
+	private long totalRows; // DB의 총 ROW 수
+	private long maxPage; // 한번에 보여줄 페이징링크 숫자 최대치
+	private long totalPages; // (long) Math.ceil((double) totalCount / count);
+	private long nowPage; //현재 페이지
+	private long rowCount; //한번에 보여줄 ROW 개수
+	private long startPage; //페이징 링크 시작 번호
+	private long endPage; //페이징 링크 끝 번호
 
-	public Paging(int nowPage, int rowCount, int maxPage, int totalRows) {
+	public Paging(long nowPage, long rowCount, long maxPage, long totalRows) {
 		this.nowPage = nowPage;
 		this.rowCount = rowCount;
 		this.totalRows = totalRows;
 		this.maxPage = maxPage;
-		this.totalPages = (int) Math.ceil((double) totalRows / rowCount);
+		this.totalPages = (long) Math.ceil((double) totalRows / rowCount);
 		if(nowPage > totalPages) this.nowPage = totalPages;
 		startPage = (nowPage - 1) / maxPage * maxPage + 1;
 		if (startPage > totalPages) startPage = totalPages;
 		this.endPage = totalPages <= nowPage || startPage + maxPage >= totalPages ? totalPages : startPage + maxPage - 1;
 	}
 
-    public int getStartRow() {
+    public long getStartRow() {
         return (nowPage - 1) * rowCount + 1;
     }
 
-	public int getEndRow() {
+	public long getEndRow() {
         return nowPage * rowCount;
     }
 

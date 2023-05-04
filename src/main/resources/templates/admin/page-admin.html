@@ -42,12 +42,12 @@
 </body>
 <script th:inline="javascript">
   const root1 = /*[[${root}]]*/ null;
+  console.log(root1);
   const oldStyle = root1.style;
   function saveStyle(){
      const style1 = $("#style-area").val();
      try {
-       const jsonStyle = JSON.parse(style1);
-       root1.style = JSON.stringify(jsonStyle);
+       root1.style = JSON.parse(style1);
        $("#style-form").submit();
      } catch {
        alert("올바르지 않은 JSON 형식");

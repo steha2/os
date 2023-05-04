@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S-Music</title>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
+
+<script src="/js/menu.js"></script>
+<script src="/js/item.js"></script>
+<style>
+body {
+  font-family: 'NanumSquare', sans-serif;
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+}
+.container {
+  width:1000px;
+}
+  .ui-menu {
+    width: 150px;
+
+  }
+  .content {
+  padding:5px;
+  height: 70vh;
+  overflow-y: auto;
+  }
+
+  #header, .content{ 
+    outline:1px solid rgb(85, 85, 158);
+  }
+
+  #search{
+    /* padding:5px; */
+  }
+
+  #category {
+    height:35px;
+    float:left;
+    margin-right: 20px;
+    /* background-color: rgb(225, 215, 243); */
+    font-size:18px;  
+    padding:3px 7px 0px 0px;
+  }
+
+#menuDiv {
+  display: none;
+  position: absolute;
+  background-color: #eee;
+}
+
+#category:hover + #menuDiv, #menuDiv:hover, #menuDiv:hover + #category {
+  display: block;
+}
+
+#category:not(:hover) + #menuDiv:not(:hover) {
+  display: none;
+}
+#search{
+  display: flex;
+  padding:3px 4px 0px 0px;
+  justify-content: flex-end;
+}
+
+.search-box {
+  height: 35px;
+  display:inline-block;
+}
+
+#ci0 {
+  margin-left:6px;
+  font-size:25px;
+  position: relative;
+  top: 3px;
+}
+
+.search-input {
+  width: 250px;
+  padding: 5px;
+  box-sizing: border-box;
+  border: 2px solid rgb(108, 152, 209);
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.search-btn {
+  width:50px;
+  padding: 7px;
+  background-color: #545dd8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.search-btn:hover {
+  background-color: #e93e0a;
+}
+</style>
+</head>
+<body>
+  <div class="container">
+  <div id="header">
+    <div id="title"></div>
+    <div id="category"><i id="ci0" class='fas fa-list-ul'></i> 전체 카테고리 | 특가 상품 | 상품 순위 | 즐겨찾기 | 쿠폰 </div>
+    <div id="menuDiv"></div>
+
+    <div id="search">
+      <div class="search-box">
+        <input type="text" class="search-input" placeholder="Search">
+        <button class="search-btn"><i class="fas fa-search"></i></button>
+      </div>
+     </div>
+  </div>
+
+  <div class="content">
+  <h2>Items</h2>
+  <div id="itemsDiv"></div>
+  </div>
+</div>
+</body>
+
+<script th:inline="javascript">
+  const root = /*[[${root}]]*/ {name:"Template", id:1};
+  $("#title").append(createTitle(root.name, "100%", 150, 45));
+  createMenu();
+  $("#menuDiv").css("top",$("#category").offset().top+$("#category").height());
+  createItemsDiv();
+  
+  function createItemsDiv(row=3, col=3, nowPage=1){
+    const itemsDiv = $("#itemsDiv").empty();
+    $.getJSON("/getPagingItems",{nowPage:nowPage,rowCount:row*col,path:root.id})
+    .done(data=>{
+		console.log(data)
+    }).fail(()=>console.log("Ajax Fail"));
+  }
+</script>
+</html>

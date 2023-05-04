@@ -129,7 +129,7 @@
   </form>
   
   <tr>
-    <td><button onclick=updateMenuName()>메뉴명 변경</button></td>
+    <td><button onclick=openUpdateMenu()>메뉴명 변경</button></td>
       <td><button id="submitButton" onclick=updateItem()></button>
         <button id="deleteButton" onclick=deleteItem()>상품 삭제</button>
   </td></tr>
@@ -139,89 +139,97 @@
   <div id="dialog-div2" title="메뉴 수정"></div>
 </body>
 
-  <script th:inline="javascript">
-    const tabsWrap = $("#tabs");
-    const ROW_COUNT = 10;
-    let selectedTabId = null;
-    let selectedPath, selectedPathName;
+<script th:inline="javascript">
+  const tabsWrap = $("#tabs");
+  const ROW_COUNT = 10;
+  const MAX_PAGE = 10; // 한번에 보여줄 최대 페이지
+  let selectedTabId = null;
+  let selectedPath, selectedPathName;
 
-    function selectPath(path, pathName){
-      $("form").get(0).reset();
-      $("#path").val(path);
-      selectedPath = path;
-      selectedPathName = pathName;
-      $("#pathName").val(pathName);
-      $("#formTable caption").text("상품 등록");
-      $("#submitButton").text("상품 등록");
-      $("#deleteButton").css("visibility","hidden");
-      updateItemList(path);
+  function selectPath(path, pathName){
+    $("form").get(0).reset();
+    $("#path").val(path);
+    selectedPath = path;
+    selectedPathName = pathName;
+    $("#pathName").val(pathName);
+    $("#formTable caption").text("상품 등록");
+    $("#submitButton").text("상품 등록");
+    $("#deleteButton").css("visibility","hidden");
+    updateItemList(path);
+  }
+
+  function deleteItem() {  
+    let formData = $("form").serializeArray();
+    const id = formData.find(f=>f.name=="id").value;
+    if(confirm("Delelte Item Id: " + id)){
+      $.ajax({url:"/deleteItem",data:{id:id}}).done((data) => {
+        alert(data);
+        selectPath(selectedPath, selectedPathName);
+      })
+      .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
     }
+  }
 
-    function deleteItem() {  
-      let formData = $("form").serializeArray();
-      const id = formData.find(f=>f.name=="id").value;
-      if(confirm("Delelte Item Id: " + id)){
-        $.ajax({url:"/deleteItem",data:{id:id}}).done((data) => {
-          alert(data);
-          selectPath(selectedPath, selectedPathName);
-        })
-        .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
-      }
-    }
-
-    function updateItemList(path, nowPage=1, rowCount = ROW_COUNT){
-      const tbody = $("#itemList tbody").empty();
-      $.getJSON("/getPagingItems",{path:path,nowPage:nowPage,rowCount:rowCount}).done((data) => {
-        console.log(data);
-        // data = JSON.parse(data);
-        const cols = ["path", "id", "name", "numSold", "numStock", "regDate"];
-        const header = $("<tr>");
-        cols.forEach(col => header.append($("<th>").text(camelToSnake(col))));
-          tbody.append(header);
-          data.items.forEach(item=>{
-          let $tr = $("<tr>").click(()=>{
-            for(let key in item) {
-              $("#"+key).val(item[key]);
-            }
-            $("#formTable caption").text("상품 수정");
-            $("#submitButton").text("상품 수정");
-            $("#deleteButton").css("visibility","visible");
-          });
-          
-          cols.forEach(col => $tr.append($("<td>").html(item[col])));
-          tbody.append($tr);
+  function updateItemList(path, nowPage=1, rowCount = ROW_COUNT, maxPage = MAX_PAGE){
+    const tbody = $("#itemList tbody").empty();
+    $.getJSON("/getPagingItems",{path:path,nowPage:nowPage,rowCount:rowCount,maxPage:maxPage}).done((pdto) => {
+      // data = JSON.parse(data);
+      const cols = ["path", "id", "name", "numSold", "numStock", "regDate"];
+      const header = $("<tr>");
+      cols.forEach(col => header.append($("<th>").text(camelToSnake(col))));
+        tbody.append(header);
+        console.log(pdto);
+        pdto.data.forEach(item=>{
+        let $tr = $("<tr>").click(()=>{
+          for(let key in item) {
+            $("#"+key).val(item[key]);
+          }
+          $("#formTable caption").text("상품 수정");
+          $("#submitButton").text("상품 수정");
+          $("#deleteButton").css("visibility","visible");
         });
-        let pagingTr = $("<tr>");
-        let pagingTd = $(`<td colspan='${cols.length}'></td>`)
-        pagingTr.append(pagingTd);
-        tbody.append(pagingTr);
-        pagingTd.append(createPaging(data.paging,(page)=>updateItemList(path,page,rowCount),(rowCount)=>updateItemList(path,nowPage,rowCount)));
-      }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
-    }
+        
+        cols.forEach(col => $tr.append($("<td>").html(item[col])));
+        tbody.append($tr);
+      });
+      let pagingTr = $("<tr>");
+      let pagingTd = $(`<td colspan='${cols.length}'></td>`)
+      pagingTr.append(pagingTd);
+      tbody.append(pagingTr);
+      pdto.paging.defaultRowCount = ROW_COUNT;
+      pagingTd.append(createPaging(pdto.paging,
+        (page)=>updateItemList(path,page,rowCount,maxPage),
+        (rowCount)=>updateItemList(path,nowPage,rowCount,maxPage))
+      );
+    }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+  }
 
-    function camelToSnake(str) {
-      return str.replace(/[A-Z]/g, letter => `_${letter.toUpperCase()}`).toUpperCase();
-    }
+  function camelToSnake(str) {
+    return str.replace(/[A-Z]/g, letter => `_${letter.toUpperCase()}`).toUpperCase();
+  }
 
-  function updateMenuName() {
+  function openUpdateMenu() {
     const path = selectedPath;
     const pathName = selectedPathName;
-    console.log(path)
+
     if(path.length){
-      const dialog = $("#dialog-div2").empty().append(pathName,
-                     "<br>",path,"<br><input id='menuName2'>").dialog({
+      const dialog = $("#dialog-div2").empty().append(pathName,"<br>",path,"<br>")
+      const input = $("<input id='menuName2'>")
+       .on("keydown",ke => { if(ke.keyCode === 13) updateMenu() });;
+      
+      function updateMenu () {
+        const name = $("#menuName2").val().trim();
+        if(name.length === 0) return;
+        $.ajax({url: "/updateMenuName", data:{path:path,name:name}})
+        .done((data) => {createMenus(); dialog.dialog("close")})
+        .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+          dialog.dialog("close");
+      }
+      
+      dialog.append(input).dialog({
       autoOpen: false, modal: true,
       buttons: {
-        "수정": () => {
-          const name = $("#menuName2").val().trim();
-          console.log(name);
-          if(name.length === 0) return;
-          $.ajax({url: "/updateMenuName", data:{path:path,name:name}})
-          .done((data) => { 
-            createMenus();
-          }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
-          dialog.dialog("close");
-        },
+        "수정": () => updateMenu(),
         "취소": () => dialog.dialog("close")
       },
     });
@@ -229,6 +237,30 @@
     }
   }
 
+  function openAddMenu(path, pathName){
+    const dialog = $("#dialog-div1").empty().append(pathName,"<br>",path,"<br>")
+    const input = $("<input id='menuName1'>")
+         .on("keydown",ke => { if(ke.keyCode === 13) addMenu() });
+    
+    function addMenu () {
+      const name = $("#menuName1").val().trim();
+      if(name.length === 0) return;
+      $.ajax({url: "/addMenu", data:{path:path,name:name}})
+      .done((data) => {createMenus(); dialog.dialog("close")})
+      .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+        dialog.dialog("close");
+    }
+    
+    dialog.append(input).dialog({
+    autoOpen: false, modal: true,
+    buttons: {
+      "등록": () => addMenu(),
+      "취소": () => dialog.dialog("close")
+      }
+    })
+    dialog.dialog("open");
+  }
+  
   function updateItem(){
     let formData = $("form").serializeArray();
     let isUpdate = true;
@@ -260,94 +292,68 @@
     }
   }
 
-  function openDialog(path, pathName){
-    console.log("pathName",pathName)
-      const dialog = $("#dialog-div1").empty()
-      .append(pathName,"<br>",path,"<br><input id='menuName1'>").dialog({
-      autoOpen: false, modal: true,
-      buttons: {
-        "등록": () => {
-          const name = $("#menuName1").val().trim();
-          if(name.length === 0) return;
-          $.ajax({url: "/addMenu", data:{path:path,name:name}})
-          .done((data) => { 
-            createMenus();
-          }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
-          dialog.dialog("close");
-        },
-        "취소": () => dialog.dialog("close")
-      },
-    });
-    dialog.dialog("open");
-  }
-
   function createOpenDialogButton(path, pathName){
     return $("<button class='addMenuButton'>").text("+").click(()=>{
-      openDialog(path,pathName);
+      openAddMenu(path,pathName);
     });
   }
 
   function createMenus() {
-	  $.getJSON("/getMenus")
-      .done((data) => {
-        tabsWrap.empty();
-        const tabs = $("<div>");
-        tabsWrap.append(tabs);
-        const tabsUl = $("<ul id='tabs-ul'></ul>");
-        tabs.append(tabsUl);
-          for(let i = 0; i<=data.length; i++){
-           const root = data[i];
-           if(i==0 && selectedTabId === null && i<data.length) selectPath("/"+root.id,"/"+root.name);
-           const li = $("<li>").click(()=>{
-            selectedTabId = i;
-            if(i === data.length) {
-              openDialog("","New Root (Name,Type)");
-            }else {
-              selectPath("/"+root.id,"/"+root.name);
-            }
-          }).append(`<a href="#tabs-${i}">${root == null ? "+" : root.name}</a>`);
-           tabsUl.append(li);
-           const rootDiv = $(`<div id="tabs-${i}">`);
-           tabs.append(rootDiv);
-           if(i === data.length) continue;
-           if(root.childs) root.childs.forEach(d1=>{
-            const depth1Div = $("<div class='depth1-div'>");
-            rootDiv.append(depth1Div);
-            const ul1 = $("<ul class='depth1-ul'>");
-            depth1Div.append(ul1);
-             const div1 = $("<div>");
-             const li1 = $("<li class='ui-widget-header'>");
-             li1.click(()=> selectPath(`/${root.id}/${d1.id}`,`/${root.name}/${d1.name}`));
-             ul1.append(li1);
-             li1.append(div1);
-             div1.html(d1.name);
-             if(d1.childs) d1.childs.forEach(d2=>{
-               const li2 = $("<li>");
-               li2.click(()=> selectPath(`/${root.id}/${d1.id}/${d2.id}`,`/${root.name}/${d1.name}/${d2.name}`));
-               const div2 = $("<div>");
-               li2.append(div2);
-               div2.html(d2.name);
-               ul1.append(li2);
-             })
-             depth1Div.append(createOpenDialogButton(`/${root.id}/${d1.id}`,`/${root.name}/${d1.name}`));
-             ul1.menu();
+	  $.getJSON("/getMenus").done((data) => {
+      tabsWrap.empty();
+      const tabs = $("<div>");
+      tabsWrap.append(tabs);
+      const tabsUl = $("<ul id='tabs-ul'></ul>");
+      tabs.append(tabsUl);
+        for(let i = 0; i<=data.length; i++){
+          const root = data[i];
+          if(i==0 && selectedTabId === null && i<data.length) selectPath("/"+root.id,"/"+root.name);
+          const li = $("<li>").click(()=>{
+          selectedTabId = i;
+          if(i === data.length) {
+            openAddMenu("","New Root (Name,Type)");
+          }else {
+            selectPath("/"+root.id,"/"+root.name);
+          }
+        }).append(`<a href="#tabs-${i}">${root == null ? "+" : root.name}</a>`);
+          tabsUl.append(li);
+          const rootDiv = $(`<div id="tabs-${i}">`);
+          tabs.append(rootDiv);
+          if(i === data.length) continue;
+          if(root.childs) root.childs.forEach(d1=>{
+          const depth1Div = $("<div class='depth1-div'>");
+          rootDiv.append(depth1Div);
+          const ul1 = $("<ul class='depth1-ul'>");
+          depth1Div.append(ul1);
+            const div1 = $("<div>");
+            const li1 = $("<li class='ui-widget-header'>");
+            li1.click(()=> selectPath(`/${root.id}/${d1.id}`,`/${root.name}/${d1.name}`));
+            ul1.append(li1);
+            li1.append(div1);
+            div1.html(d1.name);
+            if(d1.childs) d1.childs.forEach(d2=>{
+              const li2 = $("<li>");
+              li2.click(()=> selectPath(`/${root.id}/${d1.id}/${d2.id}`,`/${root.name}/${d1.name}/${d2.name}`));
+              const div2 = $("<div>");
+              li2.append(div2);
+              div2.html(d2.name);
+              ul1.append(li2);
             })
-            rootDiv.append(createOpenDialogButton(`/${root.id}`,`/${root.name}`));
-         };
-         tabs.tabs();
-         if(selectedTabId) tabs.tabs('option', 'active', selectedTabId)
-      }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
-    }
+            depth1Div.append(createOpenDialogButton(`/${root.id}/${d1.id}`,`/${root.name}/${d1.name}`));
+            ul1.menu();
+          })
+          rootDiv.append(createOpenDialogButton(`/${root.id}`,`/${root.name}`));
+        };
+        tabs.tabs();
+        if(selectedTabId) tabs.tabs('option', 'active', selectedTabId)
+    }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+  }
     
-
-
-
   $(() => {
     createMenus();
-    const b = $("<button>test</button>").click(()=>{
-      
-    });
-    $("body").append("<br>",b);
+    // const b = $("<button>test</button>").click(()=>{
+    // });
+    // $("body").append("<br>",b);
   });
   </script>
 </html>

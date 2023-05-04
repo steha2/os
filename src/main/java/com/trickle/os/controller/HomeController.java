@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.trickle.os.dao.HomeDao;
 import com.trickle.os.dao.MenuDao;
+import com.trickle.os.util.Debug;
+import com.trickle.os.util.StrUtil;
 import com.trickle.os.vo.RootVo;
 
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,7 @@ public class HomeController {
 	public String openPage(@PathVariable long rootId, Model model) {
 		RootVo root = menuDao.getRootById(rootId);
 		model.addAttribute("root", menuDao.getRootById(rootId));
+		System.out.println("/page/"+root.getType()+"/index-"+rootId);
 		return "/page/"+root.getType()+"/index-"+rootId;
 	}
 	
@@ -55,6 +58,8 @@ public class HomeController {
 	
 	@PostMapping("/updateStyle")
 	public String updateStyle(RootVo root, Model model) {
+		Debug.log(root.getStyle());
+		root.setStyle(StrUtil.toJson(root.getStyle()));
 		menuDao.updateStyle(root);
 		return openAdminPage(root.getId(), model);
 	}

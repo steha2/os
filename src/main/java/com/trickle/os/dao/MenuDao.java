@@ -30,8 +30,9 @@ private final SqlSession sqlSession;
 		List<MenuVo> depth1 = sqlSession.selectList("MenuMapper.getDepth1");
 		List<MenuVo> depth2 = sqlSession.selectList("MenuMapper.getDepth2");
 		depth1.forEach(d1->{
-			if(root.getId() == d1.getParentId()) root.addMenu(d1);
-			
+			if(root.getId() == d1.getParentId()) {
+				root.addMenu(d1);
+			}
 			depth2.forEach(d2->{
 				if(d2.getParentId() == d1.getId()) d1.addMenu(d2);
 			});
@@ -92,5 +93,4 @@ private final SqlSession sqlSession;
 	public int updateStyle(RootVo root) {
 		return sqlSession.update("MenuMapper.updateStyle", root);
 	}
-
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PagingMapper">
+<sql id = "pagingQuery">
+   SELECT ${columns} FROM (
+   SELECT ${columns} FROM (
+   SELECT ${columns}, ROWNUM AS RN FROM (
+   SELECT ${columns} FROM ${tableName}
+   ${whereQuery}
+   <if test="orderBy != null and orderBy != ''">
+      ORDER BY ${orderBy}
+   </if>
+   ) ) 
+   WHERE RN >= #{paging.startRow}) 
+   WHERE ROWNUM <![CDATA[<=]]> #{paging.rowCount}
+</sql>
+
+<select id="getTotalRows" parameterType="map" resultType="long">
+  SELECT count(*) FROM ${tableName}
+   ${whereQuery}
+</select>
+
+<select id="getPagingItems" parameterType="map" resultType="ItemVo">
+   <include refid="pagingQuery"><property name="tableName" value="Items"/></include>
+</select>
+</mapper>

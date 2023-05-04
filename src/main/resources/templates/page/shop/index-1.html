@@ -87,6 +87,7 @@ table td, table th {
           <div class="search-box">
             <input type="text" class="search-input" placeholder="Search">
             <button class="search-btn"><i class="fas fa-search"></i></button>
+            <button class="search-btn"><i class="fas fa-filter"></i></button>
           </div>
         </td>
       </tr>
@@ -107,29 +108,57 @@ table td, table th {
 
 <script th:inline="javascript">
   const root = /*[[${root}]]*/ null;
+  console.log("root:",root);
   let style = JSON.parse(root.style);
-  const ROW_COUNT = style.rows * style.cols;
+  function getRowCount() { return style.rows * style.cols };
   const itemsDiv = $("#itemsDiv");
-  function createItemsDiv(path=root.path, nowPage=1, rowCount=ROW_COUNT, isAdd=style.isAdd){
+
+  function createItemsDiv(path=root.path, nowPage=1, rowCount=getRowCount(),
+                          maxPage=style.maxPage || 10, isAdd=style.isAdd) {
+    console.log(path);
     if(!isAdd) itemsDiv.empty();
-    $.get("/getPagingItems",{path:path,nowPage:nowPage,rowCount:rowCount})
+    $.get("/getPagingItems",{path:path,nowPage:nowPage,rowCount:rowCount,maxPage:maxPage})
+    .done((data=>{
+      data = JSON.parse(data);
+      console.log(data);
+      const grid = new ItemGrid(root.id, style);
+      const items = data.items;
+      grid.setItems(items);
+      if(!isAdd){
+        data.paging.defaultRowCount = getRowCount();
+        $("#paging").empty().append(createPaging(data.paging, 
+         (page)=>createItemsDiv(path,page,rowCount,maxPage),
+         (rowCount)=>createItemsDiv(path,nowPage,rowCount,maxPage)));
+      }
+      itemsDiv.append(grid.div);
+    })).fail(()=>console.log("Ajax Fail"));
+  }
+
+  
+
+  function moveDetail(itemId) {
+    $.getJSON("/getItemDetail", { id: itemId })
+      .done((responseJson) => $("#itemDivWrap").empty().append(createItemDetail(responseJson)))
+      .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+  }
+
+  function searchItems(path=root.path, nowPage=1, rowCount=getRowCount(),
+                          maxPage=style.maxPage, filter) {
+    itemsDiv.empty();
+    $.get("/getSearchItems",{path:path,nowPage:nowPage,rowCount:rowCount,maxPage:maxPage,filter:filter})
     .done((data=>{
       data = JSON.parse(data);
       const grid = new ItemGrid(root.id, style);
       const items = data.items;
       grid.setItems(items);
       if(!isAdd){
+        data.paging.defaultRowCount = getRowCount();
         $("#paging").empty().append(createPaging(data.paging, 
-        (page)=>createItemsDiv(path,page,rowCount), (rowCount)=>createItemsDiv(path,nowPage,rowCount)));
+         (page)=>searchItems(path,page,rowCount,maxPage),
+         (rowCount)=>searchItems(path,nowPage,rowCount,maxPage)));
       }
       itemsDiv.append(grid.div);
     })).fail(()=>console.log("Ajax Fail"));
-  }
-
-  function moveDetail(itemId) {
-    $.getJSON("/getItemDetail", { id: itemId })
-      .done((responseJson) => $("#itemDivWrap").empty().append(createItemDetail(responseJson)))
-      .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
   }
 
   function createItemDetail(item) {
@@ -138,7 +167,8 @@ table td, table th {
 
   $(()=>{
     $("#title").append(createTitle(root.name, "100%", 150, 45));
-    $("#menuDiv").css("top",$("#category").offset().top+$("#category").height());
+    // console.log("OFFSET",$("#category").offset().top, $("#category").offset().left);
+    $("#menuDiv").css("top",190);
     createItemsDiv();
     createMenu((path)=>createItemsDiv(path,1,$("#rowCountSelect").val()))
   });
