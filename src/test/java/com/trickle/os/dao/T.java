@@ -10,7 +10,7 @@ import com.trickle.os.controller.rest.*;
 import com.trickle.os.util.StrUtil;
 import com.trickle.os.vo.ItemVo;
 
-import paging.PagingDto;
+import paging.PagingData;
 
 public class T {
 	private static SqlSessionFactory factory = new MyBatisConn().sqlSessionFactory();
@@ -30,7 +30,7 @@ public class T {
 //		ID.getPagingItems(p).forEach(System.out::println);
 //		IC
 		
-		PagingDto p = new PagingDto();
+		PagingData p = new PagingData();
 		p.setTable("Items", null);
 		System.out.println(p.getColumns());
 		p.addContains("NAME", "나");

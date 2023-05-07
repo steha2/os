@@ -13,8 +13,8 @@
       ORDER BY ${orderBy}
    </if>
    ) ) 
-   WHERE RN >= #{paging.startRow}) 
-   WHERE ROWNUM <![CDATA[<=]]> #{paging.rowCount}
+   WHERE RN >= #{startRow}) 
+   WHERE ROWNUM <![CDATA[<=]]> #{rowCount}
 </sql>
 
 <select id="getTotalRows" parameterType="map" resultType="long">

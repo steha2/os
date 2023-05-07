@@ -13,13 +13,12 @@ public class Paging {
 	private long endPage; //페이징 링크 끝 번호
 
 	public Paging(long nowPage, long rowCount, long maxPage, long totalRows) {
-		this.nowPage = nowPage;
 		this.rowCount = rowCount;
 		this.totalRows = totalRows;
 		this.maxPage = maxPage;
 		this.totalPages = (long) Math.ceil((double) totalRows / rowCount);
-		if(nowPage > totalPages) this.nowPage = totalPages;
-		startPage = (nowPage - 1) / maxPage * maxPage + 1;
+		this.nowPage = nowPage > totalPages ? totalPages : nowPage;
+		startPage = (this.nowPage - 1) / maxPage * maxPage + 1;
 		if (startPage > totalPages) startPage = totalPages;
 		this.endPage = totalPages <= nowPage || startPage + maxPage >= totalPages ? totalPages : startPage + maxPage - 1;
 	}

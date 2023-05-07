@@ -11,7 +11,7 @@
       <div id="navi">
       </div>
       <div class="content-frame-div">
-        <iframe id="content-frame" src="/admin/index"></iframe>
+        <iframe id="content-frame" src="/admin/admin-index" scrolling="no"></iframe>
       </div>
     </div>
   </body>
@@ -30,7 +30,7 @@
 
     $(() => {
       const optionDefault = "-----------";
-      createNavLink("admin", "/admin/index");
+      createNavLink("admin", "/admin/admin-index");
       createNavLink("process", "/process/index");
       const adminSelect = $("<select>");
       const pageSelect = $("<select>");
@@ -61,11 +61,16 @@
   	   
   	}
   	
+
     #content-frame {
       width: 100%;
       height: 100%;
       background: #f5fff1;
       border: 0px;
+      }
+
+    .content-frame-div, .grid-container{
+      overflow-y:  hidden;
     }
 
     .grid-container {

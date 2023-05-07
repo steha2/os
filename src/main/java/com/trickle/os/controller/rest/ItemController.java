@@ -1,20 +1,17 @@
 package com.trickle.os.controller.rest;
 
 import java.util.List;
-import java.util.Map;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.trickle.os.dao.ItemDao;
 import com.trickle.os.dao.PagingDao;
-import com.trickle.os.util.ItemPaging;
 import com.trickle.os.vo.ItemVo;
 
 import lombok.RequiredArgsConstructor;
-import paging.PagingDto;
+import paging.PagingData;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,29 +40,12 @@ public class ItemController {
 		return itemDao.deleteItem(id) == 1 ? "삭제 성공" : "실패";
 	}
 	
-	@GetMapping("/getTotalCount")
-	public Integer getTotalCount (String path, @RequestParam(required = false, defaultValue = "") String search) {
-		return itemDao.getTotalRows(new ItemPaging(path, search));
-	}
-	
 	@GetMapping(value="/getPagingItems") 
-	public PagingDto getPagingItems(PagingDto pdto) {
-		pdto.setTable("Items",ItemVo.class);
-		pagingDao.addTotalRows(pdto);
-		pdto.setData(pagingDao.getPagingItems(pdto));
-		return pdto;
-	}
-	
-	@GetMapping("/getCategoryItems")
-	public List<ItemVo> getCategoryItems(Map<String,Object> params){
-		int nowPage = getInt(params.get("nowPage"), 1);
-		int rowCount = getInt(params.get("rowCount"), 10);
-		ItemPaging itemPaging = new ItemPaging(params.get("path"), params);
-		itemPaging.setPaging(nowPage, rowCount, 5, itemDao.getTotalRows(itemPaging));
-		return itemDao.getPagingItems(itemPaging);
-	}
-	
-	public int getInt(Object value, int defaultValue) {
-		return value == null ? defaultValue : Integer.parseInt(value.toString());
+	public PagingData getPagingItems(PagingData pd) {
+		System.out.println(pd);
+		pd.setTable("Items",ItemVo.class);
+		pagingDao.addTotalRows(pd);
+		pd.setData(pagingDao.getPagingItems(pd));
+		return pd;
 	}
 }

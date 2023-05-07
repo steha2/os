@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.trickle.os.vo.ItemVo;
 
-import paging.PagingDto;
+import paging.PagingData;
 
 @Repository
 public class PagingDao {
@@ -19,12 +19,11 @@ public class PagingDao {
 		this.sqlSession = new SqlSessionTemplate(sqlSessionFactory);
 	}
 	
-	public void addTotalRows(PagingDto pd) {
-		pd.setTotalRows(sqlSession.selectOne("PagingMapper.getTotalRows", pd));
-		pd.calcPaging();
+	public void addTotalRows(PagingData pd) {
+		pd.calcPaging(sqlSession.selectOne("PagingMapper.getTotalRows", pd));
 	}
 	
-	public List<ItemVo> getPagingItems(PagingDto pdto) {
-		return sqlSession.selectList("PagingMapper.getPagingItems", pdto);
+	public List<ItemVo> getPagingItems(PagingData pd) {
+		return sqlSession.selectList("PagingMapper.getPagingItems", pd);
 	}
 }

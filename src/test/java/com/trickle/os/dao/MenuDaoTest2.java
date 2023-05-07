@@ -1,19 +1,15 @@
 package com.trickle.os.dao;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.trickle.os.controller.rest.ItemController;
-import com.trickle.os.dao.ItemDao;
-import com.trickle.os.dao.MenuDao;
 import com.trickle.os.util.ItemPaging;
-import com.trickle.os.vo.ItemVo;
 
 @SpringBootTest
 class MenuDaoTest2 {
@@ -39,7 +35,7 @@ class MenuDaoTest2 {
 		System.out.println();
 		params.put("name", "1");
 		params.put("id", "114");
-		List<ItemVo> il2 = ic.getSearchItems(params);
-		il2.forEach(System.out::println);
+//		List<ItemVo> il2 = ic.getSearchItems(params);
+//		il2.forEach(System.out::println);
 	}
 }

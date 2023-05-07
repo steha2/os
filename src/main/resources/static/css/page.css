@@ -57,6 +57,7 @@ body {
 .search-box {
   height: 35px;
   width: 350px;
+  position: relative;
 }
 
 .search-input {

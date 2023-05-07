@@ -22,14 +22,15 @@ function createMenu(menuClick){
   }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
 }
 
-function createTitle(title, width, height, fontSize) {
+function createTitle(title, width, height, fontSize, link) {
   const $title = $("<h1>").css({
     "font-weight": "bold",
     "font-family": "title",
     fontSize: fontSize,
     color: "White"
-  }).text(title);
+  }).html(title);
   const $wrapper = $("<div>").css({
+    cursor:"pointer",
     "display": "flex",
     "align-items": "center",
     "justify-content": "center",
@@ -37,7 +38,7 @@ function createTitle(title, width, height, fontSize) {
     "height": height,
     "width": width,
     "background": "linear-gradient(to bottom, #3a78c3, #0047b3)"
-  });
+  }).click(()=>location.href=link);
   const $reflection = $("<div>").css({
     "height": height,
     "width": width,

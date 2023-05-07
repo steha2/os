@@ -25,7 +25,6 @@ public class WebConfig implements WebMvcConfigurer {
 	@Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
     	int cachePeriod = 3600;
-    	System.out.println("resource = " + resources);
     	registry.addResourceHandler("/**").addResourceLocations("classpath:/static/").setCachePeriod(cachePeriod);
         registry.addResourceHandler("/images/**").addResourceLocations("classpath:/static/images/").setCachePeriod(cachePeriod)
                 .resourceChain(true).addResolver(defaultImageResolver("/default.png"));

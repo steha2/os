@@ -42,6 +42,14 @@ table td, table th {
   min-height: auto;
 }
 
+#filterTable {
+  position: absolute;
+  border: 1px solid;
+  right:0;
+  top:200px;
+  background: #fff;
+}
+
 #itemNavi1{
   grid-area: navi1;
   display: flex;
@@ -85,9 +93,25 @@ table td, table th {
         </td>
         <td style="width:300px; text-align: right; padding:2px 3px 0px 0px;">
           <div class="search-box">
+            <table id="filterTable">
+              <caption>Filter Option</caption>
+              <tr>
+                <td>정렬 기준</td>
+                <td>
+                  <select name="orderBy">
+                    <option value = "NUM_SOLD DESC">판매인기순</option>
+                    <option value = "PRICE ASC">낮은가격순</option>
+                    <option value = "PRICE DESC">높은가격순</option>
+                    <option value = "SCORE DESC">평점높은순</option>
+                    <option value = "REG_DATE DESC">신규등록순</option>
+                  </select>
+                </td>
+              </tr>
+            </table>
+            
             <input type="text" class="search-input" placeholder="Search">
-            <button class="search-btn"><i class="fas fa-search"></i></button>
-            <button class="search-btn"><i class="fas fa-filter"></i></button>
+            <button class="search-btn"><i class="fas fa-search" onclick=searchItems()></i></button>
+            <button class="search-btn"><i class="fas fa-filter" onclick=openFilter()></i></button>
           </div>
         </td>
       </tr>
@@ -108,57 +132,35 @@ table td, table th {
 
 <script th:inline="javascript">
   const root = /*[[${root}]]*/ null;
-  console.log("root:",root);
+  
   let style = JSON.parse(root.style);
-  function getRowCount() { return style.rows * style.cols };
   const itemsDiv = $("#itemsDiv");
+  let pd = new PagingData();
 
-  function createItemsDiv(path=root.path, nowPage=1, rowCount=getRowCount(),
-                          maxPage=style.maxPage || 10, isAdd=style.isAdd) {
-    console.log(path);
-    if(!isAdd) itemsDiv.empty();
-    $.get("/getPagingItems",{path:path,nowPage:nowPage,rowCount:rowCount,maxPage:maxPage})
-    .done((data=>{
-      data = JSON.parse(data);
-      console.log(data);
+  function updateItems() {
+    itemsDiv.empty();
+    $.get("/getPagingItems",pd.toParam())
+    .done((resData=>{
+      pd.setPagingData(resData);
       const grid = new ItemGrid(root.id, style);
-      const items = data.items;
-      grid.setItems(items);
-      if(!isAdd){
-        data.paging.defaultRowCount = getRowCount();
-        $("#paging").empty().append(createPaging(data.paging, 
-         (page)=>createItemsDiv(path,page,rowCount,maxPage),
-         (rowCount)=>createItemsDiv(path,nowPage,rowCount,maxPage)));
-      }
+      grid.setItems(pd.data);
+      $("#paging").empty().append(createPaging(pd,updateItems));
       itemsDiv.append(grid.div);
     })).fail(()=>console.log("Ajax Fail"));
   }
-
-  
 
   function moveDetail(itemId) {
     $.getJSON("/getItemDetail", { id: itemId })
-      .done((responseJson) => $("#itemDivWrap").empty().append(createItemDetail(responseJson)))
+      .done((resData) => $("#itemDivWrap").empty().append(createItemDetail(resData)))
       .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
   }
 
-  function searchItems(path=root.path, nowPage=1, rowCount=getRowCount(),
-                          maxPage=style.maxPage, filter) {
-    itemsDiv.empty();
-    $.get("/getSearchItems",{path:path,nowPage:nowPage,rowCount:rowCount,maxPage:maxPage,filter:filter})
-    .done((data=>{
-      data = JSON.parse(data);
-      const grid = new ItemGrid(root.id, style);
-      const items = data.items;
-      grid.setItems(items);
-      if(!isAdd){
-        data.paging.defaultRowCount = getRowCount();
-        $("#paging").empty().append(createPaging(data.paging, 
-         (page)=>searchItems(path,page,rowCount,maxPage),
-         (rowCount)=>searchItems(path,nowPage,rowCount,maxPage)));
-      }
-      itemsDiv.append(grid.div);
-    })).fail(()=>console.log("Ajax Fail"));
+  function searchItems() {
+
+  }
+
+  function openFilter() {
+    $("#FilterTable").toggle();
   }
 
   function createItemDetail(item) {
@@ -166,11 +168,16 @@ table td, table th {
   }
 
   $(()=>{
-    $("#title").append(createTitle(root.name, "100%", 150, 45));
+    $("#title").append(createTitle(root.name, "100%", 150, 45,"/page/"+root.id));
     // console.log("OFFSET",$("#category").offset().top, $("#category").offset().left);
     $("#menuDiv").css("top",190);
-    createItemsDiv();
-    createMenu((path)=>createItemsDiv(path,1,$("#rowCountSelect").val()))
+    pd.setPath(root.path);
+    pd.setStyle(style);
+    updateItems();
+    createMenu((path)=>{
+      pd.setPath(path);
+      updateItems();
+    });
   });
 </script>
 

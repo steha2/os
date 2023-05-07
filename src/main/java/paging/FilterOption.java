@@ -1,26 +1,36 @@
 package paging;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
-class FilterOption {
+public class FilterOption {
 	private String key;
 	private Object value1, value2;
 	private FilterCondition condition;
 
-	public FilterOption(String key, FilterCondition condition, Object value1) {
-		this.key = key;
-		this.condition = condition;
-		this.value1 = value1;
+	public FilterOption() {}
+	
+	public FilterOption(String key, Object condition, Object value1) {
+		this(key,condition,value1,null);
 	}
 	
-	public FilterOption(String key, FilterCondition condition, Object value1, Object value2) {
+	public FilterOption(String key, Object condition, Object value1, Object value2) {
 		this.key = key;
-		this.condition = condition;
 		this.value1 = value1;
 		this.value2 = value2;
+		setCondition(condition);
+	}
+	
+	public void setCondition(Object condition) {
+		this.condition = condition instanceof FilterOption ? (FilterCondition) condition : FilterCondition.valueOf(condition.toString()); 
+	}
+	
+	public void setCondition(FilterCondition condition) {
+		this.condition = condition;
 	}
 	
 	public String getQuery() {
@@ -60,10 +70,6 @@ class FilterOption {
 	}
 
 	private String getValueString(Object value) {
-	    if (value instanceof String) {
-	        return "'" + value.toString() + "'";
-	    } else {
-	        return value.toString();
-	    }
+	    return "'" + value.toString() + "'";
 	}
 }

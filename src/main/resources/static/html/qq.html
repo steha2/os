@@ -1,2 +1,134 @@
-정 적 페 이지 
-!
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T-Market</title>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
+<link rel="stylesheet" type="text/css" href="/css/page.css">
+
+<script src="/js/menu.js"></script>
+<script src="/js/item.js"></script>
+<script src="/js/util/utils.js"></script>
+<script src="/js/util/paging.js"></script>
+<style>
+#item-grid{
+  background: #a5c23e;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table td, table th {
+  padding:0px;
+  border: none;
+  margin: 0px;
+}
+
+.content {
+  height: auto;
+  overflow-y: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 150px auto;
+  grid-template-areas:
+      "navi1 navi1"
+      "navi2 items";
+  min-height: auto;
+}
+
+#itemNavi1{
+  grid-area: navi1;
+  display: flex;
+  flex-direction: column;
+  background: #619981;
+  height: 50px;
+}
+
+#itemNavi2{
+  grid-area: navi2;
+  display: flex;
+  flex-direction: row;
+  background: #bdeed9;
+}
+
+#itemNavi2Wrap {
+  float: left;
+  background: #cf8e82;
+}
+
+#itemsDiv{
+  grid-area: items;
+  float: left;
+  background: #959c7c;
+}
+</style>
+</head>
+<body>
+  <div class="container">
+  <div id="header">
+    <div id="title"></div>
+    <table>
+      <tr>
+        <td style="width:200px;">
+          <div id="category"><i id="search-icon" class='fas fa-list-ul'></i> 전체 카테고리</div><div id="menuDiv"></div>
+        </td>
+        <td style="width:500px;">
+          <div id="navi">
+            특가 상품 | 상품 순위 | 즐겨찾기 | 쿠폰 
+          </div>
+        </td>
+        <td style="width:300px; text-align: right; padding:2px 3px 0px 0px;">
+          <div class="search-box">
+            <input type="text" class="search-input" placeholder="Search">
+            <button class="search-btn"><i class="fas fa-search"></i></button>
+            <button class="search-btn"><i class="fas fa-filter"></i></button>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="content">
+  <div id="itemNavi1">I t e m N a v i - !1</div>
+  <div id="itemNavi2Wrap">
+    <div id="itemNavi2">I t e m N a v i - !2</div>
+  </div>
+    <table id="itemDivWrap">
+      <tr><td><div id="itemsDiv"></div></td></tr>
+      <tr><td><div id="paging"></div></td></tr>
+    </table>
+  </div>
+</div>
+</body>
+
+<script th:inline="javascript">
+  const itemsDiv = $("#itemsDiv");
+  let pd = new PagingData();
+  pd.rowCount=10;
+  pd.maxPage=5;
+  pd.nowPage=1;
+  pd.option = [];
+  pd.option.push("PRICE,BETWEEN,10000,14500");
+  pd.option.push("NAME,CONTAINS,더맨");
+  console.log(pd);
+  createItemsDiv();
+  function createItemsDiv() {
+    itemsDiv.empty();
+    $.get("/getPagingItems",pd)
+    .done((resData=>{
+      console.log(resData);
+    })).fail(()=>console.log("Ajax Fail"));
+  }
+
+  function moveDetail(itemId) {
+    $.getJSON("/getItemDetail", { id: itemId })
+      .done((resData) => $("#itemDivWrap").empty().append(createItemDetail(resData)))
+      .fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+  }
+  </script>
+</html>
