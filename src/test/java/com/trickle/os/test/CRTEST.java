@@ -25,10 +25,10 @@ class CRTEST {
 	@Test
 	void test() {
 		
-		MenuVo d2 = md.getDepth2(    43    ); //검색어 
+		MenuVo d2 = md.getDepth2(    44    ); //검색어 
 		
 		
-		String add = "";
+		String add = "뉴스 기사";
 
 		
 		MenuVo d1 = md.getDepth1(d2.getParentId());
@@ -37,7 +37,6 @@ class CRTEST {
 //		String pathName = "/"+root.getName()+"/"+d1.getName()+"/"+d2.getName();
 		String path= "/"+root.getId()+"/"+d1.getId()+"/"+d2.getId();
 		String search = d2.getName();
-		
 		
 		int count = 5;
 		

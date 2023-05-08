@@ -8,6 +8,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.trickle.os.util.ItemPaging;
+import com.trickle.os.vo.CommentVo;
 import com.trickle.os.vo.ItemVo;
 
 @Repository
@@ -18,7 +19,7 @@ public class ItemDao {
 		this.sqlSession = new SqlSessionTemplate(sqlSessionFactory);
 	}
 	
-	public ItemVo getItem(long id) {
+	public ItemVo getItemById(long id) {
 		return sqlSession.selectOne("ItemMapper.getItem", id);
 	}
 	
@@ -49,5 +50,16 @@ public class ItemDao {
 
 	public ItemVo getItemByName(String name) {
 		return sqlSession.selectOne("ItemMapper.getItemByName", name);
+	}
+
+	public void updateNumView(long id) {
+		sqlSession.update("ItemMapper.updateNumView",id);
+	}
+	
+	public ItemVo getCommentsItem(long id) {
+		ItemVo item = sqlSession.selectOne("ItemMapper.getItemAvgScore", id);
+		List<CommentVo> comments = sqlSession.selectList("ItemMapper.getComments",id);
+		comments.forEach(c->item.addComment(c));
+		return item;
 	}
 }

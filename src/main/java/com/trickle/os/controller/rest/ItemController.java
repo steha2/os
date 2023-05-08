@@ -2,16 +2,15 @@ package com.trickle.os.controller.rest;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import com.trickle.os.dao.ItemDao;
 import com.trickle.os.dao.PagingDao;
+import com.trickle.os.paging.PagingData;
 import com.trickle.os.vo.ItemVo;
 
 import lombok.RequiredArgsConstructor;
-import paging.PagingData;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,7 +42,7 @@ public class ItemController {
 	@GetMapping(value="/getPagingItems") 
 	public PagingData getPagingItems(PagingData pd) {
 		System.out.println(pd);
-		pd.setTable("Items",ItemVo.class);
+		pd.setTable("Items","ID,NAME,PATH,USER_ID,CONTENT,IMAGE_PATH,DISCOUNT,REG_DATE,SCORE,PRICE,NUM_SOLD,NUM_STOCK,NUM_VIEW");
 		pagingDao.addTotalRows(pd);
 		pd.setData(pagingDao.getPagingItems(pd));
 		return pd;

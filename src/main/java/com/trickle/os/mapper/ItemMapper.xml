@@ -44,4 +44,17 @@ DELETE FROM ITEMS WHERE ID = #{id}
 	INSERT INTO ITEMS(ID, NAME, CONTENT, PATH, IMAGE_PATH, NUM_STOCK, PRICE, DISCOUNT, USER_ID, REG_DATE, SCORE)
 	VALUES(#{id}, #{name}, #{content}, #{path}, '${path}/${id}${imagePath}', #{numStock}, #{price}, #{discount}, #{userId}, SYSDATE, #{score} )
 </insert>
+
+<update id="updateNumView">
+	UPDATE ITEMS SET NUM_VIEW = NUM_VIEW + 1 WHERE ID = #{id}
+</update>
+
+<select id="getItemAvgScore" resultType="ItemVo">
+    SELECT * FROM ITEMS_AVG_SCORE WHERE ID = #{id}
+</select>
+
+
+<select id="getComments" resultType="ItemVo">
+    SELECT * FROM COMMENTS WHERE ID = #{id}
+</select>
 </mapper>

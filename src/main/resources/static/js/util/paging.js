@@ -13,7 +13,7 @@ function createPaging(pd, updateFunc) {
   let pagingBar = $("<table id='pagingBar'></table>");
   let $tr = $("<tr>");
   pagingBar.append($tr).css("width","100%");
-  let $td1 = $("<td>").css({textAlign:"center",height:35,width:"100%"});
+  let $td1 = $("<td>").css({textAlign:"center",height:35,width:"100%",});
   let $td2 = $("<td>");
   $tr.append($td1,$td2);
   let startPage = pd.startPage;
@@ -33,7 +33,7 @@ function createPaging(pd, updateFunc) {
     });
   }
 
-  let createLink = (page, text) => {
+  function createLink (page, text) {
     let linkButton = $("<a class='pagingLink'>" + (text ? text : page) + "</a>");
     linkButton.css({"margin":"3px 4px 3px 4px","border-radius": "8px", "font-weight":"bold"
      ,background:"rgba(110,123,232,0.3)",padding:"4px 4px 5px 4px",fontSize:18,cursor:"pointer"});
@@ -45,24 +45,29 @@ function createPaging(pd, updateFunc) {
     }
     return linkButton;
   }
-  if (startPage > 1) $td1.append(createLink(startPage - 1, "◀"));
+
+  function addHover(target) {
+    target.on("mouseover",()=>target.css("background","rgba(210,123,132,0.3)"))
+    target.on("mouseout",()=>target.css("background","rgba(110,123,232,0.3)"))
+    return target;
+  }
+
+  if (startPage > 1) $td1.append(addHover(createLink(startPage - 1, "◀")));
   for (let p = startPage; p <= endPage; p++) {
     let pageLink = createLink(p);
     if (p == pd.nowPage) {
-        pageLink.attr("id", "activePage");
         pageLink.css("cursor","default").css("color","blue");
-        pageLink.removeAttr("href");
     } else {
-      pageLink.on("mouseover",()=>pageLink.css("background","rgba(210,123,132,0.3)"))
-      pageLink.on("mouseout",()=>pageLink.css("background","rgba(110,123,232,0.3)"))
+      addHover(pageLink);
     }
     $td1.append(pageLink);
   }
   if (endPage < pd.totalPages) {
-    $td1.append(createLink(endPage + 1, "▶"));
+    $td1.append(addHover(createLink(endPage + 1, "▶")));
   }
   return pagingBar;
 }
+
 
 class PagingData {
   constructor() {
@@ -84,17 +89,28 @@ class PagingData {
     this.path = path;
   }
 
+  setSearch(search) {
+    this.addOption("name",CONTAINS,search);
+  }
+
+  setOrderBy(orderBy) {
+    this.orderBy = orderBy;
+  }
+
   setStyle(style) {
     this.defaultRowCount = style.rows * style.cols ||this.defaultRowCount;
     this.rowCount = this.defaultRowCount;
     this.maxPage = style.maxPage || this.maxPage;
     this.pagingType = style.pagingType || this.pagingType;
-    console.log(style,this)
   }
 
-  addOption(key, condition, value1, value2){
+  addOption(key, condition, value1="", value2=""){
     const fo = {key:key, condition:condition, value1:value1, value2:value2};
     if(!this.option) this.option = [];
+    if(value1.length === 0 && value2.length === 0) {
+      this.removeOption(key,condition);
+      return;
+    }
     const idx = this.option.findIndex(efo => efo.key === key && efo.condition === condition);
     if(idx == -1){
       this.option.push(fo);
@@ -103,8 +119,8 @@ class PagingData {
     }
   }
 
-  removeOption(key, condition) {
-    this.option = this.option.filter(fo => !(fo.key === key && fo.condition === condition));
+  removeOption(key, condition){
+    this.option = this.option.filter(efo => !(efo.key === key && efo.condition === condition));
   }
 
   toParam(){
@@ -113,7 +129,6 @@ class PagingData {
       obj[key] = (key === "option") ? JSON.stringify(this[key]) : this[key];
       return obj;
     }, {});
-    console.log("toParam:",result)
     return result;
   }
 }

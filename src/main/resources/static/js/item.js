@@ -1,5 +1,5 @@
 class ItemGrid {
-  constructor(rootId, style){
+  constructor(rootId, style, addItemCell){
     this.rootId = rootId;
     this.rows = style.rows || 3;
     this.cols = style.cols || 3;
@@ -31,15 +31,8 @@ class ItemGrid {
     this.items.push(item);
     const cell = {};
     cell.div = $("<div class='itemCell'></div>");
-    cell.div.css({
-      width:this.cw, height:this.ch,
-      "padding": "10px 5px 5px 5px",
-      "margin": "10px",
-      "outline": "1px solid",
-      "display": "inline-block",
-      "text-align": "center",
-      "box-sizing": "border-box",
-    });
+    cell.div.click(()=>window.open().location.href = `/page/content/${root.id}/${item.id}`);
+    cell.div.css({width:this.cw, height:this.ch});
     cell.item = item;
     cell.image = $(`<img class='itemImg' src='/resources/images/${item.imagePath}'/>`);
     cell.image.css({width:this.iw, height:this.ih});

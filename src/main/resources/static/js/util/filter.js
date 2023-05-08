@@ -7,6 +7,8 @@ class SearchFilter {
     this.optionMap = {};
   }
 
+  
+
   addOption(key, condition, value) {
     if (!this.optionMap[key]) {
       this.optionMap[key] = [];

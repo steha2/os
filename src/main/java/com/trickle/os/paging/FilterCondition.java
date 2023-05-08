@@ -1,4 +1,4 @@
-package paging;
+package com.trickle.os.paging;
 
 public enum FilterCondition {
     EQUALS,

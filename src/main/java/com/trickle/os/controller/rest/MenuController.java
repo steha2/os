@@ -53,15 +53,16 @@ public class MenuController {
 			e.printStackTrace();
 		}
 		File pageDir = new File(resDir, "page");
-		File templateFile = new File(pageDir, "index-template.html");
 		
 		File typeDir = new File(pageDir, root.getType());
 		if(!typeDir.exists()) typeDir.mkdir();
 		
-		File indexFile = new File(typeDir,"index-"+root.getId()+".html");
-//		Debug.log("templateFile:" + templateFile.getAbsolutePath());
-//		Debug.log("indexFile:" + indexFile.getAbsolutePath());
-		try (BufferedReader reader = new BufferedReader(new FileReader(templateFile));
+		File rootIdDir = new File(typeDir, String.valueOf(root.getId()));
+		if(!rootIdDir.exists()) rootIdDir.mkdir();
+		
+		File indexFile = new File(rootIdDir,"index-"+root.getId()+".html");
+		File indexTemplate = new File(pageDir, "index-template.html");
+		try (BufferedReader reader = new BufferedReader(new FileReader(indexTemplate));
 		    BufferedWriter writer = new BufferedWriter(new FileWriter(indexFile))) {
 			
 		    String line;

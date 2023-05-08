@@ -4,20 +4,15 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.trickle.os.dao.HomeDao;
-import com.trickle.os.dao.MenuDao;
+import com.trickle.os.dao.*;
+import com.trickle.os.paging.FilterOption;
 import com.trickle.os.util.Debug;
 import com.trickle.os.util.StrUtil;
 import com.trickle.os.vo.RootVo;
 
 import lombok.RequiredArgsConstructor;
-import paging.FilterOption;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,6 +20,7 @@ public class HomeController {
 
 	private final MenuDao menuDao;
 	private final HomeDao homeDao;
+	private final ItemDao itemDao;
 	
 	@GetMapping("/")
 	public String home2(Model model) {
@@ -55,7 +51,7 @@ public class HomeController {
 		RootVo root = menuDao.getRootById(rootId);
 		model.addAttribute("root", menuDao.getRootById(rootId));
 		System.out.println("/page/"+root.getType()+"/index-"+rootId);
-		return "/page/"+root.getType()+"/index-"+rootId;
+		return "/page/"+root.getType()+"/"+root.getId()+"/index-"+rootId;
 	}
 	
 	@GetMapping(value = {"/process/index", "/process"})
@@ -69,6 +65,15 @@ public class HomeController {
 		root.setStyle(StrUtil.toJson(root.getStyle()));
 		menuDao.updateStyle(root);
 		return openAdminPage(root.getId(), model);
+	}
+	
+	@GetMapping("/page/content/{rootId}/{id}")
+	public String openContent(@PathVariable long rootId, @PathVariable long id, Model model) {
+		model.addAttribute("item", itemDao.getCommentsItem(id));
+		itemDao.updateNumView(id);
+		RootVo root = menuDao.getRootById(rootId);
+		model.addAttribute("root", root);
+		return "/page/"+root.getType()+"/"+root.getId()+"/content-"+rootId;
 	}
 	
 	@GetMapping("/test")

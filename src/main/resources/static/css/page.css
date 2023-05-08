@@ -12,8 +12,7 @@ body {
   width: 150px;
 }
 
-#header,
-.content {
+#header, .content {
   outline: 1px solid rgb(85, 85, 158);
 }
 
@@ -23,14 +22,14 @@ body {
   margin-right: 20px;
   /* background-color: rgb(225, 215, 243); */
   font-size: 18px;
-  padding: 3px 7px 0px 0px;
 }
 
 #menuDiv {
   display: none;
   position: absolute;
   background-color: #eee;
-}
+  top:33px;
+} 
 
 #category:hover + #menuDiv,
 #menuDiv:hover,
@@ -82,4 +81,11 @@ body {
 
 .search-btn:hover {
   background-color: #9e1d59;
+}
+
+
+.c{
+  display: flex;
+  flex-direction: column;
+  flex-direction: row;
 }

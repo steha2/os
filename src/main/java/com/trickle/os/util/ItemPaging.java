@@ -3,10 +3,10 @@ package com.trickle.os.util;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.trickle.os.paging.Paging;
 import com.trickle.os.vo.ItemVo;
 
 import lombok.*;
-import paging.Paging;
 
 @Getter
 @Setter

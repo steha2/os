@@ -1,4 +1,4 @@
-package paging;
+package com.trickle.os.paging;
 
 import lombok.Getter;
 import lombok.Setter;

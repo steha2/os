@@ -7,9 +7,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.trickle.os.paging.PagingData;
 import com.trickle.os.vo.ItemVo;
-
-import paging.PagingData;
 
 @Repository
 public class PagingDao {

@@ -1,6 +1,6 @@
-package paging;
+package com.trickle.os.paging;
 
-import static paging.FilterCondition.*;
+import static com.trickle.os.paging.FilterCondition.*;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -47,6 +47,11 @@ public class PagingData {
 		this.tableName = tableName;
         columns = Arrays.asList(clazz.getDeclaredFields())
 			.stream().map(f->StrUtil.toSnakeCase(f.getName())).collect(Collectors.joining(","));
+	}
+	
+	public void setTable(String tableName, String columns) {
+		this.tableName = tableName;
+		this.columns = columns;
 	}
 	
 	public void setColumns(String columns) {

@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T-Market</title>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
+<link rel="stylesheet" type="text/css" href="/css/page.css">
+
+<script src="/js/menu.js"></script>
+<script src="/js/item.js"></script>
+<script src="/js/util/utils.js"></script>
+<script src="/js/util/paging.js"></script>
+<style>
+#item-grid{
+  background: #a5c23e;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table td, table th {
+  padding:0px;
+  border: none;
+  margin: 0px;
+}
+
+.itemCell {
+  cursor: pointer;
+  padding: 10px 5px 5px 5px;
+  margin: 10px;
+  outline: 1px solid;
+  float:left;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.itemCell:hover {
+  outline: 1px solid blue;
+}
+
+.content {
+  height: auto;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 150px 850px;
+  grid-template-areas:
+      "navi1 navi1"
+      "navi2 items";
+  min-height: auto;
+}
+
+
+#itemNavi1{
+  grid-area: navi1;
+  background: #619981;
+  padding: 5px;
+}
+
+#itemNavi2{
+  grid-area: navi2;
+  display: flex;
+  flex-direction: row;
+  background: #bdeed9;
+}
+
+#itemNavi2Wrap {
+  float: left;
+  background: #cf8e82;
+}
+
+
+#itemsDiv{
+  float: left;
+  vertical-align:top ;
+  background: #959c7c;
+}
+
+#contentDiv, #itemDivWrap {
+  grid-area: items;
+  float:left;
+  display: none;
+}
+
+#minPrice, #maxPrice {
+  width:70px;
+}
+
+.naviLink{
+  padding:0;
+  margin:0;
+  font-weight: bold;
+}
+
+.cancel {
+  text-decoration: line-through;
+  text-decoration-thickness: 0.1em;
+  text-decoration-color: black;
+  text-decoration-skip-ink: none;
+  display: inline-block;
+  position: relative;
+}
+.cancel:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  border-top: 0.1em solid black;
+}
+#login {
+  text-align: right;
+  font-size:13px;
+  font-family: 'nanumsquare', 'Courier New', Courier, monospace;
+}
+a{ cursor:pointer; }
+
+#paging { width: 850px; };
+</style>
+</head>
+<body>
+  <div class="container">
+  <div id="login">로그인 | 회원가입 | 장바구니 | 마이페이지 | 고객센터</div>
+  <div id="header" th:include="|/page/${root.type}/${root.id}/header-1.html|"></div>
+  <div class="content">
+    <div id="itemNavi1"></div>
+    <div id="itemNavi2Wrap">
+      <div id="itemNavi2"></div>
+    </div>
+    <table id="itemDivWrap">
+      <tr><td><div id="itemsDiv"></div></td></tr>
+      <tr><td><div id="paging"></div></td></tr>
+    </table>
+    <div id="contentDiv"></div>
+  </div>
+</div>
+</body>
+
+<script th:inline="javascript">
+  const root = /*[[${root}]]*/ null;
+  
+  let style = JSON.parse(root.style);
+  const itemsDiv = $("#itemsDiv");
+  const itemDivWrap = $("#itemDivWrap");
+  const contentDiv = $("#contentDiv");
+  let pd = new PagingData();
+
+  function updateItems() {
+    itemsDiv.empty();
+    itemDivWrap.css("display","block");
+    contentDiv.css("display","none");
+    $.get("/getPagingItems",pd.toParam())
+    .done((resData=>{
+      pd.setPagingData(resData);
+      const grid = new ItemGrid(root.id, style);
+      grid.addItemCell = addItemCell;
+      grid.setItems(pd.data);
+      $("#paging").empty().append(createPaging(pd,updateItems));
+      itemsDiv.append(grid.div);
+    })).fail(()=>console.log("Ajax Fail"));
+  }
+
+  function searchItems() {
+    pd.setSearch($(".search-input").val());
+    changeFilter(true);
+  }
+
+  function toggleFilter() {
+    $("#filterTable").css("visibility",
+    $("#filterTable").css("visibility") === "visible" ? "hidden" : "visible");
+  }
+
+  function changeFilter(input){
+    let min = parseInt($("#minPrice").val());
+    let max = parseInt($("#maxPrice").val());
+    if(max === 0 && min === 0){
+      pd.removeOption("price",BETWEEN); 
+    } else {
+      if(max <= min) {
+        if(input === document.getElementById("minPrice")) {
+          $("#maxPrice").val(min + 10000);
+        } else {
+          $("#minPrice").val(max >= 10000 ?  max - 10000 : 0);
+        }
+      }
+      pd.addOption("price",BETWEEN,min,max);  
+    }
+    pd.setOrderBy($("#orderBy").val());
+    if(input) updateItems();
+  }
+
+  function movePath(path, pathName) {
+    if(!path) {
+      path = root.path;
+      pathName = root.pathName;
+    }
+    pd.setPath(path);
+    $("#itemNavi1").empty();
+    const sp = path.split("/");
+    const spn = pathName.split("/");
+    let lp = "";
+    let lpn = "";
+    for(let i=1; i<spn.length; i++){
+      lp += "/"+sp[i];
+      lpn += "/"+spn[i];
+      $("#itemNavi1").append(createALink(lp,lpn,spn[i])," > ");
+    }
+    updateItems();
+  }
+  
+  function addItemCell(item) {
+    this.items.push(item);
+    const cell = {};
+    cell.div = $("<div class='itemCell'></div>");
+    cell.div.click(()=>{
+      itemDivWrap.css("display","none");
+      contentDiv.empty().load(`/page/content/${root.id}/${item.id}`,null,(data)=>{console.log("data",data)});
+      contentDiv.css("display","block");
+    });
+    cell.div.css({width:this.cw, height:this.ch});
+    cell.item = item;
+    cell.image = $(`<img class='itemImg' src='/resources/images/${item.imagePath}'/>`);
+    cell.image.css({width:this.iw, height:this.ih});
+    
+    const oriPrice = $("<span>");
+    cell.div.append(cell.image,`<br>${sliceText(item.name,this.style.sliceText)}<br>`,oriPrice);
+    oriPrice.text("￦ "+item.price.toLocaleString());
+    if(item.discount > 0) {
+      oriPrice.addClass("cancel");
+      const dcPrice = "￦ "+ (Math.floor((item.price*(100-item.discount)/100))).toLocaleString();
+      cell.div.append(`<br>-${item.discount}% ${dcPrice}`);
+    }
+    this.div.append(cell.div);
+  }
+
+  $(()=>{
+    $("#title").append(createTitle(root.name, "100%", 150, 45,"/page/"+root.id));
+    pd.setStyle(style);
+    createMenu((path, pathName)=>movePath(path, pathName));
+    movePath();
+    changeFilter();
+  });
+
+  function createALink(path, pathName, spn){
+    const link = $(`<a class='naviLink'>${spn}</a>`);
+    link.click(()=>movePath(path,pathName));
+    return link;
+  }
+
+</script>
+
+</html>

@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T-Market</title>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
+<style>
+#itemTable{
+  table-layout: fixed;
+  width:100%;
+}
+#itemTable td, pre{
+  word-wrap: break-word;
+  white-space: normal;
+}
+</style>
+</head> 
+<div id="tabs">
+<ul>
+  <li><a href="#itemDiv">Item</a></li>
+  <li><a href="#commentsDiv">Comments</a></li>
+</ul>
+<div id="itemDiv">
+  <table id="itemTable">
+    <tr>
+      <td>
+        <img>
+      </td>
+      <td>
+        <pre></pre>
+      </td>
+    </tr>
+  </table>
+</div>
+<div id="commentsDiv">
+</div>
+</body>
+
+<script th:inline="javascript">
+  $(()=>{
+    const item = /*[[${item}]]*/ null;
+    const root = /*[[${root}]]*/ null;
+    const itemDiv = $("#itemDiv");
+    const commentsDiv = $("#commentsDiv");
+    let style = JSON.parse(root.style);
+    itemDiv.find("img").attr("src","/resources/images/"+item.imagePath)
+    itemDiv.find("pre").append(JSON.stringify(item,null,2));
+    const tabs = $("#tabs");
+    if(item.comments) item.comments.forEach(c => {
+      commentsDiv.append(`Id: ${c.id} Content: ${c.content}`);
+    });
+    tabs.tabs();
+  });
+</script>
+
+</html>

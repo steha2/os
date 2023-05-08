@@ -2,21 +2,24 @@ function createMenu(menuClick){
   $.getJSON("/getRootMenu",{type:"shop"}).done((root) => {
     const menuUl = $("<ul>");
     $("#menudiv").empty().append(menuUl);
+    console.log(root);
     root.childs.forEach(d1 => {
       const li1 = $("<li>");
-      li1.attr("path","/"+root.id+"/"+d1.id); 
+      li1.attr("path",d1.path); 
+      li1.attr("pathName",d1.pathName); 
       li1.append(`<div>${d1.name}</div>`);
       const ul2 = $("<ul>");
       if(d1.childs) d1.childs.forEach(d2=>{
         li1.append(ul2)
         const li2 = $(`<li><div>${d2.name}</div></li>`);
-        li2.attr("path",li1.attr("path")+"/"+d2.id);
+        li2.attr("path",d2.path);
+        li2.attr("pathName",d2.pathName);
         ul2.append(li2);
       });
       menuUl.append(li1);
     });
     menuUl.menu({delay:0, select: (event,ui)=>{
-      menuClick($(ui.item[0]).attr("path"));
+      menuClick($(ui.item[0]).attr("path"),$(ui.item[0]).attr("pathName"));
     }});
     $("#menuDiv").append(menuUl);
   }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));

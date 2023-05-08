@@ -12,13 +12,16 @@ import lombok.ToString;
 @ToString
 public class MenuVo implements Comparable<MenuVo>  {
 	private long id, parentId;
-	private String name, path;
+	private String name, path, pathName;
 	private List<MenuVo> childs;
 	private List<ItemVo> items;
 	
 	public void addMenu(MenuVo menu) {
 		if(childs == null) childs = new ArrayList<>();
-		if(path != null) menu.setPath(path+"/"+menu.id);
+		if(path != null) {
+			menu.setPath(path+"/"+menu.id);
+			menu.setPathName(pathName+"/"+menu.name);
+		}
 		childs.add(menu);
 	}
 	
