@@ -1,0 +1,384 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/css/main.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/util/utils.js"></script>
+<style>
+.itemCell {
+  cursor: pointer;
+  padding: 10px 5px 5px 5px;
+  margin: 10px;
+  outline: 1px solid;
+  float:left;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.itemCell:hover {
+  outline: 1px solid blue;
+}
+
+.item-grid{
+  height:500px;
+}
+</style>
+</head>
+<body>
+    <!-- header contents 시작 -->
+    <div id="header">
+    
+    	<!-- 로고 및 검색 -->
+		<div id="logo_search">
+			<div class="logo">Naver</div>
+			<form class="search-form">
+				<input type="text" placeholder="검색어를 입력해주세요">
+				<button type="submit">검색</button>
+			</form>
+		</div>
+
+		<!-- 네비게이션 바  -->
+		<div id="navigation">
+			<!-- 네비게이션 바 리스트 -->
+			<div id="navigation_List">
+				<div id="navigation_List">
+					<div class="nav_list" id="navList">
+						<div id="nav_blog" class = "nav_items"><a href = "#">블로그</a></div>
+						<div id="nav_cafe" class = "nav_items"><a href = "#">카페</a></div>
+					</div>
+				</div>
+				<!--  db데이터 생성 -->
+			</div>
+
+			<!-- 네비게이션 바 오른쪽 날씨 이미지  -->
+			<div id="NM_WEATHER">NM_WEATHER</div>
+		</div>
+
+	</div>
+    <!-- header contents here 끝 -->
+		
+    <!-- container contents 시작 -->
+    <div id="main_container">
+		
+		<!-- 왼쪽 컨테이너 시작 -->
+		<div id="left_container">
+
+			<!-- 왼쪽 컨테이너 메뉴바 바로밑 광고  -->
+			<div id="left_addiv">left_addiv</div>
+			<div id="news_container">
+				<div id="news_top"></div>
+				<div id=news_LR>
+					<div id="news_left"></div>
+					<div id="news_right">
+						<div id="news_right_Top"></div>
+						<div id="news_right_LR">
+							<div id="first_news">
+								<img src="" id = "first_news_img"/>
+								<h2 class="news_title"></h2>
+							</div>
+							<div id = "news_titles">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="theme_container">
+			<div id = "theme_header"></div>
+			<div id = "theme_body"></div>
+			</div>
+		</div>	
+		<!-- 왼쪽 컨테이너 끝 -->
+
+		<!-- 오른쪽 컨테이너 시작 -->
+		<div id="right_container">
+			<div id="login">login</div>		
+			<div id="timesquare">timesquare</div>
+			<div id="right_addiv">right_addiv</div>
+			<div id="shop_wrap">
+				<div id = "shop"></div>
+				<div class = "shopPage">
+					<input type = "button" id = "shopPrevPage" class= "shop PrevPage"/><div class = "shop currentPage"></div><input type = "button" id = "shopNextPage"class="shop NextPage"/>
+				</div>
+			</div>
+		</div>
+		<!-- 오른쪽 컨테이너 끝 -->
+    </div>
+    <!-- container contents 끝 -->
+
+    <!-- footer contents here -->
+    <div id="footer">
+		<div id="footer_addiv">footer_addiv</div>
+		<div id="notice_area">notice_area</div>
+		<div id="footer_area">footer_area</div>
+    </div>
+</body>
+
+<script th:inline="javascript">
+const host = "http://localhost:8092";
+let pd = new PagingData();
+const roots = /*[[${roots}]]*/ null;
+
+const pds = new Object();
+
+roots.forEach(root => {
+  pds[root.id] = new PagingData();
+  pds[root.id].root = root;
+});
+
+function addData(pd){
+  const div = $(pd.divId);
+  $.get(host+"/getPagingItems",pd.toParam()).done((resData)=>{
+    const table = $("<table>");
+    div.empty().append(table);
+    pd.setPagingData(resData);
+    const grid = new ItemGrid(pd.root.id, pd.style);
+    grid.setItems(pd.data);
+    grid.div.css({width:"300px",display:"block"});
+    const td1 = $("<td>").append(grid.div);
+    const td2 = $("<td>").append(createPaging(pd,()=>addData(pd)));
+    table.append($("<tr>").append(td1));
+    table.append($("<tr>").append(td2));
+  }).fail(()=>console.log("fail"));
+}
+
+function addDiv(divId, rootId, style) {
+  const pd = pds[divId];
+  pd.setStyle(style);
+  pd.divId = "#shop";
+  addData(pd);
+}
+$(()=>{
+  addDiv(1,"#shop",{rows:3,cols:2,iw:70,ih:70,cw:100,ch:150,paging:2,sliceText:10,maxPage:1});
+  // addDiv(1,"#shop")
+});
+
+function createPaging(pd, updateFunc) {
+  let pagingBar = $("<table id='pagingBar'></table>");
+  let $tr = $("<tr>");
+  pagingBar.append($tr).css("width","100%").css("height","40px");
+  let $td1 = $("<td>").css({textAlign:"center",height:35,width:"100%",});
+  let $td2 = $("<td>");
+  $tr.append($td1,$td2);
+  let startPage = pd.startPage;
+  let endPage = pd.endPage;
+  const drc = pd.defaultRowCount || null;
+  if(drc !== null && pd.paging === 1) {
+    let select = $("<select id='rowCountSelect'>").css({width:50,"margin-right":5,height:25});
+    for(i=drc; i<=drc*5; i+=drc){
+      $td2.append(select);
+      let option = $(`<option value='${i}'>${i}</option>`); 
+      select.append(option);
+    }
+    select.val(pd.rowCount).attr("selected","selected");
+    select.change(()=>{
+      pd.rowCount=select.val()
+      updateFunc();
+    });
+  }
+
+  function createLink (page, text) {
+    let linkButton = $("<a class='pagingLink'>" + (text ? text : page) + "</a>");
+    linkButton.css({"margin":"3px 4px 3px 4px","border-radius": "8px", "font-weight":"bold"
+     ,background:"rgba(110,123,232,0.3)",padding:"4px 4px 5px 4px",fontSize:18,cursor:"pointer"});
+    if(typeof updateFunc === 'function') {
+      linkButton.click(()=>{
+        pd.nowPage = page;
+        updateFunc()
+      });
+    }
+    return linkButton;
+  }
+
+  function addHover(target) {
+    target.on("mouseover",()=>target.css("background","rgba(210,123,132,0.3)"))
+    target.on("mouseout",()=>target.css("background","rgba(110,123,232,0.3)"))
+    return target;
+  }
+
+  if (startPage > 1) $td1.append(addHover(createLink(startPage - 1, "◀")));
+  for (let p = startPage; p <= endPage; p++) {
+    let pageLink = createLink(p);
+    if (p == pd.nowPage) {
+        pageLink.css("cursor","default").css("color","blue");
+    } else {
+      addHover(pageLink);
+    }
+    $td1.append(pageLink);
+  }
+  if (endPage < pd.totalPages) {
+    $td1.append(addHover(createLink(endPage + 1, "▶")));
+  }
+  return pagingBar;
+}
+
+
+class PagingData {
+  constructor() {
+    this.defaultRowCount = 10;
+    this.rowCount = 10;
+    this.maxPage = 10;
+    this.pagingType = 1;
+    this.nowPage = 1;
+  }
+
+  setPagingData(pagingData){
+    for(let key in pagingData){
+      this[key] = pagingData[key];
+    }
+  }
+
+  setPath(path) {
+    this.addOption("path",STARTS_WITH,path);
+    this.path = path;
+  }
+
+  setSearch(search) {
+    this.addOption("name",CONTAINS,search);
+  }
+
+  setOrderBy(orderBy) {
+    if(orderBy) this.orderBy = orderBy;
+    else this.orderBy = "";
+  }
+
+  setStyle(style) {
+    this.style = style;
+    this.defaultRowCount = style.rows * style.cols || this.defaultRowCount;
+    this.rowCount = this.defaultRowCount;
+    this.maxPage = style.maxPage || this.maxPage;
+    this.pagingType = style.pagingType || this.pagingType;
+  }
+
+  addOption(key, condition, value1="", value2=""){
+    const fo = {key:key, condition:condition, value1:value1, value2:value2};
+    if(!this.option) this.option = [];
+    if(value1.length === 0 && value2.length === 0) {
+      this.removeOption(key,condition);
+      return;
+    }
+    const idx = this.option.findIndex(efo => efo.key === key && efo.condition === condition);
+    if(idx == -1){
+      this.option.push(fo);
+    } else {
+      this.option[idx] = fo;
+    }
+  }
+
+  removeOption(key, condition){
+    this.option = this.option.filter(efo => !(efo.key === key && efo.condition === condition));
+  }
+
+  toParam(){
+    const keys = ["nowPage","rowCount","maxPage","pagingType","orderBy","option"];
+    const result = keys.reduce((obj, key) => {
+      obj[key] = (key === "option") ? JSON.stringify(this[key]) : this[key];
+      return obj;
+    }, {});
+    return result;
+  }
+}
+
+class ItemGrid {
+  constructor(rootId, style, addItemCell){
+    this.rootId = rootId;
+    this.rows = style.rows || 3;
+    this.cols = style.cols || 3;
+    this.iw = style.iw || 200;
+    this.ih = style.ih || this.iw;
+    this.cw = style.cw || 250;
+    this.ch = style.ch || this.cw;
+    this.style = style;
+    this.create();
+  }
+  
+  create = ()=>{
+    this.div = $("<div class='item-grid'></div>");
+    this.detailDiv = $("<div class='detail-div'></div>");
+    this.detailDiv.css({
+      position:"absolute",
+      width: this.cw * this.rows / 2,
+      height: this.ch * this.cols / 2,
+      border:"1px solid",
+      visibility:"hidden",
+      background:"rgba(100,250,160,0.8)",
+      zIndex:40001,
+      textAlign:"center"
+    });
+    $(this.div).append(this.detailDiv);
+  }
+
+  addItemCell = (item) => {
+    this.items.push(item);
+    const cell = {};
+    cell.div = $("<div class='itemCell'></div>");
+    cell.div.click(()=>window.open().location.href = `/page/content/${root.id}/${item.id}`);
+    cell.div.css({width:this.cw, height:this.ch});
+    cell.item = item;
+    cell.image = $(`<img class='itemImg' src='/resources/images/${item.imagePath}'/>`);
+    cell.image.css({width:this.iw, height:this.ih});
+    
+    cell.div.append(cell.image).append(`<br>${sliceText(item.name,this.style.sliceText)}<br>￦ ${item.price.toLocaleString()} `);
+    
+    this.div.append(cell.div);
+
+    cell.div.click(()=>{
+      if(this.isOpenDetail) this.openDetail(cell);
+    });
+    // if(this.items.length % this.cols === 0) this.div.append("<br>");
+  }
+
+  setLocation = (left, top) => {
+    this.div.css({position:"absolute", left: left, top: top});
+  }
+
+  setVisible = (isVisible) => {
+    this.isVisible = isVisible;
+    this.div.css("visibility",isVisible ? "visible" : "hidden");
+  }
+
+  openDetail = (item) => {
+    this.detailDiv.empty();
+    const pre = $(`<pre>Item Id: ${item.id}\nItem Name: ${item.name}\nAmount: ${item.price}\nUseable: ${item.regDate}\nDescription: ${item.content}\n</pre>`);
+    pre.css({textAlign:"left",padding:10, margin:0, flex:1});
+    this.detailDiv.append(pre);
+    const buttonDiv = $("<div></div>");
+    this.detailDiv.append(buttonDiv)
+    if(item.useable) {
+      const useButton = $("<button class='detail-button'>사용</button>");
+      useButton.click(()=>this.useItem(item));
+      this.detailDiv.append(useButton);
+      buttonDiv.append(useButton);
+    }
+    const closeButton = $("<button class='detail-button'>닫기</button>");
+    buttonDiv.append(closeButton);
+    closeButton.click(()=>this.setDetailVisible(false));
+    this.detailDiv.css({
+      left: this.div.offset().left + this.div.width()/4,
+      top: this.div.offset().top + this.div.height()/4,
+    });
+    this.setDetailVisible(true);
+  }
+
+  useItem = (item) => {
+    if(this.useItemAction) this.useItemAction(item);
+    this.setDetailVisible(false);
+    return item;
+  }
+
+  setDetailVisible = (visible) => {
+    this.div.css('filter', visible ? 'blur(2px)' : 'none');
+    this.detailDiv.css("visibility", visible ? "visible": "hidden");
+  }
+  
+  setItems = (items) => {
+     this.items = [];
+     this.div.empty();
+     items.forEach(i => this.addItemCell(i));
+  }
+}
+
+</script>
+</html>

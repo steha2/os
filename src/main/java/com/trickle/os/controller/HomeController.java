@@ -2,6 +2,8 @@ package com.trickle.os.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +12,7 @@ import com.trickle.os.dao.*;
 import com.trickle.os.paging.FilterOption;
 import com.trickle.os.util.Debug;
 import com.trickle.os.util.StrUtil;
-import com.trickle.os.vo.RootVo;
+import com.trickle.os.vo.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,17 +24,22 @@ public class HomeController {
 	private final HomeDao homeDao;
 	private final ItemDao itemDao;
 	
-	@GetMapping("/")
-	public String home2(Model model) {
-		model.addAttribute("time",homeDao.getTime());
-		System.out.println(model.getAttribute("time"));
+	@GetMapping(value = {"/home","/"})
+	public String home(Model model) {
+		model.addAttribute("roots", menuDao.getRoots());
 		return "/index";
 	}
 	
-	@GetMapping("/os-home")
-	public String home(Model model) {
+	@GetMapping("/admin/os-home")
+	public String osHome(Model model) {
 		model.addAttribute("roots", menuDao.getRoots());
-		return "/os-home";
+		return "/admin/os-home";
+	}	
+	
+	@GetMapping("/main")
+	public String main(Model model) {
+		model.addAttribute("roots", menuDao.getRoots());
+		return "/main";
 	}
 	
 	@GetMapping(value = {"/admin/admin-index", "/admin"})
@@ -45,15 +52,7 @@ public class HomeController {
 		model.addAttribute("root", menuDao.getRootById(rootId));
 		return "/admin/admin-page";
 	}
-	
-	@GetMapping("/page/{rootId}")
-	public String openPage(@PathVariable long rootId, Model model) {
-		RootVo root = menuDao.getRootById(rootId);
-		model.addAttribute("root", menuDao.getRootById(rootId));
-		System.out.println("/page/"+root.getType()+"/index-"+rootId);
-		return "/page/"+root.getType()+"/"+root.getId()+"/index-"+rootId;
-	}
-	
+
 	@GetMapping(value = {"/process/index", "/process"})
 	public String process(Model model) {
 		return "/process/index";
@@ -67,14 +66,6 @@ public class HomeController {
 		return openAdminPage(root.getId(), model);
 	}
 	
-	@GetMapping("/page/content/{rootId}/{id}")
-	public String openContent(@PathVariable long rootId, @PathVariable long id, Model model) {
-		model.addAttribute("item", itemDao.getCommentsItem(id));
-		itemDao.updateNumView(id);
-		RootVo root = menuDao.getRootById(rootId);
-		model.addAttribute("root", root);
-		return "/page/"+root.getType()+"/"+root.getId()+"/content-"+rootId;
-	}
 	
 	@GetMapping("/test")
 	@ResponseBody

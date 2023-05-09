@@ -36,6 +36,7 @@
             <td>정렬</td>
             <td>
               <select id="orderBy" onchange=changeFilter(this)>
+                <option>----------</option>
                 <option value = "NUM_SOLD DESC">판매인기순</option>
                 <option value = "PRICE ASC">낮은가격순</option>
                 <option value = "PRICE DESC">높은가격순</option>
@@ -93,4 +94,28 @@
 
     links.forEach(l=>createNaviLink(l));
   })
+
+  function toggleFilter() {
+    $("#filterTable").css("visibility",
+    $("#filterTable").css("visibility") === "visible" ? "hidden" : "visible");
+  }
+
+  function changeFilter(input){
+    let min = parseInt($("#minPrice").val());
+    let max = parseInt($("#maxPrice").val());
+    if(max === 0 && min === 0){
+      pd.removeOption("price",BETWEEN); 
+    } else {
+      if(max <= min) {
+        if(input === document.getElementById("minPrice")) {
+          $("#maxPrice").val(min + 10000);
+        } else {
+          $("#minPrice").val(max >= 10000 ?  max - 10000 : 0);
+        }
+      }
+      pd.addOption("price",BETWEEN,min,max);  
+    }
+    pd.setOrderBy($("#orderBy").attr("value"));
+    if(input) updateItems();
+  }
 </script>

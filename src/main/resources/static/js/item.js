@@ -12,8 +12,8 @@ class ItemGrid {
   }
   
   create = ()=>{
-    this.div = $("<div id='item-grid'></div>");
-    this.detailDiv = $("<div id='detail-div'></div>");
+    this.div = $("<div class='item-grid'></div>");
+    this.detailDiv = $("<div class='detail-div'></div>");
     this.detailDiv.css({
       position:"absolute",
       width: this.cw * this.rows / 2,

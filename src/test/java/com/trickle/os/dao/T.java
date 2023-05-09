@@ -30,7 +30,7 @@ public class T {
 //		IC
 		
 		PagingData p = new PagingData();
-		p.setTable("Items", null);
+//		p.setTable("Items", null);
 		System.out.println(p.getColumns());
 		p.addContains("NAME", "나");
 		

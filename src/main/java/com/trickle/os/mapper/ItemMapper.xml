@@ -57,4 +57,5 @@ DELETE FROM ITEMS WHERE ID = #{id}
 <select id="getComments" resultType="ItemVo">
     SELECT * FROM COMMENTS WHERE ID = #{id}
 </select>
+
 </mapper>

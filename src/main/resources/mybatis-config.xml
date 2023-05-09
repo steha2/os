@@ -9,6 +9,7 @@
 		<typeAlias type="com.trickle.os.vo.ItemVo" alias="ItemVo"/>
 		<typeAlias type="com.trickle.os.vo.MenuVo" alias="MenuVo"/>
 		<typeAlias type="com.trickle.os.vo.RootVo" alias="RootVo"/>
+		<typeAlias type="com.trickle.os.vo.UserVo" alias="UserVo"/>
 		<typeAlias type="com.trickle.os.vo.CommentVo" alias="CommentVo"/>
 	</typeAliases>
 	

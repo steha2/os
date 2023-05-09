@@ -25,11 +25,9 @@ class CRTEST {
 	@Test
 	void test() {
 		
-		MenuVo d2 = md.getDepth2(    44    ); //검색어 
+		MenuVo d2 = md.getDepth2(    48    ); //검색어 
 		
-		
-		String add = "뉴스 기사";
-
+		String add = "";
 		
 		MenuVo d1 = md.getDepth1(d2.getParentId());
 		RootVo root = md.getRootById(d1.getParentId());

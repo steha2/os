@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <title>홈</title>
+  </head>
+  <body >
+    <div class="grid-container">
+      <div id="navi">
+      </div>
+      <div class="content-frame-div">
+        <iframe id="content-frame" src="/admin/admin-index" scrolling="no"></iframe>
+      </div>
+    </div>
+  </body>
+  
+  <script th:inline="javascript">
+    const roots = /*[[${roots}]]*/ null;
+    function createNavLink(text, src) {
+      const navLink = $("<a href='#' class='navi-link'></a>");
+      navLink.text(text);
+      navLink.click(() => {
+        $("#content-frame").prop("src",src);
+        return false;
+      });
+	  $("#navi").append(navLink);
+	}
+
+    $(() => {
+      const optionDefault = "-----------";
+      createNavLink("admin", "/admin/admin-index");
+      createNavLink("process", "/process/index");
+      const adminSelect = $("<select>");
+      const pageSelect = $("<select>");
+      const adminLabel = $("<label>").text(" Admin : ").click(()=>selectChange("/admin/page/",adminSelect.val())).css("cursor","pointer");
+      const pageLabel = $("<label>").text(" Page : ").click(()=>selectChange("/page/",pageSelect.val())).css("cursor","pointer");
+      $("#navi").append(adminLabel,adminSelect,pageLabel,pageSelect);
+      roots.forEach(root => {
+    	  const option = $("<option>");
+    	  option.attr("value",root.id);
+    	  option.text(root.name);
+    	  adminSelect.append(option);
+    	  pageSelect.append(option.clone());
+      });
+      
+      adminSelect.change(()=>selectChange("/admin/page/",adminSelect.val()))
+      pageSelect.change(()=>selectChange("/page/",pageSelect.val()))
+      function selectChange(src1,src2){
+        if(src2 !== optionDefault) $("#content-frame").prop("src",src1+src2);
+      }
+	  });
+  </script>
+  <style>
+  	.navi-link{
+  		margin:7px;
+  	}
+  	
+  	#navi-ul {
+  	   
+  	}
+  	
+
+    #content-frame {
+      width: 100%;
+      height: 100%;
+      background: #f5fff1;
+      border: 0px;
+      }
+
+    .content-frame-div, .grid-container{
+      overflow-y:  hidden;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      grid-template-columns: auto;
+      grid-template-areas: "navi" "content";
+      height: 100vh;
+    }
+
+    #navi {
+      padding: 5px;
+      grid-area: navi;
+      background-color: lightgray;
+    }
+
+    .content-frame-div {
+      grid-area: content;
+      background: #fffff0;
+    }
+
+    body {
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</html>

@@ -12,14 +12,14 @@ BETWEEN="BETWEEN";
 function createPaging(pd, updateFunc) {
   let pagingBar = $("<table id='pagingBar'></table>");
   let $tr = $("<tr>");
-  pagingBar.append($tr).css("width","100%");
+  pagingBar.append($tr).css("width","100%").css("height","40px");
   let $td1 = $("<td>").css({textAlign:"center",height:35,width:"100%",});
   let $td2 = $("<td>");
   $tr.append($td1,$td2);
   let startPage = pd.startPage;
   let endPage = pd.endPage;
   const drc = pd.defaultRowCount || null;
-  if(drc !== null) {
+  if(drc !== null && pd.paging === 1) {
     let select = $("<select id='rowCountSelect'>").css({width:50,"margin-right":5,height:25});
     for(i=drc; i<=drc*5; i+=drc){
       $td2.append(select);
@@ -94,11 +94,13 @@ class PagingData {
   }
 
   setOrderBy(orderBy) {
-    this.orderBy = orderBy;
+    if(orderBy) this.orderBy = orderBy;
+    else this.orderBy = "";
   }
 
   setStyle(style) {
-    this.defaultRowCount = style.rows * style.cols ||this.defaultRowCount;
+    this.style = style;
+    this.defaultRowCount = style.rows * style.cols || this.defaultRowCount;
     this.rowCount = this.defaultRowCount;
     this.maxPage = style.maxPage || this.maxPage;
     this.pagingType = style.pagingType || this.pagingType;

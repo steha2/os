@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <title>홈</title>
+  </head>
+  <body>
+     <h1>Home</h1>
+	<ul>
+	  <li th:each="root : ${roots}">
+	    <a th:href="|/page/${root.id}|" th:text="${root.name}"></a>
+	  </li>
+	</ul>
+	<ul>
+    <span th:text="|User : ${session.user.name}|"></span>
+    <li>
+    <a th:if="${session.user == null}" th:href="@{/user/loginForm}">로그인</a>
+    <a th:if="${session.user != null}" th:href="@{/user/logout}">로그아웃</a></li>
+    <li><a href="/user/signUpForm">회원가입</a></li>
+  </ul> 
+  </body>
+  
+  <script th:inline="javascript">
+  </script>
+  <style>
+  </style>
+</html>

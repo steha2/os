@@ -17,6 +17,23 @@
   word-wrap: break-word;
   white-space: normal;
 }
+#detailTable td{
+  border-collapse: collapse;
+  border:1px solid;
+  padding: 5px;
+}
+.ra{
+  text-align: right;
+}
+.buyButton{
+  background: #ffffff;
+  color:rgb(37, 37, 37);
+  font-size: 25px;
+  font-weight: bold;
+  padding: 10px;
+  /* border-radius: 10px; */
+  cursor: pointer;
+}
 </style>
 </head> 
 <div id="tabs">
@@ -31,15 +48,30 @@
         <img>
       </td>
       <td>
-        <pre></pre>
+        <table id="detailTable">
+          <tr><td style="width:80px">상품명 : </td><td><span th:text="${item.name}"></span></td></tr>
+          <tr><td>남은 수량 </td><td><span th:text="${item.numStock}"></span></td></tr>
+          <tr><td>판매 수량 </td><td><span th:text="${item.numSold}"></span></td></tr>
+          <tr><td>가격 : </td><td class="ra"><span th:text="${#numbers.formatInteger(item.price,3,'COMMA')} + ' 원'"></td></tr>
+          <tr><td>할인가 : </td><td class="ra"><span th:text="|-${item.discount}% ${#numbers.formatInteger(item.dcPrice,3,'COMMA')} 원|"></td></tr>
+          <tr><td>결제 금액  : </td><td class="ra"><span id="priceSpan"></td></tr>
+          <tr><td>구매 수량 : </td><td class="ra"><input type="number" min="1"  id="amount" value="1" style="width:30px"></td></tr>
+          <tr>
+            <td colspan="2" style="text-align: center;">
+              <button onclick=addCart() class="buyButton"> 장바구니 </button>
+              <button onclick=buyItem() class="buyButton"> 구매하기 </button>
+            </td>
+          </tr>
+          </table>
       </td>
     </tr>
+    <tr><td colspan="2"><pre></pre></td></tr>
   </table>
 </div>
 <div id="commentsDiv">
 </div>
 </body>
-
+</table>
 <script th:inline="javascript">
   $(()=>{
     const item = /*[[${item}]]*/ null;
@@ -48,12 +80,19 @@
     const commentsDiv = $("#commentsDiv");
     let style = JSON.parse(root.style);
     itemDiv.find("img").attr("src","/resources/images/"+item.imagePath)
-    itemDiv.find("pre").append(JSON.stringify(item,null,2));
+    for(let i=0; i<30; i++) itemDiv.find("pre").append(JSON.stringify(item,null,2));
     const tabs = $("#tabs");
     if(item.comments) item.comments.forEach(c => {
       commentsDiv.append(`Id: ${c.id} Content: ${c.content}`);
     });
     tabs.tabs();
+    function calcPrice(){
+      const amount = parseInt($("#amount").val());
+      totalPrice = (amount * item.dcPrice).toLocaleString() + " 원";
+      $("#priceSpan").text(totalPrice);
+    }
+    $("#amount").change(calcPrice);
+    calcPrice();
   });
 </script>
 

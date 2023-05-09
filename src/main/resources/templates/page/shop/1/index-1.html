@@ -16,117 +16,12 @@
 <script src="/js/util/utils.js"></script>
 <script src="/js/util/paging.js"></script>
 <style>
-#item-grid{
-  background: #a5c23e;
-}
 
-table {
-  border-collapse: collapse;
-}
-
-table td, table th {
-  padding:0px;
-  border: none;
-  margin: 0px;
-}
-
-.itemCell {
-  cursor: pointer;
-  padding: 10px 5px 5px 5px;
-  margin: 10px;
-  outline: 1px solid;
-  float:left;
-  text-align: center;
-  box-sizing: border-box;
-}
-
-.itemCell:hover {
-  outline: 1px solid blue;
-}
-
-.content {
-  height: auto;
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  grid-template-columns: 150px 850px;
-  grid-template-areas:
-      "navi1 navi1"
-      "navi2 items";
-  min-height: auto;
-}
-
-
-#itemNavi1{
-  grid-area: navi1;
-  background: #619981;
-  padding: 5px;
-}
-
-#itemNavi2{
-  grid-area: navi2;
-  display: flex;
-  flex-direction: row;
-  background: #bdeed9;
-}
-
-#itemNavi2Wrap {
-  float: left;
-  background: #cf8e82;
-}
-
-
-#itemsDiv{
-  float: left;
-  vertical-align:top ;
-  background: #959c7c;
-}
-
-#contentDiv, #itemDivWrap {
-  grid-area: items;
-  float:left;
-  display: none;
-}
-
-#minPrice, #maxPrice {
-  width:70px;
-}
-
-.naviLink{
-  padding:0;
-  margin:0;
-  font-weight: bold;
-}
-
-.cancel {
-  text-decoration: line-through;
-  text-decoration-thickness: 0.1em;
-  text-decoration-color: black;
-  text-decoration-skip-ink: none;
-  display: inline-block;
-  position: relative;
-}
-.cancel:before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  border-top: 0.1em solid black;
-}
-#login {
-  text-align: right;
-  font-size:13px;
-  font-family: 'nanumsquare', 'Courier New', Courier, monospace;
-}
-a{ cursor:pointer; }
-
-#paging { width: 850px; };
 </style>
 </head>
 <body>
   <div class="container">
-  <div id="login">로그인 | 회원가입 | 장바구니 | 마이페이지 | 고객센터</div>
+  <div id="topDiv" th:include="/page/topDiv.html"></div>
   <div id="header" th:include="|/page/${root.type}/${root.id}/header-1.html|"></div>
   <div class="content">
     <div id="itemNavi1"></div>
@@ -171,29 +66,6 @@ a{ cursor:pointer; }
     changeFilter(true);
   }
 
-  function toggleFilter() {
-    $("#filterTable").css("visibility",
-    $("#filterTable").css("visibility") === "visible" ? "hidden" : "visible");
-  }
-
-  function changeFilter(input){
-    let min = parseInt($("#minPrice").val());
-    let max = parseInt($("#maxPrice").val());
-    if(max === 0 && min === 0){
-      pd.removeOption("price",BETWEEN); 
-    } else {
-      if(max <= min) {
-        if(input === document.getElementById("minPrice")) {
-          $("#maxPrice").val(min + 10000);
-        } else {
-          $("#minPrice").val(max >= 10000 ?  max - 10000 : 0);
-        }
-      }
-      pd.addOption("price",BETWEEN,min,max);  
-    }
-    pd.setOrderBy($("#orderBy").val());
-    if(input) updateItems();
-  }
 
   function movePath(path, pathName) {
     if(!path) {
@@ -220,7 +92,7 @@ a{ cursor:pointer; }
     cell.div = $("<div class='itemCell'></div>");
     cell.div.click(()=>{
       itemDivWrap.css("display","none");
-      contentDiv.empty().load(`/page/content/${root.id}/${item.id}`,null,(data)=>{console.log("data",data)});
+      contentDiv.empty().load(`/page/content/${root.id}/${item.id}`);
       contentDiv.css("display","block");
     });
     cell.div.css({width:this.cw, height:this.ch});
@@ -233,10 +105,16 @@ a{ cursor:pointer; }
     oriPrice.text("￦ "+item.price.toLocaleString());
     if(item.discount > 0) {
       oriPrice.addClass("cancel");
-      const dcPrice = "￦ "+ (Math.floor((item.price*(100-item.discount)/100))).toLocaleString();
+      const dcPrice = "￦ "+ (item.dcPrice).toLocaleString();
       cell.div.append(`<br>-${item.discount}% ${dcPrice}`);
     }
     this.div.append(cell.div);
+  }
+
+  function openCart(){
+    contentDiv.empty().load(`/page/cart/${root.id}`);
+    contentDiv.css("display","block");
+    itemDivWrap.css("display","none");
   }
 
   $(()=>{

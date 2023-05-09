@@ -1,0 +1,69 @@
+<style>
+.item-div{
+  outline: 1px solid;
+  display: none;
+  width:300px;
+  float: left;
+}
+
+.data-div{
+  float:left;
+  width:100px;
+  text-align: center;
+}
+
+</style>
+<body>
+  <div id="div1"></div>
+  <button onclick=move(-1)>←</button>
+  <button onclick=move(+1)>→</button>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+
+<script>
+  let items = [];
+  const col = 3;
+  class ItemDiv {
+    constructor(){
+      this.div = $("<div class='item-div'></div>");
+      $("#div1").append(this.div);
+    }
+
+    addData(data){
+      const div = $("<div class='data-div'>");
+      div.text(data);
+      this.div.append(div);
+    }
+  }
+  
+  let divIdx = 0;
+
+
+  for (let i = 0; i < 9; i++) {
+    const item = {
+      addData:(data)=>{
+        const div = $("<div class='data-div'>");
+        div.text(data);
+        item.div.append(div);
+      }
+    };
+
+    item.div = $("<div class='item-div'>");
+    $("#div1").append(item.div);
+    items.push(item);
+    item.addData(i*3+1)
+    item.addData(i*3+2)
+    item.addData(i*3+3)
+  }
+
+  items[0].div.css("display","block");
+
+  function move(d){
+    items[divIdx].div.css("display","none");
+    divIdx += d;
+    if(divIdx<0) divIdx = items.length-1;
+    if(divIdx>=items.length) divIdx = 0;
+    items[divIdx].div.css("display","block");
+  }
+</script>

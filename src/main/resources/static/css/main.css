@@ -1,0 +1,350 @@
+body {
+  margin: 0;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+/* ------------------------------------------- */
+/* 헤더 시작 */
+/* ------------------------------------------- */
+#header {
+  position: relative;
+  background-color: #fff;
+  width: 960px;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+#logo_search {
+  position: relative;
+  width: 1130px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.search-form {
+  align-items: center;
+}
+
+.search-form input[type="text"] {
+  width: 300px;
+  height: 30px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+.search-form button[type="submit"] {
+  height: 30px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  color: #fff;
+  background-color: #02a246;
+  cursor: pointer;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+.search-form button[type="submit"]:hover {
+  background-color: #028c3e;
+}
+
+/* ------------------------------------------- */
+/* 네비게이션 바 부분 시작 */
+/* ------------------------------------------- */
+#navigation {
+  display: flex;
+  height: 60px;
+  background-color: #03c75a;
+  color: #fff;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  text-decoration: none;
+}
+
+#navigaiont_List {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding-left: 8px;
+  background-color: #eee;
+}
+
+#navList {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* li 요소들 사이의 간격을 벌리기 위해 추가 */
+  width: 100%; /* 부모 요소인 #navigation의 너비에 맞게 설정 */
+  margin : 10px;
+}
+
+.nav_items{
+	margin-left: 15px;
+}
+
+.nav_items a{
+  text-decoration: none;
+  font-weight: bold;
+}
+
+
+
+
+/* NM_WEATHER 부분  시작*/
+#NM_WEATHER {
+  margin-top: 10px;
+  width: 120px;
+  height: 24px;
+  margin: 8px 0px 0px 4px;
+  background-color: #fff;
+  border: 1px solid #d1d1d1;
+  border-radius: 2px;
+  text-align: center;
+  line-height: 24px;
+  font-size: 14px;
+  color: #333;
+}
+/* NM_WEATHER  부분  끝*/
+
+
+/* ------------------------------------------- */
+/* 네비게이션 바 부분 끝 */
+/* ------------------------------------------- */
+/* ------------------------------------------- */
+/* 헤더 끝 */
+/* ------------------------------------------- */
+
+/* ------------------------------------------- */
+/* container 부분 시작*/
+/* ------------------------------------------- */
+#main_container {
+  display: flex;
+  width: 960px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 900px;
+}
+
+/* left_container 부분 */
+#left_container{
+	flex: 2;
+}
+
+/* ------------------------------------------- */
+/* addiv  부분  시작*/
+/* ------------------------------------------- */
+#left_addiv {
+  position: relative;
+  top: 10px; /* 원하는 위치로 조정 */
+  height:100px;
+}
+/* ------------------------------------------- */
+/* addiv  부분  끝*/
+/* ------------------------------------------- */
+
+/* ------------------------------------------- */
+/* news  부분  시작*/
+/* ------------------------------------------- */
+#news_container {
+  position: relative;
+  top: 10px; /* 원하는 위치로 조정 */
+  height:350px;
+  background-color: red;
+}
+#news_LR{
+	display:flex;
+}
+
+#news_right_LR{
+	height:90%;
+	display:flex;
+}
+
+#first_news{
+	height:100%;
+	width:40%;
+	background-color: gray;
+}
+#first_news_img{
+	width : 100%;
+	height:70%;
+}
+
+#news_title{
+	width : 30%;
+	height:30%;
+}
+
+#news_titles{
+	width:60%;
+}
+
+#news_top{
+	height:10%;
+	background-color: black;
+	display:flex;
+}
+#news_LR{
+	height:90%;
+	background-color: orange;
+}
+#news_left{
+	height:90%;
+	width:20%;
+	background-color: yellow;
+}
+#news_right{
+	height:90%;
+	width:80%;
+	background-color: cyan;
+}
+
+#news_right_Top{
+	height:10%;
+	background-color: black;
+}
+/* ------------------------------------------- */
+/* news  부분  끝*/
+/* ------------------------------------------- */
+
+
+/* ------------------------------------------- */
+/* theme_container  부분  시작*/
+/* ------------------------------------------- */
+#theme_container {
+  position: relative;
+  top: 10px; /* 원하는 위치로 조정 */
+  height:650px;
+  background-color: yellow;
+}
+/* ------------------------------------------- */
+/* theme_container  부분  끝*/
+/* ------------------------------------------- */
+
+
+/* right_container 부분 */
+#right_container{
+	flex: 1;
+}
+
+/* ------------------------------------------- */
+/* login  부분  시작*/
+/* ------------------------------------------- */
+#login {
+  position: relative;
+  top: 10px; /* 원하는 위치로 조정 */
+  height:200px;
+  background-color: orange;
+}
+/* ------------------------------------------- */
+/* login  부분  끝*/
+/* ------------------------------------------- */
+
+/* ------------------------------------------- */
+/* timesquare  부분  시작*/
+/* ------------------------------------------- */
+#timesquare {
+  position: relative;
+  top: 10px; /* 원하는 위치로 조정 */
+  height:50px;
+  background-color: blue;
+}
+/* ------------------------------------------- */
+/* timesquare  부분  끝*/
+/* ------------------------------------------- */
+
+/* ------------------------------------------- */
+/* right_addiv  부분  시작*/
+/* ------------------------------------------- */
+#right_addiv {
+  position: relative;
+  top: 10px; /* 원하는 위치로 조정 */
+  height:200px;
+  background-color: green;
+}
+/* ------------------------------------------- */
+/* right_addiv  부분  끝*/
+/* ------------------------------------------- */
+
+/* ------------------------------------------- */
+/* right_addiv  부분  시작*/
+/* ------------------------------------------- */
+#shop {
+  position: relative;
+  top: 10px; /* 원하는 위치로 조정 */
+  height:700px;
+  background-color: cyan;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.shop_div{
+	border : 1px solid black;
+	border-collapse : collapse;
+  	height: 100%;
+  	width: 100%;
+}
+
+.shopPage{
+	display : flex;
+	height:10%;
+	border-collapse : collapse;
+	border : 1px solid black;
+	margin-top : 12px;
+	justify-content: center;
+    align-items: center;
+}
+
+.shop{
+	margin : 5px;
+}
+/* ------------------------------------------- */
+/* right_addiv  부분  끝*/
+/* ------------------------------------------- */
+
+/* ------------------------------------------- */
+/* container 부분 끝 */
+/* ------------------------------------------- */
+
+
+/* ------------------------------------------- */
+/* footer 부분 시작 */
+/* ------------------------------------------- */
+
+#footer {
+  height: 80px;
+  width: 960px;
+  padding: 20px;
+  margin: 0 auto;
+  color: #fff;
+  text-align: center;
+  background-color: #4a4a4a;
+}
+/* ------------------------------------------- */
+/* footer 부분 시작 */
+/* ------------------------------------------- */
+
+
+
+
+
+
+
+
+
+
+

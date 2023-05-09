@@ -1,6 +1,6 @@
 package com.trickle.os.dao;
 
-import java.util.List;
+import java.util.*;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -8,8 +8,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.trickle.os.util.ItemPaging;
-import com.trickle.os.vo.CommentVo;
-import com.trickle.os.vo.ItemVo;
+import com.trickle.os.vo.*;
 
 @Repository
 public class ItemDao {
