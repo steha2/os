@@ -20,6 +20,7 @@ function openLoginDialog(action){
    "<br><img src='/images/star.png' width='15' height='15'>",
    "<a href='/user/signUpForm?isClose=true' target='_blank'>회원가입</a>");
 
+  console.log($.cookie())
   if ($.cookie("remember") === "true") {
     remember.prop("checked", true);
     nameInput.val($.cookie("name"));
@@ -44,6 +45,10 @@ function openLoginDialog(action){
       const name = nameInput.val();
       const password = pwInput.val();
       if(name.length >= 3 && password.length >=3) {
+        if (remember.is(":checked")) {
+          $.cookie("name", name, { expires: 70 });
+          $.cookie("password", password, { expires: 70 });
+        }
         $.get("/user/auth",{name:name,password:password}).done(resData=>{
           if(resData) {
             alert("로그인 성공");
@@ -55,7 +60,7 @@ function openLoginDialog(action){
           }
         }).fail(()=>console.log("Ajax Error"));
       } else {
-        alert("아이디, 비밀번호 3자 이상 필요");
+        alert("아이디, 비밀번호 3자 이상 입력");
       }
     },
     "닫기": () => (dialog.dialog("close"), dialog.remove())

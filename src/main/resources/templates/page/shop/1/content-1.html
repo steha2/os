@@ -49,13 +49,13 @@
       </td>
       <td>
         <table id="detailTable">
-          <tr><td style="width:80px">상품명 : </td><td><span th:text="${item.name}"></span></td></tr>
-          <tr><td>남은 수량 </td><td><span th:text="${item.numStock}"></span></td></tr>
-          <tr><td>판매 수량 </td><td><span th:text="${item.numSold}"></span></td></tr>
-          <tr><td>가격 : </td><td class="ra"><span th:text="${#numbers.formatInteger(item.price,3,'COMMA')} + ' 원'"></td></tr>
-          <tr><td>할인가 : </td><td class="ra"><span th:text="|-${item.discount}% ${#numbers.formatInteger(item.dcPrice,3,'COMMA')} 원|"></td></tr>
-          <tr><td>결제 금액  : </td><td class="ra"><span id="priceSpan"></td></tr>
-          <tr><td>구매 수량 : </td><td class="ra"><input type="number" min="1" max="99" id="amount" value="1" class="ra" style="width:100px;"></td></tr>
+          <tr><td style="width:80px">상품명</td><td><span th:text="${item.name}"></span></td></tr>
+          <tr><td>남은 수량</td><td><span th:text="${item.numStock}"></span></td></tr>
+          <tr><td>판매 수량</td><td><span th:text="${item.numSold}"></span></td></tr>
+          <tr><td>가격</td><td class="ra"><span th:text="${#numbers.formatInteger(item.price,3,'COMMA')} + ' 원'"></td></tr>
+          <tr><td>할인가</td><td class="ra"><span th:text="|-${item.discount}% ${#numbers.formatInteger(item.dcPrice,3,'COMMA')} 원|"></td></tr>
+          <tr><td>결제 금액</td><td class="ra"><span id="priceSpan"></td></tr>
+          <tr><td>구매 수량</td><td class="ra"><input type="number" min="1" max="99" id="amount" value="1" class="ra" style="width:100px;padding-right:5px"></td></tr>
           <tr>
             <td colspan="2" style="text-align: center;">
               <button id="addCart" class="buyButton"> 장바구니 </button>
@@ -78,8 +78,9 @@
     const root = /*[[${root}]]*/ null;
     const itemDiv = $("#itemDiv");
     const commentsDiv = $("#commentsDiv");
+    let totalPrice, amount;
     let style = JSON.parse(root.style);
-    itemDiv.find("img").attr("src","/resources/images/"+item.imagePath)
+    itemDiv.find("img").attr("src","/resources/images"+item.imagePath)
     for(let i=0; i<30; i++) itemDiv.find("pre").append(JSON.stringify(item,null,2));
     const tabs = $("#tabs");
     if(item.comments) item.comments.forEach(c => {
@@ -87,9 +88,9 @@
     });
     tabs.tabs();
     function calcPrice(){
-      const amount = parseInt($("#amount").val());
-      totalPrice = (amount * item.dcPrice).toLocaleString() + " 원";
-      $("#priceSpan").text(totalPrice);
+      amount = parseInt($("#amount").val());
+      totalPrice = amount * item.dcPrice;
+      $("#priceSpan").text(totalPrice.toLocaleString()+" 원");
     }
     $("#amount").change(calcPrice);
     calcPrice();
@@ -98,6 +99,10 @@
         const cart = {itemId:item.id,rootId:root.id,amount:parseInt($("#amount").val())}
         $.post("/login/addCart",cart).done((resData)=>alert(resData)).fail(()=>console.log("Ajax Fail"));
       });
+    });
+    $("#buyItem").click(()=>{
+      item.amount = amount;
+      pay(item,totalPrice);
     });
   });
 </script>

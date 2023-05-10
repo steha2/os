@@ -1,4 +1,5 @@
 function runPay(orderVo,done){
+  done();return;
   BootPay.request({
       price: orderVo.price, //실제 결제되는 가격
  
@@ -32,28 +33,51 @@ function runPay(orderVo,done){
   }).done(function (data) {
       //결제가 정상적으로 완료되면 수행됩니다
       //비즈니스 로직을 수행하기 전에 결제 유효성 검증을 하시길 추천합니다.
+      orderVo.pg_name = data.pg_name;
       done();
       console.log("결제완료");
       console.log(data);
   });
 }
 
-function createOrderVo(carts, name, orderSeq, totalPrice) {
+function createOrderVo(items, orderSeq, totalPrice) {
   const orderVo = {
                    pg:"nicepay",
                    method:"card",
-                   name:name,
+                   name:sliceText(items[0].name,15) + `[${items.length}] 건`,
                    id:orderSeq,
                    price:totalPrice
                   };
   orderVo.items = [];
-  carts.forEach(cart => {
-    orderVo.items.push({
-                item_name:cart.item.name,
-                qty:cart.amount,
-                unique:cart.item.id,
-                price:cart.item.dcPrice
-              });
+  items.forEach(item => {
+  orderVo.items.push({
+              item_name:item.name,
+              qty:item.amount,
+              unique:"I"+item.id,
+              price:item.dcPrice
+            });
   });
   return orderVo;
+}
+
+function pay(items,totalPrice,done) {
+  if(!Array.isArray(items)) items = [items];
+  if(items.length !== 0 && confirm("결제 하기?")){
+    checkMove(()=>{
+      $.get("/login/getOrderSeq").done((orderSeq)=>{
+          const orderVo = createOrderVo(items,orderSeq,totalPrice);
+          runPay(orderVo,()=>{
+            orderVo.items = JSON.stringify(orderVo.items);
+            $.post("/login/addOrder",orderVo).done(resData=>{
+              console.log(resData);
+              if(resData){
+                alert("결제 완료");
+                if(done) done();
+                location.href = "/login/payComplate";
+              }
+            });
+          });
+        })
+    });
+  }
 }

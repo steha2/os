@@ -2,13 +2,21 @@ package com.trickle.os.controller;
 
 import javax.servlet.http.HttpSession;
 
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.trickle.os.dao.*;
-import com.trickle.os.vo.*;
+import com.trickle.os.dao.CartDao;
+import com.trickle.os.dao.ItemDao;
+import com.trickle.os.dao.MenuDao;
+import com.trickle.os.vo.CartVo;
+import com.trickle.os.vo.OrderVo;
+import com.trickle.os.vo.RootVo;
+import com.trickle.os.vo.UserVo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -58,11 +66,11 @@ public class CartController {
 		return "삭제";
 	}
 	
-	@GetMapping("/login/deleteCarts")
+	@GetMapping("/login/deleteCarts/{rootId}")
 	@ResponseBody
-	public String deleteCarts(HttpSession session) {
+	public String deleteCarts(@PathVariable long rootId, HttpSession session) {
 		UserVo user = (UserVo) session.getAttribute("user");
-		if(user != null) cartDao.deleteCarts(user.getId());
+		if(user != null) cartDao.deleteCarts(rootId, user.getId());
 		return "여러개 삭제";
 	}
 	
@@ -72,5 +80,15 @@ public class CartController {
 		return cartDao.getOrderSeq();
 	}
 	
-	
+	@PostMapping("/login/addOrder")
+	@ResponseBody
+	public Boolean addOrder(OrderVo order, HttpSession session) {
+		UserVo user = (UserVo) session.getAttribute("user");
+		if(user != null) {
+			order.setUserId(user.getId());
+			cartDao.addOrder(order);
+			return true;
+		}
+		return false;
+	}
 }

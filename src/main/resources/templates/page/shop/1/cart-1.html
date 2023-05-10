@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <meta charset="utf-8">
@@ -60,11 +59,11 @@
     let totalPrice = 0;
     items.forEach(item => {
       const cart = carts.find(c=>c.itemId === item.id);
-      cart.item = item;
+      item.amount = cart.amount;
       let imgTd = $("<td>"), nameTd=$("<td>"), amountTd=$("<td>"), priceTd=$("<td>"), deleteTd=$("<td>");
       let $tr = $("<tr>").append(imgTd,nameTd,amountTd,priceTd,deleteTd);
       table.append($tr);
-      imgTd.append(`<img class='item-img' width='50' height='50' src='/resources/images/${item.imagePath}'>`);
+      imgTd.append(`<img class='item-img' width='50' height='50' src='/resources/images${item.imagePath}'>`);
       nameTd.append(sliceText(item.name,30)).css("cursor","pointer").click(()=>openContent(item.id));
       amountTd.append(cart.amount);
       totalPrice += cart.amount * item.dcPrice;
@@ -74,16 +73,8 @@
       }))
     });
     $("#totalPriceSpan").text(totalPrice.toLocaleString());
-    $("#payButton").click(()=>{
-      const c = cart.length;
-      if(c >= 1) {
-        $.get("/login/getOrderSeq").done((orderSeq)=>{
-          const orderVo = createOrderVo(carts,sliceText(cart[0].item.name,15) + `[${c}] 건`,orderSeq,totalPrice);
-          runPay(orderVo,()=>{
-            $.get("/login/addOrder",orderVo).done(()=>$.get("/login/deleteCarts",carts));
-          });
-        })
-      }
+    $("#payButton").click(()=> { 
+      pay(items,totalPrice,()=>{$.get("/login/deleteCarts/"+root.id)}) 
     });
   });
 </script>

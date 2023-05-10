@@ -108,9 +108,11 @@
     } else {
       if(max <= min) {
         if(input === document.getElementById("minPrice")) {
-          $("#maxPrice").val(min + 10000);
+          max = min + 10000;
+          $("#maxPrice").val(max);
         } else {
-          $("#minPrice").val(max >= 10000 ?  max - 10000 : 0);
+          min = max >= 10000 ?  max - 10000 : 0
+          $("#minPrice").val(min);
         }
       }
       pd.addOption("price",BETWEEN,min,max);  

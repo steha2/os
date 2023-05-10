@@ -20,10 +20,6 @@
 <script src="/js/util/login-dialog.js"></script>
 <script src="/js/util/paging.js"></script>
 <style>
-#container {
-  width:1000px;
-  margin:0;
-}
 </style>
 </head>
 <body>
@@ -32,14 +28,10 @@
     <div id="header" th:include="|/page/${root.type}/${root.id}/header-1.html|"></div>
   <div class="content">
     <div id="itemNavi1"></div>
+    <div id="contentDiv"></div>
     <div id="itemNavi2Wrap">
       <div id="itemNavi2"></div>
     </div>
-    <table id="itemDivWrap">
-      <tr><td><div id="itemsDiv"></div></td></tr>
-      <tr><td><div id="paging"></div></td></tr>
-    </table>
-    <div id="contentDiv"></div>
   </div>
 </div>
 </body>
@@ -47,23 +39,18 @@
 <script th:inline="javascript">
   const root = /*[[${root}]]*/ null;
   let style = JSON.parse(root.style);
-  const itemsDiv = $("#itemsDiv");
-  const itemDivWrap = $("#itemDivWrap");
   const contentDiv = $("#contentDiv");
   let pd = new PagingData();
 
   function updateItems() {
-    itemsDiv.empty();
-    itemDivWrap.css("display","block");
-    contentDiv.css("display","none");
+    contentDiv.empty();
     $.get("/getPagingItems",pd.toParam())
     .done((resData=>{
       pd.setPagingData(resData);
       const grid = new ItemGrid(root.id, style);
       grid.addItemCell = addItemCell;
       grid.setItems(pd.data);
-      $("#paging").empty().append(createPaging(pd,updateItems));
-      itemsDiv.append(grid.div);
+      contentDiv.append(grid.div,createPaging(pd,updateItems));
     })).fail(()=>console.log("Ajax Fail"));
   }
 
@@ -113,15 +100,11 @@
   }
 
   function openContent(itemId){
-    itemDivWrap.css("display","none");
     contentDiv.empty().load(`/page/content/${root.id}/${itemId}`);
-    contentDiv.css("display","block");
   }
 
   function openCart(){
     contentDiv.empty().load(`/login/openCart/${root.id}`);
-    contentDiv.css("display","block");
-    itemDivWrap.css("display","none");
   }
 
   $(()=>{

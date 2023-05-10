@@ -7,8 +7,8 @@ body {
 }
 #container {
   width: 1000px;
-  height: 100vh;
-  overflow-y: auto;
+  height: 95vh;
+  /* overflow-y: auto; */
 }
 .ui-menu {
   width: 150px;
@@ -129,10 +129,10 @@ table td, table th {
   overflow: hidden;
   display: grid;
   grid-template-rows: auto 1fr;
-  grid-template-columns: 150px 850px;
+  grid-template-columns: 850px 150px;
   grid-template-areas:
       "navi1 navi1"
-      "navi2 items";
+      "items navi2";
   min-height: auto;
 }
 
@@ -162,10 +162,9 @@ table td, table th {
   background: #959c7c;
 }
 
-#contentDiv, #itemDivWrap {
+#contentDiv {
   grid-area: items;
   float:left;
-  display: none;
 }
 
 #minPrice, #maxPrice {

@@ -1,13 +1,16 @@
 package com.trickle.os.vo;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
 public class OrderVo {
 	private long id, userId, price;
-	private String items, status, pg, requestedAt;
+	private String status="", pg="", pg_name="", requested_at;
+	private String items="";
 }
 
 // [

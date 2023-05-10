@@ -1,6 +1,8 @@
 package com.trickle.os.dao;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.trickle.os.vo.CartVo;
 import com.trickle.os.vo.ItemVo;
+import com.trickle.os.vo.OrderVo;
 
 @Repository
 public class CartDao {
@@ -48,11 +51,15 @@ public class CartDao {
 		sqlSession.delete("CartMapper.deleteCart",map);
 	}
 	
-	public void deleteCarts(long userId) {
-		sqlSession.delete("CartMapper.deleteCarts");
+	public void deleteCarts(long rootId, long userId) {
+		sqlSession.delete("CartMapper.deleteCarts",cartMapper(rootId, userId));
 	}
 
 	public Integer getOrderSeq() {
 		return sqlSession.selectOne("CartMapper.getOrderSeq");
+	}
+
+	public void addOrder(OrderVo order) {
+		sqlSession.insert("CartMapper.addOrder",order);
 	}
 }
