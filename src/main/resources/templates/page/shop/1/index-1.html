@@ -7,22 +7,29 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
 <link rel="stylesheet" type="text/css" href="/css/page.css">
+<script src="https://cdn.bootpay.co.kr/js/bootpay-3.3.1.min.js" type="application/javascript"></script>
 
+<script src="/js/util/bootpay.js"></script>
 <script src="/js/menu.js"></script>
 <script src="/js/item.js"></script>
 <script src="/js/util/utils.js"></script>
+<script src="/js/util/login-dialog.js"></script>
 <script src="/js/util/paging.js"></script>
 <style>
-
+#container {
+  width:1000px;
+  margin:0;
+}
 </style>
 </head>
 <body>
-  <div class="container">
-  <div id="topDiv" th:include="/page/topDiv.html"></div>
-  <div id="header" th:include="|/page/${root.type}/${root.id}/header-1.html|"></div>
+  <div id="container">
+    <div id="topDiv" th:include="|/page/${root.type}/${root.id}/top-1.html|"></div>
+    <div id="header" th:include="|/page/${root.type}/${root.id}/header-1.html|"></div>
   <div class="content">
     <div id="itemNavi1"></div>
     <div id="itemNavi2Wrap">
@@ -39,7 +46,6 @@
 
 <script th:inline="javascript">
   const root = /*[[${root}]]*/ null;
-  
   let style = JSON.parse(root.style);
   const itemsDiv = $("#itemsDiv");
   const itemDivWrap = $("#itemDivWrap");
@@ -66,7 +72,6 @@
     changeFilter(true);
   }
 
-
   function movePath(path, pathName) {
     if(!path) {
       path = root.path;
@@ -90,11 +95,7 @@
     this.items.push(item);
     const cell = {};
     cell.div = $("<div class='itemCell'></div>");
-    cell.div.click(()=>{
-      itemDivWrap.css("display","none");
-      contentDiv.empty().load(`/page/content/${root.id}/${item.id}`);
-      contentDiv.css("display","block");
-    });
+    cell.div.click(()=>openContent(item.id));
     cell.div.css({width:this.cw, height:this.ch});
     cell.item = item;
     cell.image = $(`<img class='itemImg' src='/resources/images/${item.imagePath}'/>`);
@@ -111,8 +112,14 @@
     this.div.append(cell.div);
   }
 
+  function openContent(itemId){
+    itemDivWrap.css("display","none");
+    contentDiv.empty().load(`/page/content/${root.id}/${itemId}`);
+    contentDiv.css("display","block");
+  }
+
   function openCart(){
-    contentDiv.empty().load(`/page/cart/${root.id}`);
+    contentDiv.empty().load(`/login/openCart/${root.id}`);
     contentDiv.css("display","block");
     itemDivWrap.css("display","none");
   }
@@ -130,7 +137,6 @@
     link.click(()=>movePath(path,pathName));
     return link;
   }
-
 </script>
 
 </html>

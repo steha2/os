@@ -93,13 +93,13 @@
         <label> <input type="checkbox" name="remember" id="remember" /> 아이디 저장 </label>
       
       <p><img src="/images/star.png" width="15" height="15" />
-        <a href="/user/sign-up-form.html" id="sign-up">회원가입</a></p>
+        <a href="/user/signUpForm" id="sign-up">회원가입</a></p>
     </div>
   </body>
   
   <script th:inline="javascript">
     const remember = $("#remember");
-    const returnUrl = /*[[${returnUrl}]]*/ null
+    const params = new URLSearchParams(window.location.search);
 
     $(() => {
       if ($.cookie("remember") === "true") {
@@ -115,7 +115,6 @@
           $.removeCookie("remember", { path: "/" });
         }
       });
-      console.log(returnUrl);
     });
 
     function login() {
@@ -131,11 +130,7 @@
         alert("아이디와 비밀번호는 3자 이상 입력");
       } else {
     	$.get("/user/auth",loginForm.serializeArray()).done((resData)=>{
-    	    if(resData){
-              location.href = returnUrl || "/home";
-          } else {
-    	    	alert("인증 실패");
-    	    }
+        window.top.location.href = '/home';
     	}).fail(()=>console.log("Ajax Error"));      
       }
     }

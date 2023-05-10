@@ -4,15 +4,37 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="CartMapper">
 <select id="getCartItems" resultType="ItemVo">
-SELECT 
+SELECT I.*
+FROM CARTS C
+JOIN ITEMS I ON C.ITEM_ID = I.ID
+WHERE C.USER_ID = #{userId} AND C.ROOT_ID = #{rootId}
 </select>
 
-<insert id="addCartItem">
-<selectKey keyProperty="id" resultType="int" order="BEFORE">
-	SELECT ITEM_SEQ.NEXTVAL FROM DUAL
+<insert id="addCart">
+<selectKey keyProperty="cartId" resultType="int" order="BEFORE">
+	SELECT CART_SEQ.NEXTVAL FROM DUAL
  </selectKey>
-	INSERT INTO ITEMS(ID, NAME, CONTENT, PATH, IMAGE_PATH, NUM_STOCK, PRICE, DISCOUNT, USER_ID, REG_DATE, SCORE)
-	VALUES(#{id}, #{name}, #{content}, #{path}, '${path}/${id}${imagePath}', #{numStock}, #{price}, #{discount}, #{userId}, SYSDATE, #{score} ) 
+	INSERT INTO CARTS(CART_ID, ITEM_ID, ROOT_ID, USER_ID, AMOUNT, REG_DATE)
+	VALUES(#{cartId}, #{itemId}, #{rootId}, #{userId}, #{amount}, SYSDATE) 
 </insert>
 
+<select id="getCartItem" resultType="CartVo">
+SELECT * FROM CARTS WHERE ROOT_ID = #{rootId} AND USER_ID = #{userId} AND ITEM_ID = #{itemId}
+</select>
+
+<select id="getCarts" resultType="CartVo">
+SELECT * FROM CARTS WHERE ROOT_ID = #{rootId} AND USER_ID = #{userId}
+</select>
+
+<select id="getOrderSeq" resultType="int">
+SELECT ORDER_SEQ.NEXTVAL FROM FROM DUAL
+</select>
+
+<select id="deleteCart">
+DELETE FROM CARTS WHERE USER_ID = #{userId} AND CART_ID = #{cartId}
+</select>
+
+<select id="deleteCarts">
+DELETE FROM CARTS WHERE USER_ID = #{userId}
+</select>
 </mapper>

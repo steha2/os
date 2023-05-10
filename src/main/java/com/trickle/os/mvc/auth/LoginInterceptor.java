@@ -15,10 +15,10 @@ public class LoginInterceptor implements HandlerInterceptor {
         Debug.log("reUri:" + reUri);
         if(reUri.startsWith("/login")) {
         	session.setAttribute("returnUrl",reUri);
-        	 if (session == null || session.getAttribute("user") == null) { // 로그인 정보가 없는 경우
-             	response.sendRedirect("/user/loginForm");
-                return false;
-             }
+        	if (session == null || session.getAttribute("user") == null) { // 로그인 정보가 없는 경우
+            	response.sendRedirect("/user/loginForm");
+        		return false;
+            }
         }
         return true;
     }

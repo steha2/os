@@ -1,7 +1,5 @@
 package com.trickle.os.dao;
 
-import java.util.Optional;
-
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -22,11 +20,11 @@ public class UserDao {
 		return sqlSession.insert("UserMapper.addUser",user);
 	}
 	
-	public UserVo findByIdx(long idx) {
-		return sqlSession.selectOne("UserMapper.findByIdx",idx);
+	public UserVo findById(long idx) {
+		return sqlSession.selectOne("UserMapper.findById",idx);
 	}
 
-	public UserVo findByIdPw(UserVo user) {
+	public UserVo findByNamePw(UserVo user) {
 		return sqlSession.selectOne("UserMapper.findByNamePw",user);
 	}
 

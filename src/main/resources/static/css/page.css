@@ -5,16 +5,22 @@ body {
   display: flex;
   background-color: #ebe2e6;
 }
-.container {
+#container {
   width: 1000px;
+  height: 100vh;
+  overflow-y: auto;
 }
 .ui-menu {
   width: 150px;
 }
 
 #header, .content {
-  outline: 1px solid rgb(85, 85, 158);
+  border: 1px solid rgb(85, 85, 158);
+  box-sizing: border-box;
 }
+
+.la{text-align: right;}
+.ra{text-align: right;}
 
 #category {
   height: 35px;

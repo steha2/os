@@ -7,10 +7,8 @@
 </style>
 
 <div id="topDiv">
-  <a th:if="${session.user == null}" th:href="@{/user/loginForm}">로그인</a>
-  <a th:if="${session.user != null}" th:href="@{/user/logout}">로그아웃</a> |
   <a th:href="@{/user/signUpForm}">회원가입</a> |
-  <a th:href="@{/login/openCart}">장바구니</a> |
+  <a onclick=checkMove(openCart)>장바구니</a> |
   <a th:href="@{/login/myPage}">마이페이지</a> |
   <a th:href="@{/login/csCenter}">고객센터</a>
 </div>

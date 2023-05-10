@@ -6,7 +6,7 @@ import lombok.*;
 @Setter
 @ToString
 public class UserVo {
-	private long idx;
+	private long id;
 	private String name;
 	private String password;
 	private String phone;
@@ -21,6 +21,6 @@ public class UserVo {
 		if (getClass() != object.getClass())
 			return false;
 		UserVo otherUser = (UserVo) object;
-		return idx == otherUser.idx;
+		return id == otherUser.id;
 	}
 }

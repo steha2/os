@@ -13,41 +13,77 @@
   border-collapse: collapse;
   border:1px solid;
   padding: 5px;
+  text-align: center;
 }
-.ra{
-  text-align: right;
+
+#itemTable th{
+  border-collapse: collapse;
+  border:1px solid;
+  padding: 5px;
 }
-.buyButton {
+
+#itemTable {
+  width: 95%;
+  height: 500px;
+  margin:20px;
+}
+
+#payButton {
   background: #ffffff;
   color:rgb(37, 37, 37);
   font-size: 25px;
   font-weight: bold;
-  padding: 10px;
+  padding: 5px 10px;
   /* border-radius: 10px; */
   cursor: pointer;
 }
+
 </style>
 </head> 
 <body>
+<div style="overflow-y: auto;">
 <table id="itemTable">
-
 </table>
+<div style="text-align: center; margin-bottom: 30px;"><h3>총 결제 금액:
+  <span id="totalPriceSpan"></span>원 <button id="payButton">결제하기</button></h3></div>
+</div>
 </body>
 <script th:inline="javascript">
   $(()=>{
+    const carts = /*[[${carts}]]*/ null;
     const items = /*[[${items}]]*/ null;
     const root = /*[[${root}]]*/ null;
     let style = JSON.parse(root.style);
-    items.forEach(i => {
-      const table = $("#itemTable");
-      let header = $("<tr>").append("<th>이미지</th><th>상품명</th><th>수량</th><th>결재 금액</th><th>삭제</th>");
+    const table = $("#itemTable");
+    let header = $("<tr>").append("<th>이미지</th><th>상품명</th><th>수량</th><th>결재 금액</th><th>삭제</th>");
+    table.append(header);
+    let totalPrice = 0;
+    items.forEach(item => {
+      const cart = carts.find(c=>c.itemId === item.id);
+      cart.item = item;
       let imgTd = $("<td>"), nameTd=$("<td>"), amountTd=$("<td>"), priceTd=$("<td>"), deleteTd=$("<td>");
-      let $tr = ("<tr>").append(imgTd,nameTd,amountTd,priceTd,delteTd);
-      table.append(header,$tr);
-      imgTd.append(`<img class=item-img src='/resources/images/${i.imagePath}'>`);
-      nameTd.append(i.name);
-      amountTd.append(`<input type='num' min='1' id='amount' value=${i.amount}>`);
-      priceTd.append(`<span id='totalPrice'>${i.amount * i.dcPrice} 원</span>`);
+      let $tr = $("<tr>").append(imgTd,nameTd,amountTd,priceTd,deleteTd);
+      table.append($tr);
+      imgTd.append(`<img class='item-img' width='50' height='50' src='/resources/images/${item.imagePath}'>`);
+      nameTd.append(sliceText(item.name,30)).css("cursor","pointer").click(()=>openContent(item.id));
+      amountTd.append(cart.amount);
+      totalPrice += cart.amount * item.dcPrice;
+      priceTd.append(`<span id='totalPrice'>${(cart.amount * item.dcPrice).toLocaleString()} 원</span>`);
+      deleteTd.append($(`<button>X</button>`).click(()=>{
+        $.get("/login/deleteCart/"+cart.cartId).done(openCart);
+      }))
+    });
+    $("#totalPriceSpan").text(totalPrice.toLocaleString());
+    $("#payButton").click(()=>{
+      const c = cart.length;
+      if(c >= 1) {
+        $.get("/login/getOrderSeq").done((orderSeq)=>{
+          const orderVo = createOrderVo(carts,sliceText(cart[0].item.name,15) + `[${c}] 건`,orderSeq,totalPrice);
+          runPay(orderVo,()=>{
+            $.get("/login/addOrder",orderVo).done(()=>$.get("/login/deleteCarts",carts));
+          });
+        })
+      }
     });
   });
 </script>

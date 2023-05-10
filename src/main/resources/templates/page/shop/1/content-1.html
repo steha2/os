@@ -7,6 +7,9 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<script src="/js/util/login-dialog.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
 <style>
 #itemTable{
@@ -21,9 +24,6 @@
   border-collapse: collapse;
   border:1px solid;
   padding: 5px;
-}
-.ra{
-  text-align: right;
 }
 .buyButton{
   background: #ffffff;
@@ -55,11 +55,11 @@
           <tr><td>가격 : </td><td class="ra"><span th:text="${#numbers.formatInteger(item.price,3,'COMMA')} + ' 원'"></td></tr>
           <tr><td>할인가 : </td><td class="ra"><span th:text="|-${item.discount}% ${#numbers.formatInteger(item.dcPrice,3,'COMMA')} 원|"></td></tr>
           <tr><td>결제 금액  : </td><td class="ra"><span id="priceSpan"></td></tr>
-          <tr><td>구매 수량 : </td><td class="ra"><input type="number" min="1"  id="amount" value="1" style="width:30px"></td></tr>
+          <tr><td>구매 수량 : </td><td class="ra"><input type="number" min="1" max="99" id="amount" value="1" class="ra" style="width:100px;"></td></tr>
           <tr>
             <td colspan="2" style="text-align: center;">
-              <button onclick=addCart() class="buyButton"> 장바구니 </button>
-              <button onclick=buyItem() class="buyButton"> 구매하기 </button>
+              <button id="addCart" class="buyButton"> 장바구니 </button>
+              <button id="buyItem" class="buyButton"> 구매하기 </button>
             </td>
           </tr>
           </table>
@@ -93,6 +93,12 @@
     }
     $("#amount").change(calcPrice);
     calcPrice();
+    $("#addCart").click(()=>{ 
+      checkMove(()=>{
+        const cart = {itemId:item.id,rootId:root.id,amount:parseInt($("#amount").val())}
+        $.post("/login/addCart",cart).done((resData)=>alert(resData)).fail(()=>console.log("Ajax Fail"));
+      });
+    });
   });
 </script>
 

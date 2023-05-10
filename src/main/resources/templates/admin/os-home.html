@@ -11,7 +11,7 @@
       <div id="navi">
       </div>
       <div class="content-frame-div">
-        <iframe id="content-frame" src="/admin/admin-index" scrolling="no"></iframe>
+        <iframe id="content-frame" src="/home" scrolling="no"></iframe>
       </div>
     </div>
   </body>
@@ -30,6 +30,7 @@
 
     $(() => {
       const optionDefault = "-----------";
+      createNavLink("home", "/home");
       createNavLink("admin", "/admin/admin-index");
       createNavLink("process", "/process/index");
       const adminSelect = $("<select>");

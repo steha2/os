@@ -22,7 +22,6 @@ public class PageController {
 
 	private final MenuDao menuDao;
 	private final ItemDao itemDao;
-	private final CartDao cartDao;
 	
 	//id : Item Id
 	@GetMapping("/page/content/{rootId}/{id}") 
@@ -32,16 +31,6 @@ public class PageController {
 		RootVo root = menuDao.getRootById(rootId);
 		model.addAttribute("root", root);
 		return "/page/"+root.getType()+"/"+root.getId()+"/content-"+rootId;
-	}
-	
-	@GetMapping("/page/cart/{rootId}}")
-	public String openCart(@PathVariable long rootId, HttpSession session, Model model) {
-		UserVo user = (UserVo) session.getAttribute("user");
-		RootVo root = menuDao.getRootById(rootId);
-		CartVo cart = cartDao.getCart(rootId, user.getIdx());
-		model.addAttribute("root", root);
-		model.addAttribute("cart", cart);
-		return "/page/"+root.getType()+"/"+root.getId()+"/cart-"+rootId;
 	}
 	
 	@GetMapping("/page/{rootId}")
