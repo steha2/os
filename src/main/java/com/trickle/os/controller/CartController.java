@@ -4,11 +4,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.trickle.os.dao.CartDao;
 import com.trickle.os.dao.ItemDao;
@@ -25,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 public class CartController {
 
 	private final MenuDao menuDao;
-	private final ItemDao itemDao;
 	private final CartDao cartDao;
 	
 	//id : Item Id
@@ -90,5 +85,20 @@ public class CartController {
 			return true;
 		}
 		return false;
+	}
+	
+	@GetMapping("/login/payComplate/{orderId}")
+	public String payComplate(@PathVariable long orderId, HttpSession session, Model model) {
+		UserVo user = (UserVo) session.getAttribute("user");
+		user.setRefId(orderId);
+		model.addAttribute("order", cartDao.getOrder(user));
+		return "/login/pay-complate";
+	}
+	
+	@GetMapping("/login/myPage")
+	public String myPage(HttpSession session, Model model) {
+		UserVo user = (UserVo) session.getAttribute("user");
+		model.addAttribute("orderList", cartDao.getOrders(user));
+		return "/login/my-page";
 	}
 }

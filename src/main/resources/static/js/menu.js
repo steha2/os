@@ -1,9 +1,9 @@
-function createMenu(menuClick){
-  $.getJSON("/getRootMenu",{type:"shop"}).done((root) => {
+function createMenu(menuClick, rootId){
+  $.getJSON("/getRootMenu/"+rootId).done((root) => {
     const menuUl = $("<ul>");
     $("#menudiv").empty().append(menuUl);
     console.log(root);
-    root.childs.forEach(d1 => {
+    if(root.childs) root.childs.forEach(d1 => {
       const li1 = $("<li>");
       li1.attr("path",d1.path); 
       li1.attr("pathName",d1.pathName); 

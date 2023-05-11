@@ -13,9 +13,9 @@ import com.trickle.os.vo.ItemVo;
 
 public class T {
 	private static SqlSessionFactory factory = new MyBatisConn().sqlSessionFactory();
-	public static MenuDao MD = new MenuDao(factory);
-	public static MenuController MC = new MenuController(MD);
 	public static ItemDao ID = new ItemDao(factory);
+	public static MenuDao MD = new MenuDao(factory, ID);
+	public static MenuController MC = new MenuController(MD);
 	public static PagingDao PD = new PagingDao(factory);
 	public static ItemController IC = new ItemController(ID, PD);
 	public static ProcessController PC = new ProcessController();

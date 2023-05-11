@@ -23,6 +23,14 @@ WHERE C.USER_ID = #{userId} AND C.ROOT_ID = #{rootId}
 	VALUES(#{id}, #{userId}, #{items}, '결제완료', #{price}, SYSDATE, #{pg}, #{pg_name}) 
 </insert>
 
+<select id="getOrder" resultType="OrderVo">
+SELECT * FROM ORDERS WHERE ID = #{refId} AND USER_ID = #{id}
+</select>
+
+<select id="getOrders" resultType="OrderVo">
+SELECT * FROM ORDERS WHERE USER_ID = #{id} ORDER BY REQUESTED_AT DESC
+</select>
+
 <select id="getCartItem" resultType="CartVo">
 SELECT * FROM CARTS WHERE ROOT_ID = #{rootId} AND USER_ID = #{userId} AND ITEM_ID = #{itemId}
 </select>
@@ -42,4 +50,6 @@ DELETE FROM CARTS WHERE USER_ID = #{userId} AND CART_ID = #{cartId}
 <select id="deleteCarts">
 DELETE FROM CARTS WHERE USER_ID = #{userId} AND ROOT_ID = #{rootId}
 </select>
+
+
 </mapper>

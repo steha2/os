@@ -1,12 +1,13 @@
 package com.trickle.os.controller.rest;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.trickle.os.dao.MenuDao;
@@ -60,19 +61,23 @@ public class MenuController {
 		File rootIdDir = new File(typeDir, String.valueOf(root.getId()));
 		if(!rootIdDir.exists()) rootIdDir.mkdir();
 		
-		File indexFile = new File(rootIdDir,"index-"+root.getId()+".html");
-		File indexTemplate = new File(pageDir, "index-template.html");
-		try (BufferedReader reader = new BufferedReader(new FileReader(indexTemplate));
-		    BufferedWriter writer = new BufferedWriter(new FileWriter(indexFile))) {
-			
-		    String line;
-		    while ((line = reader.readLine()) != null) {
-		        String modifiedLine = line.replace("#pageName", root.getName());
-		        writer.write(modifiedLine);
-		        writer.newLine();
-		    }
-		} catch (IOException e) {
-		    e.printStackTrace();
+		File typeTemplateDir = new File(pageDir, root.getType()+"-template");
+		if(typeTemplateDir.exists()) {
+			File[] templateFiles = typeTemplateDir.listFiles();
+			if (templateFiles != null) {
+			    for (File templateFile : templateFiles) {
+			        String newFileName = templateFile.getName().replace(".html", "-" + root.getId() + ".html");
+			        File newFile = new File(rootIdDir, newFileName);
+			        
+			        try {
+			            Files.copy(templateFile.toPath(), newFile.toPath());
+			            System.out.println("File copied: " + templateFile.getName() + " -> " + newFileName);
+			        } catch (IOException e) {
+			            System.out.println("Failed to copy file: " + templateFile.getName());
+			            e.printStackTrace();
+			        }
+			    }
+			}
 		}
 	}
 	
@@ -100,9 +105,9 @@ public class MenuController {
 		return roots;
 	}
 	
-	@GetMapping("/getRootMenu")
-	public RootVo getRootMenu(String type){
-		return menuDao.addChilds(menuDao.getRootByType(type));
+	@GetMapping("/getRootMenu/{rootId}")
+	public RootVo getRootMenu(@PathVariable long rootId){
+		return menuDao.addChilds(menuDao.getRootById(rootId));
 	}
 	
 	@GetMapping("/getPathName")

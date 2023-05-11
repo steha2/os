@@ -12,8 +12,8 @@ class CR2 {
 
 	//이미지를 검색해서 DB에 넣는다.
 	public static void main(String[] args) {
-		MenuDao md = new MenuDao (new MyBatisConn().sqlSessionFactory());
 		ItemDao id = new ItemDao (new MyBatisConn().sqlSessionFactory());
+		MenuDao md = new MenuDao (new MyBatisConn().sqlSessionFactory(),id);
 		
 		int count = 5;
 		MenuVo d2 = md.getDepth2(    46   ); //검색어 

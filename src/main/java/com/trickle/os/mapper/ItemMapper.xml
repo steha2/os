@@ -53,9 +53,24 @@ DELETE FROM ITEMS WHERE ID = #{id}
     SELECT * FROM ITEMS_AVG_SCORE WHERE ID = #{id}
 </select>
 
+<insert id="addComment">
+ <selectKey keyProperty="id" resultType="int" order="BEFORE">
+	SELECT COMMENT_SEQ.NEXTVAL FROM DUAL
+ </selectKey>
+	INSERT INTO ITEMS(ID, USER_ID, PATH, CONTENT, REG_DATE, SCORE)
+	VALUES(#{id}, #{userId}, #{path}, #{content}, SYSDATE, #{score} )
+</insert>
 
 <select id="getComments" resultType="ItemVo">
     SELECT * FROM COMMENTS WHERE ID = #{id}
 </select>
+
+ <select id="getRecentItems" parameterType="java.util.List" resultType="ItemVo">
+   SELECT * FROM items
+   WHERE id IN
+   <foreach collection="list" item="itemId" open="(" close=")" separator=",">
+     #{itemId}
+   </foreach>
+ </select>
 
 </mapper>

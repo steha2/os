@@ -11,6 +11,7 @@ public class UserVo {
 	private String password;
 	private String phone;
 	private String email;
+	private long refId;
 	
 	@Override
 	public boolean equals(Object object) {

@@ -23,7 +23,7 @@ class MenuDaoTest {
 	@Test
 	void test() {
 //		md.getMenus().forEach(System.out::println);
-		System.out.println(md.getRootByType("shop"));
+//		System.out.println(md.getRootByType("shop"));
 		System.out.println(md.getPathName("/1/1/2"));
 //		System.out.println(id.getTotalRows(null))
 		ItemPaging itemPaging = new ItemPaging("/1/1/2", "");

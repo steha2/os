@@ -26,16 +26,15 @@
   <div id="container">
     <div id="topDiv" th:include="|/page/${root.type}/${root.id}/top-${root.id}.html|"></div>
     <div id="header" th:include="|/page/${root.type}/${root.id}/header-${root.id}.html|"></div>
-    <div class="content">
-      <div id="itemNavi1"></div>
-      <div id="contentDiv"></div>
-      <div id="itemNavi2Wrap">
-        <div id="recentItems"></div>
-        <div id="itemNavi2"></div>
-      </div>
+  <div class="content">
+    <div id="itemNavi1"></div>
+    <div id="contentDiv"></div>
+    <div id="itemNavi2Wrap">
+      <div id="recentItems"></div>
+      <div id="itemNavi2"></div>
     </div>
-    <div id="footer" th:include="|/page/${root.type}/${root.id}/footer-${root.id}.html|"></div>
   </div>
+</div>
 </body>
 
 <script th:inline="javascript">
@@ -49,7 +48,8 @@
     $.get("/getPagingItems",pd.toParam())
     .done((resData=>{
       pd.setPagingData(resData);
-      const grid = new ItemGrid(style,openContent);
+      const grid = new ItemGrid(root.id, style);
+      grid.addItemCell = addItemCell;
       grid.setItems(pd.data);
       contentDiv.append(grid.div,createPaging(pd,updateItems));
     })).fail(()=>console.log("Ajax Fail"));
@@ -78,6 +78,27 @@
     }
     updateItems();
   }
+  
+  function addItemCell(item) {
+    this.items.push(item);
+    const cell = {};
+    cell.div = $("<div class='itemCell'></div>");
+    cell.div.click(()=>openContent(item.id));
+    cell.div.css({width:this.cw, height:this.ch});
+    cell.item = item;
+    cell.image = $(`<img class='itemImg' src='/resources/images/${item.imagePath}'/>`);
+    cell.image.css({width:this.iw, height:this.ih});
+    
+    const oriPrice = $("<span>");
+    cell.div.append(cell.image,`<br>${sliceText(item.name,this.style.sliceText)}<br>`,oriPrice);
+    oriPrice.text("￦ "+item.price.toLocaleString());
+    if(item.discount > 0) {
+      oriPrice.addClass("cancel");
+      const dcPrice = "￦ "+ (item.dcPrice).toLocaleString();
+      cell.div.append(`<br>-${item.discount}% ${dcPrice}`);
+    }
+    this.div.append(cell.div);
+  }
 
   function openContent(itemId){
     contentDiv.empty().load(`/page/content/${itemId}`);
@@ -86,12 +107,11 @@
 
   function updateRecentItems(){
     $.get("/getRecentItems").done((resData)=>{
-      if(resData) {
-        const grid = new ItemGrid({fontSize:10, padding:"10px 5px 0px 5px", margin:"5px 5px 0px 5px"},openContent);
-        grid.setItems(resData);
-        console.log(resData);
-        $("#recentItems").empty().append("<h5 style='padding:5px 0px 0px 5px; margin:0px;'>최근 본 상품</h5>",grid.div);
-      }
+      $("#recentItems").empty()
+
+      if(resData) resData.forEach(item => {
+        
+      });
     })
   }
 
@@ -105,9 +125,6 @@
     createMenu((path, pathName)=>movePath(path, pathName),root.id);
     movePath();
     changeFilter();
-    updateRecentItems();
-    const reqItemId = /*[[${reqItemId}]]*/ null;
-    if(reqItemId) openContent(reqItemId);
   });
 
   function createALink(path, pathName, spn){

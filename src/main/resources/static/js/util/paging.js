@@ -36,7 +36,7 @@ function createPaging(pd, updateFunc) {
   function createLink (page, text) {
     let linkButton = $("<a class='pagingLink'>" + (text ? text : page) + "</a>");
     linkButton.css({"margin":"3px 4px 3px 4px","border-radius": "8px", "font-weight":"bold"
-     ,background:"rgba(110,123,232,0.3)",padding:"4px 4px 5px 4px",fontSize:18,cursor:"pointer"});
+     ,background:"rgba(110,123,232,0.3)",padding:"4px 4px 5px 4px",fontSize:15,cursor:"pointer"});
     if(typeof updateFunc === 'function') {
       linkButton.click(()=>{
         pd.nowPage = page;

@@ -6,8 +6,8 @@ import lombok.*;
 @Setter
 @ToString
 public class CommentVo {
-	private long id, parentId;
+	private long id;
 	private String userId;
-	private String content;
+	private String content, path, regDate;
 	private double score;
 }

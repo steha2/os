@@ -7,7 +7,7 @@
 SELECT * FROM MENU_ROOT ORDER BY ID ASC
 </select>
 
-<select id="getRootByType" resultType="RootVo">
+<select id="getRootsByType" resultType="RootVo">
 SELECT * FROM MENU_ROOT WHERE TYPE = #{type} ORDER BY TYPE, ID 
 </select>
 

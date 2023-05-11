@@ -15,7 +15,7 @@ class MenuDaoTest3 {
 //	@Autowired
 //	MenuController mc;
 	public static void main(String[] args) {
-		MenuDao md = new MenuDao(new MyBatisConn().sqlSessionFactory());
+//		MenuDao md = new MenuDao(new MyBatisConn().sqlSessionFactory());
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 //		ItemController ic = new ItemController(new ItemDao(new MyBatisConn().sqlSessionFactory()));
 		

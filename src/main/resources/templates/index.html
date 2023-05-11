@@ -6,19 +6,26 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <title>홈</title>
   </head>
+  <style>
+    h4 { margin:0px; padding:0px }
+  </style>
   <body>
      <h1>Home</h1>
+
+  <h4>Site Map</h4>   
 	<ul>
 	  <li th:each="root : ${roots}">
 	    <a th:href="|/page/${root.id}|" th:text="${root.name}"></a>
 	  </li>
 	</ul>
-	<ul>
-    <span th:text="|User : ${session.user}|"></span>
+
+  <h4 th:if="${session.user != null}" th:text="|User Name : ${session.user.name}|"></h4>
+  <ul>
     <li>
     <a th:if="${session.user == null}" th:href="@{/user/loginForm}">로그인</a>
     <a th:if="${session.user != null}" th:href="@{/user/logout}">로그아웃</a></li>
-    <li><a href="/user/signUpForm">회원가입</a></li>
+    <li th:if="${session.user == null}"><a href="/user/signUpForm">회원가입</a></li>
+    <li><a href="/login/myPage">주문내역</a></li>
   </ul> 
   </body>
   

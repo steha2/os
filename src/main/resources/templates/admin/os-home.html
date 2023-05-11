@@ -36,7 +36,7 @@
       const adminSelect = $("<select>");
       const pageSelect = $("<select>");
       const adminLabel = $("<label>").text(" Admin : ").click(()=>selectChange("/admin/page/",adminSelect.val())).css("cursor","pointer");
-      const pageLabel = $("<label>").text(" Page : ").click(()=>selectChange("/page/",pageSelect.val())).css("cursor","pointer");
+      const pageLabel = $("<label>").text(" Page : ").click(()=>selectChange2("/page/",pageSelect.val())).css("cursor","pointer");
       $("#navi").append(adminLabel,adminSelect,pageLabel,pageSelect);
       roots.forEach(root => {
     	  const option = $("<option>");
@@ -47,9 +47,12 @@
       });
       
       adminSelect.change(()=>selectChange("/admin/page/",adminSelect.val()))
-      pageSelect.change(()=>selectChange("/page/",pageSelect.val()))
+      pageSelect.change(()=>selectChange2("/page/",pageSelect.val()))
       function selectChange(src1,src2){
         if(src2 !== optionDefault) $("#content-frame").prop("src",src1+src2);
+      }
+      function selectChange2(src1,src2){
+        window.open(src1+src2);
       }
 	  });
   </script>

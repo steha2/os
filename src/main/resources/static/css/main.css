@@ -287,9 +287,9 @@ body {
   top: 10px; /* 원하는 위치로 조정 */
   height:700px;
   background-color: cyan;
-  display: grid;
+  /* display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr); */
 }
 
 .shop_div{

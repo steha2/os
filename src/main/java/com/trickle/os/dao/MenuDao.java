@@ -13,13 +13,19 @@ import com.trickle.os.vo.RootVo;
 @Repository
 public class MenuDao {
 private final SqlSession sqlSession;
-	
-	public MenuDao(SqlSessionFactory sqlSessionFactory) {
+	private final ItemDao itemDao;
+
+	public MenuDao(SqlSessionFactory sqlSessionFactory, ItemDao itemDao) {
 		this.sqlSession = new SqlSessionTemplate(sqlSessionFactory);
+		this.itemDao = itemDao;
 	}
 	
-	public RootVo getRootByType(String type) {
-		return sqlSession.selectOne("MenuMapper.getRootByType", type);
+	public RootVo getRootByItemId(long itemId) {
+		return getRootById(Long.parseLong(itemDao.getItemById(itemId).getPath().split("/")[1]));
+	}
+	
+	public List<RootVo> getRootsByType(String type) {
+		return sqlSession.selectList("MenuMapper.getRootsByType", type);
 	}
 	
 	public List<RootVo> getRoots(){

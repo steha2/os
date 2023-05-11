@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<header>
+  <meta charset="utf-8">
+</header>
+<body>
+<style>
+  
+#filterTable {
+  position: absolute;
+  width:230px;
+  border: 1px solid;
+  right:0;
+  top:37px;
+  background: #fff;
+  visibility: hidden;
+}
+#filterTable td{
+  padding:2px;
+}
+
+</style>
+<div id="title"></div>
+<table>
+  <tr>
+    <td style="width:200px; position: relative; cursor:pointer">
+      <div id="category"><i id="search-icon" class='fas fa-list-ul'></i> 전체 카테고리</div><div id="menuDiv"></div>
+    </td>
+    <td style="width:500px;">
+      <div id="navi"></div>
+    </td>
+    <td style="width:300px; text-align: right; padding:2px 3px 0px 0px;">
+      <div class="search-box">
+        <table id="filterTable">
+          <tr>
+            <td>정렬</td>
+            <td>
+              <select id="orderBy" onchange=changeFilter(this)>
+                <option>----------</option>
+                <option value = "NUM_SOLD DESC">판매인기순</option>
+                <option value = "PRICE ASC">낮은가격순</option>
+                <option value = "PRICE DESC">높은가격순</option>
+                <option value = "SCORE DESC">평점높은순</option>
+                <option value = "REG_DATE DESC">신규등록순</option>
+              </select>
+            </td>
+          </tr>
+            <tr>
+            <td>가격</td>
+            <td>
+              <input type="number" id="minPrice" min="0" step="1000" value="0" max="999999999" onchange="changeFilter(this)">~<input type="number" id="maxPrice" min="0" step="1000" value="0" max="999999999" onchange="changeFilter(this)">
+            </td>
+          </tr>
+        </table>
+        <input type="text" class="search-input" placeholder="Search">
+        <button class="search-btn" onclick=searchItems()><i class="fas fa-search"></i></button>
+        <button class="search-btn" onclick=toggleFilter()><i class="fas fa-filter"></i></button>
+      </div>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
+<script>
+  function createNaviLink(link){
+    const navi = $("#navi");
+    const a = $(`<a>${link.text}</a>`);
+    if(link.func) a.click(()=>link.func());
+    if(link.href) a.attr("href",link.href);
+    navi.append(a);
+    if(link.separator) navi.append(link.separator);
+  }
+  
+  $(()=>{
+    const links = [
+    { 
+        text:"특가 상품",
+        separator : " | ",
+        func : () => {
+          pd.option = [];
+          pd.setOrderBy("DISCOUNT DESC");
+          movePath();
+        }
+      },
+      { 
+        text:"인기 상품",
+        func : () => {
+          pd.option = [];
+          pd.setOrderBy("NUM_SOLD DESC");
+          movePath();
+        }
+      },
+    ]
+
+    links.forEach(l=>createNaviLink(l));
+  })
+
+  function toggleFilter() {
+    $("#filterTable").css("visibility",
+    $("#filterTable").css("visibility") === "visible" ? "hidden" : "visible");
+  }
+
+  function changeFilter(input){
+    let min = parseInt($("#minPrice").val());
+    let max = parseInt($("#maxPrice").val());
+    if(max === 0 && min === 0){
+      pd.removeOption("price",BETWEEN); 
+    } else {
+      if(max <= min) {
+        if(input === document.getElementById("minPrice")) {
+          max = min + 10000;
+          $("#maxPrice").val(max);
+        } else {
+          min = max >= 10000 ?  max - 10000 : 0
+          $("#minPrice").val(min);
+        }
+      }
+      pd.addOption("price",BETWEEN,min,max);  
+    }
+    pd.setOrderBy($("#orderBy").attr("value"));
+    if(input) updateItems();
+  }
+</script>

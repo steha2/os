@@ -10,10 +10,11 @@
 <style>
 .itemCell {
   cursor: pointer;
-  padding: 10px 5px 5px 5px;
-  margin: 10px;
-  outline: 1px solid;
+  padding: 3px;
+  margin: 3px;
+  outline: 1px solid gray;
   float:left;
+  font-size:12px;
   text-align: center;
   box-sizing: border-box;
 }
@@ -23,8 +24,31 @@
 }
 
 .item-grid{
-  height:500px;
 }
+
+red {
+  color:red;
+  font-weight: bold;
+}
+
+.title-div span{
+  font-size : 14px;
+  font-weight: bold;
+  margin: 4px;
+  cursor: pointer;
+  outline: 1px solid gray;
+  text-align: center;
+  padding: 0px 4px 0px 4px;
+}
+
+.title-div {
+  padding-top : 5px;
+}
+
+.pd-div {
+  display: none;
+}
+
 </style>
 </head>
 <body>
@@ -98,7 +122,7 @@
 			<div id="timesquare">timesquare</div>
 			<div id="right_addiv">right_addiv</div>
 			<div id="shop_wrap">
-				<div id = "shop"></div>
+				<div id = "shop"> <div class="title-div"></div> </div>
 				<div class = "shopPage">
 					<input type = "button" id = "shopPrevPage" class= "shop PrevPage"/><div class = "shop currentPage"></div><input type = "button" id = "shopNextPage"class="shop NextPage"/>
 				</div>
@@ -184,7 +208,7 @@ class PagingData {
 }
 
 class ItemGrid {
-  constructor(rootId, style, addItemCell){
+  constructor(rootId, style){
     this.rootId = rootId;
     this.rows = style.rows || 3;
     this.cols = style.cols || 3;
@@ -193,39 +217,39 @@ class ItemGrid {
     this.cw = style.cw || 250;
     this.ch = style.ch || this.cw;
     this.style = style;
-    this.create();
-  }
-  
-  create = ()=>{
     this.div = $("<div class='item-grid'></div>");
   }
 
   addItemCell = (item) => {
-    this.items.push(item);
     const cell = {};
     cell.div = $("<div class='itemCell'></div>");
-    cell.div.click(()=>window.open().location.href = `/page/content/${root.id}/${item.id}`);
+    cell.div.click(()=>window.open().location.href = `/page/reqItemId/${item.id}`);
     cell.div.css({width:this.cw, height:this.ch});
     cell.item = item;
     cell.image = $(`<img class='itemImg' src='/resources/images/${item.imagePath}'/>`);
+    cell.image.attr("alt",sliceText(item.name,20));
     cell.image.css({width:this.iw, height:this.ih});
-    
-    cell.div.append(cell.image).append(`<br>${sliceText(item.name,this.style.sliceText)}<br>￦ ${item.price.toLocaleString()} `);
-    
+    cell.div.append(cell.image,`<br>${sliceText(item.name,this.style.sliceText)}<br>`,
+                    item.discount > 0 ? `<red>-${item.discount}%</red>`:"",` ￦${item.dcPrice.toLocaleString()}`);
     this.div.append(cell.div);
-
-    cell.div.click(()=>{
-      if(this.isOpenDetail) this.openDetail(cell);
-    });
-    // if(this.items.length % this.cols === 0) this.div.append("<br>");
   }
   
   setItems = (items) => {
-     this.items = [];
      this.div.empty();
      items.forEach(i => this.addItemCell(i));
   }
 }
+
+const 
+EQUALS = "EQUALS", 
+NOT_EQUALS="NOT_EQUALS", 
+GREATER_THAN = "GREATER_THAN",
+LESS_THAN = "LESS_THAN", 
+CONTAINS="CONTAINS", 
+NOT_CONTAINS="NOT_CONTAINS",
+STARTS_WITH="STARTS_WITH",
+ENDS_WITH="ENDS_WITH",
+BETWEEN="BETWEEN";
 
 let pd = new PagingData();
 const roots = /*[[${roots}]]*/ null;
@@ -233,19 +257,20 @@ const roots = /*[[${roots}]]*/ null;
 const pds = new Object();
 
 roots.forEach(root => {
-  pds[root.id] = new PagingData();
-  pds[root.id].root = root;
+  const pd = new PagingData();
+  pds[root.id] = pd;
+  pd.root = root;
+  pd.setPath(root.path);
 });
 
 function addData(pd){
-  const div = $(pd.divId);
   $.get("/getPagingItems",pd.toParam()).done((resData)=>{
     const table = $("<table>");
-    div.empty().append(table);
+    pd.div.empty().append(table);
     pd.setPagingData(resData);
     const grid = new ItemGrid(pd.root.id, pd.style);
     grid.setItems(pd.data);
-    grid.div.css({width:"300px",display:"block"});
+    console.log(pd.data);
     const td1 = $("<td>").append(grid.div);
     const td2 = $("<td>").append(createPaging(pd,()=>addData(pd)));
     table.append($("<tr>").append(td1));
@@ -253,15 +278,24 @@ function addData(pd){
   }).fail(()=>console.log("fail"));
 }
 
-function addDiv(divId, rootId, style) {
-  const pd = pds[divId];
-  pd.setStyle(style);
-  pd.divId = divId;
+function addDiv(divId, rootId, s) {
+  const pd = pds[rootId];
+  pd.setStyle(s);
+  pd.div = $("<div class='pd-div'>").css({width:s.cols*s.cw+s.cols*10,height:s.rows*s.ch+s.rows*10});
+  $(divId).css({background:"#eeeeee"}).append(pd.div);
+  const titleDiv = $(divId).find(".title-div");
+  titleDiv.append($(`<span>${pd.root.name}</span>`).click(()=>clickTitle(pd)));
   addData(pd);
+  function clickTitle(pd){
+    $(divId).find(".pd-div").css("display","none");
+    pd.div.css("display","block");
+  }
+  if(titleDiv.find("span").length === 1) clickTitle(pd);
 }
+
 $(()=>{
-  addDiv(1,"#shop",{rows:3,cols:2,iw:70,ih:70,cw:100,ch:150,paging:2,sliceText:10,maxPage:1});
-  // addDiv(1,"#timesquare",{rows:3,cols:2,iw:70,ih:70,cw:100,ch:150,paging:2,sliceText:10,maxPage:1});
+  addDiv("#shop",1,{rows:3,cols:3,iw:70,ih:70,cw:95,ch:110,paging:2,sliceText:6,maxPage:1});
+  addDiv("#shop",5,{rows:3,cols:3,iw:70,ih:70,cw:95,ch:110,paging:2,sliceText:6,maxPage:1});
 });
 
 function createPaging(pd, updateFunc) {
@@ -290,8 +324,7 @@ function createPaging(pd, updateFunc) {
 
   function createLink (page, text) {
     let linkButton = $("<a class='pagingLink'>" + (text ? text : page) + "</a>");
-    linkButton.css({"margin":"3px 4px 3px 4px","border-radius": "8px", "font-weight":"bold"
-     ,background:"rgba(110,123,232,0.3)",padding:"4px 4px 5px 4px",fontSize:18,cursor:"pointer"});
+    linkButton.css({padding:2,cursor:"pointer"});
     if(typeof updateFunc === 'function') {
       linkButton.click(()=>{
         pd.nowPage = page;
@@ -302,8 +335,8 @@ function createPaging(pd, updateFunc) {
   }
 
   function addHover(target) {
-    target.on("mouseover",()=>target.css("background","rgba(210,123,132,0.3)"))
-    target.on("mouseout",()=>target.css("background","rgba(110,123,232,0.3)"))
+    // target.on("mouseover",()=>target.css("background","rgba(210,123,132,0.3)"))
+    // target.on("mouseout",()=>target.css("background","rgba(110,123,232,0.3)"))
     return target;
   }
 

@@ -3,7 +3,7 @@ body {
   justify-content: center;
   /* align-items: center; */
   display: flex;
-  background-color: #ebe2e6;
+  /* background-color: #ebe2e6; */
 }
 #container {
   width: 1000px;
@@ -35,6 +35,7 @@ body {
   position: absolute;
   background-color: #eee;
   top:33px;
+  z-index: 3;
 } 
 
 #category:hover + #menuDiv,
@@ -89,7 +90,6 @@ body {
   background-color: #9e1d59;
 }
 
-
 .c{
   display: flex;
   flex-direction: column;
@@ -97,7 +97,7 @@ body {
 }
 
 #item-grid{
-  background: #a5c23e;
+  /* background: #a5c23e; */
 }
 
 table {
@@ -112,12 +112,13 @@ table td, table th {
 
 .itemCell {
   cursor: pointer;
-  padding: 10px 5px 5px 5px;
-  margin: 10px;
-  outline: 1px solid;
+  outline: 1px solid rgb(214, 199, 199);
   float:left;
   text-align: center;
   box-sizing: border-box;
+  white-space: nowrap; /* Prevent line breaks */
+  overflow: hidden; /* Hide overflowing text */
+  text-overflow: ellipsis; /* Display ellipsis for truncated text */
 }
 
 .itemCell:hover {
@@ -139,7 +140,9 @@ table td, table th {
 
 #itemNavi1{
   grid-area: navi1;
-  background: #619981;
+  background: hsl(247, 36%, 86%);
+  font-size: larger;
+  font-weight: 600;
   padding: 5px;
 }
 
@@ -147,19 +150,19 @@ table td, table th {
   grid-area: navi2;
   display: flex;
   flex-direction: row;
-  background: #bdeed9;
+  /* background: #bdeed9; */
 }
 
 #itemNavi2Wrap {
   float: left;
-  background: #cf8e82;
+  background: #eeecda;
 }
 
 
 #itemsDiv{
   float: left;
   vertical-align:top ;
-  background: #959c7c;
+  /* background: #959c7c; */
 }
 
 #contentDiv {
@@ -197,3 +200,8 @@ table td, table th {
 }
 
 a{ cursor:pointer; }
+
+red {
+  color:red;
+  font-weight: bold;
+}

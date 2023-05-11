@@ -1,17 +1,13 @@
 package com.trickle.os.dao;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.trickle.os.vo.CartVo;
-import com.trickle.os.vo.ItemVo;
-import com.trickle.os.vo.OrderVo;
+import com.trickle.os.vo.*;
 
 @Repository
 public class CartDao {
@@ -61,5 +57,13 @@ public class CartDao {
 
 	public void addOrder(OrderVo order) {
 		sqlSession.insert("CartMapper.addOrder",order);
+	}
+
+	public OrderVo getOrder(UserVo user) {
+		return sqlSession.selectOne("CartMapper.getOrder", user);
+	}
+
+	public List<OrderVo> getOrders(UserVo user) {
+		return sqlSession.selectList("CartMapper.getOrders", user);
 	}
 }

@@ -9,8 +9,8 @@ import lombok.ToString;
 @ToString
 public class OrderVo {
 	private long id, userId, price;
-	private String status="", pg="", pg_name="", requested_at;
-	private String items="";
+	private String status="", pg="", pgName="", requestedAt;
+	private String items="", name="";
 }
 
 // [

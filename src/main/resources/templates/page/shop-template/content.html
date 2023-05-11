@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>T-Market</title>
+<title th:text="${root.name}"></title>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -49,8 +49,7 @@
       </td>
       <td>
         <table id="detailTable">
-          <tr><td style="width:80px">조회수</td><td class="ra"><span th:text="${item.numView}"></span></td></tr>
-          <tr><td>상품명</td><td><span th:text="${item.name}"></span></td></tr>
+          <tr><td style="width:80px">상품명</td><td><span th:text="${item.name}"></span></td></tr>
           <tr><td>남은 수량</td><td><span th:text="${item.numStock}"></span></td></tr>
           <tr><td>판매 수량</td><td><span th:text="${item.numSold}"></span></td></tr>
           <tr><td>가격</td><td class="ra"><span th:text="${#numbers.formatInteger(item.price,3,'COMMA')} + ' 원'"></td></tr>
@@ -63,10 +62,10 @@
               <button id="buyItem" class="buyButton"> 구매하기 </button>
             </td>
           </tr>
-        </table>
+          </table>
       </td>
     </tr>
-    <tr><td colspan="2"><hr><h2 style="text-align: center;">상품 상세정보</h2><hr><pre></pre></td></tr>
+    <tr><td colspan="2"><pre></pre></td></tr>
   </table>
 </div>
 <div id="commentsDiv">

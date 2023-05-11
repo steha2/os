@@ -13,12 +13,12 @@ function openLoginDialog(action){
   const inputCss = {width:240,padding:5,margin:5};
   const nameInput = $("<input type='text' placeholder='User Name'>").css(inputCss);
   const pwInput = $("<input type='password' placeholder='Password'>").css(inputCss);
-  const remember = $("<input type='checkbox'>")
+  const remember = $("<input type='checkbox' id='remember'>")
   $("body").append(dialog);
   
-  dialog.append(nameInput,"<br>",pwInput,"<br>",remember,"아이디 저장",
-   "<br><img src='/images/star.png' width='15' height='15'>",
-   "<a href='/user/signUpForm?isClose=true' target='_blank'>회원가입</a>");
+  dialog.append(nameInput,"<br>",pwInput,"<br>",remember,"<label for='remember'>remember</label>",
+   "<img src='/images/star.png' width='15' height='15' style='margin-left:80px;'>",
+   " <a href='/user/signUpForm?isClose=true' target='_blank'>회원가입</a>");
 
   console.log($.cookie())
   if ($.cookie("remember") === "true") {
@@ -37,7 +37,7 @@ function openLoginDialog(action){
 
   dialog.dialog({
   autoOpen: false,
-  height: 270,
+  height: 250,
   width: 300,
   modal: true,
   buttons: {

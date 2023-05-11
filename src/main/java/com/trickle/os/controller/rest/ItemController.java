@@ -2,7 +2,8 @@ package com.trickle.os.controller.rest;
 
 import java.util.List;
 
-import org.springframework.ui.Model;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.web.bind.annotation.*;
 
 import com.trickle.os.dao.ItemDao;
@@ -20,8 +21,8 @@ public class ItemController {
 	
 	@PostMapping("/addItem")
 	public String addItem(ItemVo item) {
-		if(itemDao.addItem(item) == 1) return "상품 등록 성공";
-		return "실패";
+		if(itemDao.addItem(item) == 1) return "Success";
+		return "Fail";
 	}
 	
 	@GetMapping("/getItems")
@@ -36,7 +37,7 @@ public class ItemController {
 	
 	@GetMapping("/deleteItem")
 	public String updateItem(long id) {
-		return itemDao.deleteItem(id) == 1 ? "삭제 성공" : "실패";
+		return itemDao.deleteItem(id) == 1 ? "Success" : "Fail";
 	}
 	
 	@GetMapping(value="/getPagingItems") 
@@ -46,5 +47,14 @@ public class ItemController {
 		pagingDao.addTotalRows(pd);
 		pd.setData(pagingDao.getPagingItems(pd));
 		return pd;
+	}
+	
+	@GetMapping("/getRecentItems")
+	public List<ItemVo> getRecentItems(HttpSession session) {
+		@SuppressWarnings("unchecked")
+		List<Long> itemIds = (List<Long>) session.getAttribute("recentItems");
+		System.out.println(itemIds);
+		if(itemIds == null) return null;
+		else return itemDao.getRecentItems(itemIds);
 	}
 }

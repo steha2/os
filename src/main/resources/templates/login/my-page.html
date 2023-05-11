@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>Order List</title>
+  <style>
+    /* CSS for center-aligning the table */
+    body {
+      /* display: flex; */
+      justify-content: center;
+      /* align-items: center; */
+      height: 100vh;
+    }
+
+    table {
+      border: 2px solid gray;
+      border-collapse: collapse;
+      /* width: 600px; */
+      background-color: #f2f2f2;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+</head>
+
+<body>
+  <h1><a href="/home">Home</a></h1>
+  <table>
+    <caption>
+      <h1>Order List</h1>
+    </caption>
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Order Name</th>
+        <th>User ID</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Payment Gateway</th>
+        <th>PG Name</th>
+        <th>Requested At</th>
+        <th>Items</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="order : ${orderList}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.name}"></td>
+        <td th:text="${order.userId}"></td>
+        <td th:text="${order.price}"></td>
+        <td th:text="${order.status}"></td>
+        <td th:text="${order.pg}"></td>
+        <td th:text="${order.pgName}"></td>
+        <td th:text="${order.requestedAt}"></td>
+        <td th:text="${order.items}"></td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+
+</html>

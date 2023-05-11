@@ -2,17 +2,15 @@ package com.trickle.os.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.trickle.os.dao.*;
+import com.trickle.os.dao.MenuDao;
 import com.trickle.os.paging.FilterOption;
 import com.trickle.os.util.Debug;
 import com.trickle.os.util.StrUtil;
-import com.trickle.os.vo.*;
+import com.trickle.os.vo.RootVo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,8 +19,6 @@ import lombok.RequiredArgsConstructor;
 public class HomeController {
 
 	private final MenuDao menuDao;
-	private final HomeDao homeDao;
-	private final ItemDao itemDao;
 	
 	@GetMapping(value = {"/home","/"})
 	public String home(Model model) {
@@ -34,7 +30,7 @@ public class HomeController {
 	public String osHome(Model model) {
 		model.addAttribute("roots", menuDao.getRoots());
 		return "/admin/os-home";
-	}	
+	}
 	
 	@GetMapping("/main")
 	public String main(Model model) {
@@ -65,7 +61,6 @@ public class HomeController {
 		menuDao.updateStyle(root);
 		return openAdminPage(root.getId(), model);
 	}
-	
 	
 	@GetMapping("/test")
 	@ResponseBody
