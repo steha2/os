@@ -74,20 +74,29 @@
 </body>
 </table>
 <script th:inline="javascript">
-  $(()=>{
-    const item = /*[[${item}]]*/ null;
-    const root = /*[[${root}]]*/ null;
-    const itemDiv = $("#itemDiv");
-    const commentsDiv = $("#commentsDiv");
-    let totalPrice, amount;
-    let style = JSON.parse(root.style);
-    itemDiv.find("img").attr("src","/resources/images"+item.imagePath)
-    for(let i=0; i<30; i++) itemDiv.find("pre").append(JSON.stringify(item,null,2));
-    const tabs = $("#tabs");
-    if(item.comments) item.comments.forEach(c => {
-      commentsDiv.append(`Id: ${c.id} Content: ${c.content}`);
-    });
-    tabs.tabs();
+$(()=>{
+  const item = /*[[${item}]]*/ null;
+  const root = /*[[${root}]]*/ null;
+  const itemDiv = $("#itemDiv");
+  const commentsDiv = $("#commentsDiv");
+  let totalPrice, amount;
+  let style = JSON.parse(root.style);
+  itemDiv.find("img").attr("src","/resources/images"+item.imagePath)
+  for(let i=0; i<30; i++) itemDiv.find("pre").append(JSON.stringify(item,null,2));
+  const tabs = $("#tabs");
+if(item.comments) item.comments.forEach(c => {
+  commentsDiv.append(`Id: ${c.id} Content: ${c.content}`);
+});
+tabs.tabs({
+  activate: function(event, ui) {
+  updateComments()
+  }
+});
+    function updateComments(){
+      tabs.tabs({active:1});
+      
+    }
+
     function calcPrice(){
       amount = parseInt($("#amount").val());
       totalPrice = amount * item.dcPrice;

@@ -62,8 +62,8 @@ function createOrderVo(items, orderSeq, totalPrice) {
 
 function pay(items,totalPrice,done) {
   if(!Array.isArray(items)) items = [items];
+  checkMove(()=>{
   if(items.length !== 0 && confirm(totalPrice.toLocaleString()+"원 결제를 시작합니다.")){
-    checkMove(()=>{
       $.get("/login/getOrderSeq").done((orderSeq)=>{
         const orderVo = createOrderVo(items,orderSeq,totalPrice);
         runPay(orderVo,()=>{
@@ -78,6 +78,6 @@ function pay(items,totalPrice,done) {
           });
         });
       })
-    });
-  }
+    };
+  })
 }
