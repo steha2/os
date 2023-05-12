@@ -17,6 +17,9 @@
   font-size:12px;
   text-align: center;
   box-sizing: border-box;
+  white-space: nowrap; /* Prevent line breaks */
+  overflow: hidden; /* Hide overflowing text */
+  text-overflow: ellipsis; /* Display ellipsis for truncated text */
 }
 
 .itemCell:hover {
@@ -122,7 +125,7 @@ red {
 			<div id="timesquare">timesquare</div>
 			<div id="right_addiv">right_addiv</div>
 			<div id="shop_wrap">
-				<div id = "shop"> <div class="title-div"></div> </div>
+				<div id = "shop"></div>
 				<div class = "shopPage">
 					<input type = "button" id = "shopPrevPage" class= "shop PrevPage"/><div class = "shop currentPage"></div><input type = "button" id = "shopNextPage"class="shop NextPage"/>
 				</div>
@@ -142,12 +145,14 @@ red {
 
 <script th:inline="javascript">
 class PagingData {
-  constructor() {
+  constructor(path, style) {
     this.defaultRowCount = 10;
     this.rowCount = 10;
     this.maxPage = 10;
     this.pagingType = 1;
     this.nowPage = 1;
+    this.setPath(path);
+    this.setStyle(style);
   }
 
   setPagingData(pagingData){
@@ -208,8 +213,7 @@ class PagingData {
 }
 
 class ItemGrid {
-  constructor(rootId, style){
-    this.rootId = rootId;
+  constructor(style){
     this.rows = style.rows || 3;
     this.cols = style.cols || 3;
     this.iw = style.iw || 200;
@@ -251,24 +255,30 @@ STARTS_WITH="STARTS_WITH",
 ENDS_WITH="ENDS_WITH",
 BETWEEN="BETWEEN";
 
-let pd = new PagingData();
 const roots = /*[[${roots}]]*/ null;
 
-const pds = new Object();
-
-roots.forEach(root => {
-  const pd = new PagingData();
-  pds[root.id] = pd;
-  pd.root = root;
-  pd.setPath(root.path);
-});
+function findMenu(path, menu) {
+  if(menu) menu = roots;
+  if (menu.path === path) {
+    return menu;
+  }
+  if (menu.childs && menu.childs.length > 0) {
+    for (let i = 0; i < menu.childs.length; i++) {
+      const foundMenu = findMenu(path, menu.childs[i]);
+      if (foundMenu) {
+        return foundMenu;
+      }
+    }
+  }
+  return null;
+}
 
 function addData(pd){
   $.get("/getPagingItems",pd.toParam()).done((resData)=>{
     const table = $("<table>");
     pd.div.empty().append(table);
     pd.setPagingData(resData);
-    const grid = new ItemGrid(pd.root.id, pd.style);
+    const grid = new ItemGrid(pd.style);
     grid.setItems(pd.data);
     console.log(pd.data);
     const td1 = $("<td>").append(grid.div);
@@ -281,21 +291,50 @@ function addData(pd){
 function addDiv(divId, rootId, s) {
   const pd = pds[rootId];
   pd.setStyle(s);
-  pd.div = $("<div class='pd-div'>").css({width:s.cols*s.cw+s.cols*10,height:s.rows*s.ch+s.rows*10});
+  pd.div = $("<div class='pd-div'>")
   $(divId).css({background:"#eeeeee"}).append(pd.div);
-  const titleDiv = $(divId).find(".title-div");
-  titleDiv.append($(`<span>${pd.root.name}</span>`).click(()=>clickTitle(pd)));
+  
+  
   addData(pd);
   function clickTitle(pd){
     $(divId).find(".pd-div").css("display","none");
     pd.div.css("display","block");
   }
-  if(titleDiv.find("span").length === 1) clickTitle(pd);
+}
+
+function addMenu(divId, menu, s){
+  const div1 = $(divId);
+  const titleDiv = div1.find(".titleDiv");
+  if(!titleDiv) div1.append(`<div class='titleDiv'><h6 style='padding:0;margin:0'>${menu.name}</h6></div>`)
+  if(menu.childs) menu.childs.forEach((d2,index)=>{
+    let pd = new PagingData(d2.path,s);
+    pd.div = $("<div class='itemDiv'>").css({width:s.cols*s.cw+s.cols*10,height:s.rows*s.ch+s.rows*10});
+    div1.append(pd.div);
+    function clickD2(){
+      div1.find(".itemDiv").css("display","none");
+      pd.div.css("display","block");
+    }
+
+    $.get("/getPagingItems",pd.toParam()).done((resData)=>{
+      const table = $("<table>");
+      pd.div.empty().append(table);
+      pd.setPagingData(resData);
+      const grid = new ItemGrid(s);
+      grid.setItems(pd.data);
+      console.log(pd.data);
+      const td1 = $("<td>").append(grid.div);
+      const td2 = $("<td>").append(createPaging(pd,()=>addData(pd)));
+      table.append($("<tr>").append(td1));
+      table.append($("<tr>").append(td2));
+    }).fail(()=>console.log("fail"));
+
+    titleDiv.append($(`<span>${menu.name}</span>`).click(()=>clickD2()));
+    if(index===0) clickD2();
+  });
 }
 
 $(()=>{
-  addDiv("#shop",1,{rows:3,cols:3,iw:70,ih:70,cw:95,ch:110,paging:2,sliceText:6,maxPage:1});
-  addDiv("#shop",5,{rows:3,cols:3,iw:70,ih:70,cw:95,ch:110,paging:2,sliceText:6,maxPage:1});
+  addMenu("#shop", findMenu("/1/1"), {rows:3,cols:3,iw:70,ih:70,cw:95,ch:110,maxPage:1});
 });
 
 function createPaging(pd, updateFunc) {
@@ -307,20 +346,20 @@ function createPaging(pd, updateFunc) {
   $tr.append($td1,$td2);
   let startPage = pd.startPage;
   let endPage = pd.endPage;
-  const drc = pd.defaultRowCount || null;
-  if(drc !== null && pd.paging === 1) {
-    let select = $("<select id='rowCountSelect'>").css({width:50,"margin-right":5,height:25});
-    for(i=drc; i<=drc*5; i+=drc){
-      $td2.append(select);
-      let option = $(`<option value='${i}'>${i}</option>`); 
-      select.append(option);
-    }
-    select.val(pd.rowCount).attr("selected","selected");
-    select.change(()=>{
-      pd.rowCount=select.val()
-      updateFunc();
-    });
-  }
+  // const drc = pd.defaultRowCount || null;
+  // if(drc !== null && pd.paging === 1) {
+  //   let select = $("<select id='rowCountSelect'>").css({width:50,"margin-right":5,height:25});
+  //   for(i=drc; i<=drc*5; i+=drc){
+  //     $td2.append(select);
+  //     let option = $(`<option value='${i}'>${i}</option>`); 
+  //     select.append(option);
+  //   }
+  //   select.val(pd.rowCount).attr("selected","selected");
+  //   select.change(()=>{
+  //     pd.rowCount=select.val()
+  //     updateFunc();
+  //   });
+  // }
 
   function createLink (page, text) {
     let linkButton = $("<a class='pagingLink'>" + (text ? text : page) + "</a>");

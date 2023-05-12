@@ -137,6 +137,16 @@ table td, table th {
   min-height: auto;
 }
 
+a {
+  color: #036;
+  text-decoration: none;
+  transition: color 0.3s, text-decoration 0.3s;
+}
+
+a:hover {
+  color: red;
+  text-decoration: underline;
+}
 
 #itemNavi1{
   grid-area: navi1;

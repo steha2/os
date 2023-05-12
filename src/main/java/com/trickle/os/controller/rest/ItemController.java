@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.trickle.os.dao.ItemDao;
 import com.trickle.os.dao.PagingDao;
 import com.trickle.os.paging.PagingData;
-import com.trickle.os.vo.ItemVo;
+import com.trickle.os.vo.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,7 +43,7 @@ public class ItemController {
 	@GetMapping(value="/getPagingItems") 
 	public PagingData getPagingItems(PagingData pd) {
 		System.out.println(pd);
-		pd.setTable("Items","ID,NAME,PATH,USER_ID,CONTENT,IMAGE_PATH,DISCOUNT,REG_DATE,SCORE,PRICE,NUM_SOLD,NUM_STOCK,NUM_VIEW");
+		pd.setTable("ITEMS_WITH_SCORE",ItemVo.class);
 		pagingDao.addTotalRows(pd);
 		pd.setData(pagingDao.getPagingItems(pd));
 		return pd;
@@ -56,5 +56,20 @@ public class ItemController {
 		System.out.println(itemIds);
 		if(itemIds == null) return null;
 		else return itemDao.getRecentItems(itemIds);
+	}
+	
+	@PostMapping("/getComments")
+	public PagingData getComments(PagingData cpd) {
+		System.out.println(cpd);
+		cpd.setTable("COMMENTS_WITH_USER_NAME",CommentVo.class);
+		pagingDao.addTotalRows(cpd);
+		cpd.setData(pagingDao.getPagingComments(cpd));
+		return cpd;
+	}
+	
+	@PostMapping("/login/addComment")
+	public String addComment(CommentVo comment, @SessionAttribute("user") UserVo user) {
+		comment.setUserId(user.getId());
+		return itemDao.addComment(comment) == 1 ? "Success" : null;
 	}
 }

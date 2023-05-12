@@ -40,7 +40,7 @@ function runPay(orderVo,done){
   });
 }
 
-function createOrderVo(items, orderSeq, totalPrice) {
+function createOrderVo(items, totalPrice, orderSeq) {
   const orderVo = {
                    pg:"nicepay",
                    method:"card",
@@ -53,7 +53,7 @@ function createOrderVo(items, orderSeq, totalPrice) {
   orderVo.items.push({
               item_name:item.name,
               qty:item.amount,
-              unique:"I"+item.id,
+              unique:"P"+item.id,
               price:item.dcPrice
             });
   });
@@ -65,7 +65,7 @@ function pay(items,totalPrice,done) {
   checkMove(()=>{
   if(items.length !== 0 && confirm(totalPrice.toLocaleString()+"원 결제를 시작합니다.")){
       $.get("/login/getOrderSeq").done((orderSeq)=>{
-        const orderVo = createOrderVo(items,orderSeq,totalPrice);
+        const orderVo = createOrderVo(items,totalPrice,orderSeq);
         runPay(orderVo,()=>{
           orderVo.items = JSON.stringify(orderVo.items);
           $.post("/login/addOrder",orderVo).done(resData=>{

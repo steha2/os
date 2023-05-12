@@ -1,5 +1,12 @@
 package com.trickle.os.vo;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.trickle.os.paging.FilterOption;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,8 +16,15 @@ import lombok.ToString;
 @ToString
 public class OrderVo {
 	private long id, userId, price;
-	private String status="", pg="", pgName="", requestedAt;
-	private String items="", name="";
+	private String status="", pg="", pgName="", requestedAt, name="", items="";
+	private List<OrderItem> itemList;
+	
+	public void setItems(String items) {
+	    Gson gson = new Gson();
+        Type type = new TypeToken<List<OrderItem>>(){}.getType();
+        this.itemList = gson.fromJson(items, type);
+        this.items = items;
+	}
 }
 
 // [

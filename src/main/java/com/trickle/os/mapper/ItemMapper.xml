@@ -3,16 +3,12 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ItemMapper">
-<select id="getItem" resultType="ItemVo">
-	SELECT * FROM ITEMS WHERE ID = #{id} 
-</select>
-
-<select id="getItemByName" resultType="ItemVo">
-	SELECT * FROM ITEMS WHERE NAME = #{name} AND ROWNUM = 1
+<select id="getItemById" resultType="ItemVo">
+	SELECT * FROM ITEMS_WITH_SCORE WHERE ID = #{id} 
 </select>
 
 <select id="getItems" resultType="ItemVo">
-	SELECT * FROM ITEMS	WHERE PATH LIKE '${path}%'
+	SELECT * FROM ITEMS_WITH_SCORE	WHERE PATH LIKE '${path}%'
 </select>
 
 <update id="updateItem">
@@ -27,7 +23,7 @@ WHERE ID = #{id}
 DELETE FROM ITEMS WHERE ID = #{id}
 </delete>
 
-<select id="getTotalRows" parameterType="map" resultType="int">
+<select id="getTotalRows" parameterType="map" resultType="long">
   SELECT count(*) FROM ITEMS
   WHERE PATH LIKE '${path}%'
   <if test="searchMap != null">
@@ -49,24 +45,24 @@ DELETE FROM ITEMS WHERE ID = #{id}
 	UPDATE ITEMS SET NUM_VIEW = NUM_VIEW + 1 WHERE ID = #{id}
 </update>
 
-<select id="getItemAvgScore" resultType="ItemVo">
-    SELECT * FROM ITEMS_AVG_SCORE WHERE ID = #{id}
+<select id="getItemCount" resultType="long">
+    SELECT count(*) FROM ITEMS WHERE PATH LIKE '${path}%'
 </select>
 
 <insert id="addComment">
- <selectKey keyProperty="id" resultType="int" order="BEFORE">
+ <selectKey keyProperty="id" resultType="long" order="BEFORE">
 	SELECT COMMENT_SEQ.NEXTVAL FROM DUAL
  </selectKey>
-	INSERT INTO ITEMS(ID, USER_ID, PATH, CONTENT, REG_DATE, SCORE)
+	INSERT INTO COMMENTS(ID, USER_ID, PATH, CONTENT, REG_DATE, SCORE)
 	VALUES(#{id}, #{userId}, #{path}, #{content}, SYSDATE, #{score} )
 </insert>
 
-<select id="getComments" resultType="ItemVo">
-    SELECT * FROM COMMENTS WHERE ID = #{id}
+<select id="getComments" resultType="CommentVo">
+    SELECT * FROM COMMENTS WHERE PATH LIKE '/${id}%'
 </select>
 
  <select id="getRecentItems" parameterType="java.util.List" resultType="ItemVo">
-   SELECT * FROM items
+   SELECT * FROM ITEMS_WITH_SCORE
    WHERE id IN
    <foreach collection="list" item="itemId" open="(" close=")" separator=",">
      #{itemId}

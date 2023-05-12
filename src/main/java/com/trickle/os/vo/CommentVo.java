@@ -7,7 +7,7 @@ import lombok.*;
 @ToString
 public class CommentVo {
 	private long id;
-	private String userId;
-	private String content, path, regDate;
+	private long userId;
+	private String userName, content, path, regDate;
 	private double score;
 }

@@ -25,7 +25,7 @@ public class PageController {
 	
 	@GetMapping("/page/content/{itemId}") 
 	public String openContent(@PathVariable long itemId, Model model, HttpSession session) {
-		model.addAttribute("item", itemDao.getCommentsItem(itemId));
+		model.addAttribute("item", itemDao.getItemById(itemId));
 		itemDao.updateNumView(itemId);
 		RootVo root = menuDao.getRootByItemId(itemId);
 		model.addAttribute("root", root);

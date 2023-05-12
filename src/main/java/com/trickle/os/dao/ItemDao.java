@@ -26,7 +26,7 @@ public class ItemDao {
 	}
 	
 	public ItemVo getItemById(long id) {
-		return sqlSession.selectOne("ItemMapper.getItem", id);
+		return sqlSession.selectOne("ItemMapper.getItemById", id);
 	}
 	
 	public long addItem(ItemVo item) {
@@ -65,20 +65,22 @@ public class ItemDao {
 		sqlSession.update("ItemMapper.updateNumView",id);
 	}
 	
-	public ItemVo getCommentsItem(long id) {
-		ItemVo item = sqlSession.selectOne("ItemMapper.getItemAvgScore", id);
-		List<CommentVo> comments = sqlSession.selectList("ItemMapper.getComments",id);
-		comments.forEach(c->item.addComment(c));
-		return item;
-	}
-
 	public List<ItemVo> getRecentItems(List<Long> itemIds) {
 		List<ItemVo> result = new ArrayList<>();
 		itemIds.forEach(id->result.add(getItemById(id)));
 		return result;
 	}
 
-	public void addComment(CommentVo comment) {
-		sqlSession.insert("ItemMapper.addComment",comment);
+	public int addComment(CommentVo comment) {
+		return sqlSession.insert("ItemMapper.addComment",comment);
+	}
+	
+	public long getItemCount(String path) {
+		Long count = sqlSession.selectOne("ItemMapper.getItemCount",path);
+		return count == null ? 0 : count;
+	}
+
+	public List<CommentVo> getComments(long itemId) {
+		return sqlSession.selectList("ItemMapper.getComments",itemId);
 	}
 }

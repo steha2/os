@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class OrderItemVo {
-	private String itemName, unique;
+public class OrderItem {
+	private String item_name, unique;
 	private long qrt, price;
 }

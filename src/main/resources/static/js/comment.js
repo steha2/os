@@ -1,5 +1,6 @@
 class CommentInput {
   constructor(path,style = {}) {
+    if (!path) { throw new Error("Path is null."); }
     this.path = path;
     this.width = style.width || 300;
     this.height = style.height || 100;
@@ -17,8 +18,8 @@ class CommentInput {
       height: 60,
       resize: "none",
     });
-    this.score = $(`<input type='number' min='1' max='5' value='5'>`).css({width:30,margin:5});
-    this.commentButton = $("<button>").text("등록").click(this.addComment);
+    this.score = $(`<input type='number' min='0' max='5' value='5'>`).css({width:30,margin:5});
+    this.commentButton = $("<button>").text("등록").click(this.addComment.bind(this));
     this.div.append(this.textarea, 
     `<br><i class='fas fa-star' style='color: #f3da35'></i>`,
     this.score,
@@ -26,7 +27,7 @@ class CommentInput {
   }
 
   addComment(){
-    const text = this.textarea.val();
+    const text = this.textarea.val(); // this.textarea 가 undefiend 임 bind 해줘
     if(text){
       checkMove(()=>{
         $.post("/login/addComment/",{content:text,path:this.path,score:this.score.val()}).done((resData)=>{

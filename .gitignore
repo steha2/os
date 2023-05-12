@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+java_pid17204.hprof
+java_pid9296.hprof

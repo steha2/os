@@ -5,11 +5,9 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
@@ -36,6 +34,10 @@ public class WebConfig implements WebMvcConfigurer {
     	registry.addResourceHandler("/resources/**").addResourceLocations("file:/"+resources+"/").setCachePeriod(cachePeriod);
     	registry.addResourceHandler("/resources/images/**").addResourceLocations("file:/"+resources+"/images/").setCachePeriod(cachePeriod)
     			.resourceChain(true).addResolver(defaultImageResolver("/default.png"));
+       
+    	registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/")
+                .setCacheControl(CacheControl.noStore());
     }
 	
 	private PathResourceResolver defaultImageResolver(String imagePath) {

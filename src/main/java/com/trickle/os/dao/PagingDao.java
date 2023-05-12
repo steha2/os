@@ -8,6 +8,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.trickle.os.paging.PagingData;
+import com.trickle.os.vo.CommentVo;
 import com.trickle.os.vo.ItemVo;
 
 @Repository
@@ -24,5 +25,9 @@ public class PagingDao {
 	
 	public List<ItemVo> getPagingItems(PagingData pd) {
 		return sqlSession.selectList("PagingMapper.getPagingItems", pd);
+	}
+	
+	public List<CommentVo> getPagingComments(PagingData pd) {
+		return sqlSession.selectList("PagingMapper.getPagingComments", pd);
 	}
 }

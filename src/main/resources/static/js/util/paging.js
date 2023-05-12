@@ -65,6 +65,9 @@ function createPaging(pd, updateFunc) {
   if (endPage < pd.totalPages) {
     $td1.append(addHover(createLink(endPage + 1, "▶")));
   }
+  if(startPage === 0) {
+    pagingBar = $("<h4 id='pagingBar' style='text-align:center'>비어있음</h4>");
+  }
   return pagingBar;
 }
 

@@ -23,11 +23,13 @@ import lombok.ToString;
 public class PagingData {
 	@JsonIgnore private String columns;
 	@JsonIgnore private String tableName;
+	@JsonIgnore private String joinClause;
 	private Paging paging;
 	private List<?> data;
 	private List<FilterOption> option = new ArrayList<>();
 	
-	@JsonIgnore private String orderBy;
+//	@JsonIgnore
+	private String orderBy;
 	
 	private long totalRows; // DB의 총 ROW 수
 	private long maxPage; // 한번에 보여줄 페이징링크 숫자 최대치
@@ -102,5 +104,9 @@ public class PagingData {
         Type type = new TypeToken<List<FilterOption>>(){}.getType();
         this.option = gson.fromJson(option, type);
         System.out.println(this.option);
+	}
+
+	public void addColumn(String column) {
+		columns += (columns == null || columns.isBlank() ? "" : ",") + column;
 	}
 }
