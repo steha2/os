@@ -61,6 +61,10 @@ DELETE FROM ITEMS WHERE ID = #{id}
     SELECT * FROM COMMENTS WHERE PATH LIKE '/${id}%'
 </select>
 
+<select id="getItemByName" resultType="ItemVO">
+    SELECT * FROM ITEMS WHERE NAME = #{name}
+</select>
+
  <select id="getRecentItems" parameterType="java.util.List" resultType="ItemVo">
    SELECT * FROM ITEMS_WITH_SCORE
    WHERE id IN

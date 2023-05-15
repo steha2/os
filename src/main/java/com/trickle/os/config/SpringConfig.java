@@ -8,11 +8,11 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 public class SpringConfig {
-
-	private DataSource dataSource;
-
-	@Autowired
-	public SpringConfig(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+//
+//	private DataSource dataSource;
+//
+//	@Autowired
+//	public SpringConfig(DataSource dataSource) {
+//		this.dataSource = dataSource;
+//	}
 }

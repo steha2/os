@@ -12,12 +12,8 @@
       float: right;
     }
 
-    .itemCell{
-      background: #90c79e;
-    }
-
-    #page-frame{
-      overflow-y: hidden;
+    #page-div{
+      overflow-y: auto;
     }
   </style>
 </head>
@@ -25,7 +21,7 @@
   <table>
     <tr>  
       <td>
-        <!-- <div id="page-div" th:include="|/page/${root.type}/index-${root.id}.html|"></div> -->
+        <!-- <div id="page-div" th:include="|/page/${root.type}/${root.id}/index-${root.id}.html|"></div> -->
         <iframe id="page-frame" th:src="|/page/${root.id}|" onload=calcHeight() frameborder="0"></iframe>
       </td>
       <td>
@@ -71,8 +67,7 @@
     setTimeout(()=>{
       const frame = document.getElementById('page-frame');
       frame.width = 1100;
-      frame.style.overflow = "hidden";
-      frame.height=1000;
+      frame.height= 860;
     },50);
   }
 </script>

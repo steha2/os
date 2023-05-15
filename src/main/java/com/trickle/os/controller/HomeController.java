@@ -34,7 +34,9 @@ public class HomeController {
 	
 	@GetMapping("/main")
 	public String main(Model model) {
-		model.addAttribute("roots", menuDao.getRoots());
+		List<RootVo> roots = menuDao.getRoots();
+		roots.forEach(root->menuDao.addChilds(root));
+		model.addAttribute("roots", roots);
 		return "/main";
 	}
 	

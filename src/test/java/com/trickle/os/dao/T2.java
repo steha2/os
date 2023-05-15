@@ -4,15 +4,24 @@ import java.io.File;
 import java.util.List;
 import java.util.Random;
 
+import javax.sql.DataSource;
+
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.trickle.os.controller.rest.*;
 import com.trickle.os.test.Crawling;
 import com.trickle.os.test.GmSql;
 import com.trickle.os.vo.*;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
-public class T {
+public class T2 {
 	private static SqlSessionFactory factory = new MyBatisConn().sqlSessionFactory();
 	public static ItemDao ID = new ItemDao(factory);
 	public static MenuDao MD = new MenuDao(factory, ID);
@@ -27,11 +36,13 @@ public class T {
 		List<RootVo> roots = MC.getMenus();
 		roots.forEach(root->{
 			System.out.println(root.getName());
-			all(root.getChilds(),1);
+			all(root.getChilds(), root,1);
 		});
+		removeRoot(2);
+		ID.deleteItem(31);
 	}
 	
-	public static void all(List<MenuVo> menus, int depth) {
+	public static void all(List<MenuVo> menus, RootVo root, int depth) {
 		if(menus == null) return;
 	    for (MenuVo menu : menus) {
 	        StringBuilder sb = new StringBuilder();
@@ -54,12 +65,32 @@ public class T {
 	        });
 	        
 	        if(depth == 2 && itemCount == 0) {
-	        	System.out.println(menu.getId() + ":  뎁스2에 아이템이 없음.. 채우자! " + menu.getName());
+	        	System.out.println("뎁스2에 아이템이 없음.. 채우자! " + menu.getName());
+	        	if(root.getType().equals("shop")) {
+	        		
+	        	}
+	        	if(root.getType().equals("board")) {
+	        		List<String> ds = sql.query("SELECT DEFINITION, VOCABULARY FROM DICTIONARY WHERE LENGTH(DEFINITION) > 50 ORDER BY DBMS_RANDOM.VALUE()", (rs,rowNum) -> {
+	        			
+	        			return  rs.getString("VOCABULARY")+ "#@" + rs.getString("DEFINITION");
+	        			});
+	        		String rt2 = ds.get(0).split("#@")[0];
+	        		String rt = ds.get(0).split("#@")[1];
+	        		String name = rt.substring(0,10);
+	        		String cont = rt.substring(11, depth);
+	        		ItemVo item = new ItemVo();
+	        		item.setName(name);
+	        		item.setContent(cont);
+	        		item.setUserId(rt2);
+	        	}
+	        	if(root.getType().equals("score")) {
+	        		
+	        	}
 	        }
 	        
 	        // 자식 메뉴가 있는 경우 재귀적으로 호출하여 출력
 	        if (menu.getChilds() != null && !menu.getChilds().isEmpty()) {
-	            all(menu.getChilds(), depth + 1);
+	            all(menu.getChilds(), root, depth + 1);
 	        }
 	    }
 	}
@@ -107,7 +138,7 @@ public class T {
 					ItemVo item = new ItemVo();
 					item.setContent(t);
 					item.setName(t);
-					item.setPrice(getRandomPrice(3000, 90000, 100));
+					item.setPrice(getRandomPrice(5000, 200000, 100));
 					item.setNumStock(100);
 					item.setScore(""+getRandomPrice(1,5,1));
 					item.setImagePath(ext);
@@ -130,4 +161,15 @@ public class T {
     }
     
     
+    static void removeRoot(long id) {
+    	List<RootVo> roots = MC.getMenus();
+		roots.stream().filter(root->root.getId()==id).forEach(root->{
+			root.getChilds().forEach(d1->{
+				d1.getChilds().forEach(d2->{
+					List<ItemVo> items = ID.getItems(d2.getPath());
+					items.forEach(i->ID.deleteItem(i.getId()));
+				});
+			});
+		});
+    }
 }

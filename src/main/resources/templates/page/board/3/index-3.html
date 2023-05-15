@@ -20,6 +20,14 @@
 <script src="/js/util/utils.js"></script>
 <script src="/js/util/paging.js"></script>
 <style>
+  #itemTable {
+    width: 100%;
+  }
+
+  #itemTable td, #itemTable th{ 
+    border-collapse: collapse;
+    border: 1px solid;
+  }
 </style>
 </head>
 <body>
@@ -49,9 +57,13 @@
     $.get("/getPagingItems",pd.toParam())
     .done((resData=>{
       pd.setPagingData(resData);
-      const grid = new ItemGrid(style,openContent);
-      grid.setItems(pd.data);
-      contentDiv.append(grid.div,createPaging(pd,updateItems));
+      const table = $("<table id='itemTable'>").append("<tr><th>제목</th><th>작성자</th><th>작성일</th><th>조회수</th></tr>");
+      const columns = ["name","userId","regDate","numView"];
+      if(resData.data) resData.data.forEach(item => {
+        let $tr = $("<tr>").click(()=>openContent(item.id));;
+        columns.forEach(c=>$tr.append($("<td>").append(item[c])));
+      });
+      contentDiv.append(table,createPaging(pd,updateItems));
     })).fail(()=>console.log("Ajax Fail"));
   }
 
@@ -89,6 +101,7 @@
       if(resData) {
         const grid = new ItemGrid({fontSize:10, padding:"10px 5px 0px 5px", margin:"5px 5px 0px 5px"},openContent);
         grid.setItems(resData);
+        console.log(resData);
         $("#recentItems").empty().append("<h5 style='padding:5px 0px 0px 5px; margin:0px;'>최근 본 상품</h5>",grid.div);
       }
     })
@@ -99,7 +112,7 @@
   }
 
   $(()=>{
-    $("#title").append(createTitle(root.name, "100%", 150, 45,"/page/"+root.id,"linear-gradient(to bottom, #3a78c3, #0047b3)"));
+    $("#title").append(createTitle(root.name, "100%", 150, 45,"/page/"+root.id,"linear-gradient(to bottom, #78c33a, #47b300)"));
     pd.setStyle(style);
     createMenu((path, pathName)=>movePath(path, pathName),root.id);
     movePath();

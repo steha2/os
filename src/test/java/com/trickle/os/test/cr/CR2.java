@@ -16,8 +16,8 @@ class CR2 {
 		MenuDao md = new MenuDao (new MyBatisConn().sqlSessionFactory(),id);
 		
 		int count = 5;
-		MenuVo d2 = md.getDepth2(    46   ); //검색어 
-		String add = "";
+		MenuVo d2 = md.getDepth2(   50   ); //검색어 
+		String add = " 관련 기사";
 		
 		MenuVo d1 = md.getDepth1(d2.getParentId());
 		RootVo root = md.getRootById(d1.getParentId());

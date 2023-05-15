@@ -4,10 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.trickle.os.controller.rest.ItemController;
-import com.trickle.os.dao.ItemDao;
-import com.trickle.os.dao.MenuDao;
 import com.trickle.os.util.ItemPaging;
 
 @SpringBootTest

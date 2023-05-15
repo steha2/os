@@ -10,6 +10,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.web.bind.annotation.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trickle.os.dao.MenuDao;
 import com.trickle.os.vo.MenuVo;
 import com.trickle.os.vo.RootVo;
@@ -103,6 +105,24 @@ public class MenuController {
 		List<RootVo> roots = menuDao.getRoots();
 		roots.forEach(root->menuDao.addChilds(root));
 		return roots;
+	}
+	
+	@GetMapping("/os/getMenus2")
+	public List<RootVo> getMenus22(){
+		List<RootVo> roots = menuDao.getRoots();
+		roots.forEach(root->menuDao.addChilds(root));
+		return roots;
+	}
+	
+	@RequestMapping(value="/os/getMenus", produces = "text/plain; charset=utf8")
+	public String getMenus2() {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString(getMenus());
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@GetMapping("/getRootMenu/{rootId}")

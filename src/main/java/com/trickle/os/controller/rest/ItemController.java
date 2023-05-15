@@ -6,8 +6,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.trickle.os.dao.ItemDao;
 import com.trickle.os.dao.PagingDao;
+import com.trickle.os.paging.FilterCondition;
 import com.trickle.os.paging.PagingData;
 import com.trickle.os.vo.*;
 
@@ -49,18 +52,34 @@ public class ItemController {
 		return pd;
 	}
 	
+	@RequestMapping(value="/os/getItems", produces = "text/plain; charset=utf8")
+	public String getItems(String path, long rowCount, long maxPage, long nowPage) {
+		PagingData pd = new PagingData();
+		pd.addOption("path", FilterCondition.STARTS_WITH, path);
+		pd.setMaxPage(maxPage);
+		pd.setRowCount(rowCount);
+		pd.setNowPage(maxPage);
+		pd = getPagingItems(pd);
+		ObjectMapper mapper = new ObjectMapper();
+        try {
+            String json = mapper.writeValueAsString(pd);
+            return json;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return null; 
+	}
+	
 	@GetMapping("/getRecentItems")
 	public List<ItemVo> getRecentItems(HttpSession session) {
 		@SuppressWarnings("unchecked")
 		List<Long> itemIds = (List<Long>) session.getAttribute("recentItems");
-		System.out.println(itemIds);
 		if(itemIds == null) return null;
 		else return itemDao.getRecentItems(itemIds);
 	}
 	
 	@PostMapping("/getComments")
 	public PagingData getComments(PagingData cpd) {
-		System.out.println(cpd);
 		cpd.setTable("COMMENTS_WITH_USER_NAME",CommentVo.class);
 		pagingDao.addTotalRows(cpd);
 		cpd.setData(pagingDao.getPagingComments(cpd));

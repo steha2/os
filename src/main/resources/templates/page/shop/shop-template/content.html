@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title th:text="${root.name}"></title>
+<style>
+#itemTable{
+  table-layout: fixed;
+  width:100%;
+}
+#itemTable td, pre{
+  word-wrap: break-word;
+  white-space: normal;
+}
+#detailTable td{
+  border-collapse: collapse;
+  border:1px solid;
+  padding: 5px;
+}
+.buyButton{
+  background: #ffffff;
+  color:rgb(37, 37, 37);
+  font-size: 25px;
+  font-weight: bold;
+  padding: 10px;
+  /* border-radius: 10px; */
+  cursor: pointer;
+}
+.comment-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comment-table th,
+.comment-table td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.comment-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.comment-table tr:hover {
+  background-color: #f9f9f9;
+}
+</style>
+</head> 
+<div id="tabs">
+  <ul>
+    <li><a href="#itemDiv">상품 상세</a></li>
+    <li><a href="#commentsDiv">상품 후기</a></li>
+  </ul>
+  <div id="itemDiv">
+    <table id="itemTable">
+      <tr>
+        <td>
+          <img>
+        </td>
+        <td>
+          <table id="detailTable">
+            <tr><td style="width:80px">조회수</td><td class="ra"><span th:text="${item.numView}"></span></td></tr>
+            <tr><td>별점</td><td class="ra"><span th:text="${item.avgScore}"></span></td></tr>
+            <tr><td>상품명</td><td><span th:text="${item.name}"></span></td></tr>
+            <tr><td>남은 수량</td><td><span th:text="${item.numStock}"></span></td></tr>
+            <tr><td>판매 수량</td><td><span th:text="${item.numSold}"></span></td></tr>
+            <tr><td>가격</td><td class="ra"><span th:text="${#numbers.formatInteger(item.price,3,'COMMA')} + ' 원'"></td></tr>
+            <tr><td>할인가</td><td class="ra"><span th:text="|-${item.discount}% ${#numbers.formatInteger(item.dcPrice,3,'COMMA')} 원|"></td></tr>
+            <tr><td>결제 금액</td><td class="ra"><span id="priceSpan"></td></tr>
+            <tr><td>구매 수량</td><td class="ra"><input type="number" min="1" max="99" id="amount" value="1" class="ra" style="width:100px;padding-right:5px"></td></tr>
+            <tr>
+              <td colspan="2" style="text-align: center;">
+                <button id="addCart" class="buyButton"> 장바구니 </button>
+                <button id="buyItem" class="buyButton"> 구매하기 </button>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr><td colspan="2"><hr><h2 style="text-align: center;">상품 상세정보</h2><hr><pre></pre></td></tr>
+    </table>
+  </div>
+  <div id="commentDiv">asd</div>
+</div>
+</body>
+</table>
+<script th:inline="javascript">
+
+$(()=>{
+  const item = /*[[${item}]]*/ null;
+  const root = /*[[${root}]]*/ null;
+  const itemDiv = $("#itemDiv");
+  let cpd = new PagingData();
+  cpd.setPath("/"+item.id);
+  let totalPrice, amount;
+  let style = JSON.parse(root.style);
+  itemDiv.find("img").attr("src","/resources/images"+item.imagePath)
+  for(let i=0; i<30; i++) itemDiv.find("pre").append(JSON.stringify(item,null,2));
+  const tabs = $("#tabs");
+  tabs.tabs({
+  activate: function(event, ui) {
+    if (ui.newTab.index() === 1) {
+      updateComments();
+     }
+    }
+  });
+
+  function calcPrice(){
+    amount = parseInt($("#amount").val());
+    totalPrice = amount * item.dcPrice;
+    $("#priceSpan").text(totalPrice.toLocaleString()+" 원");
+    }
+    $("#amount").change(calcPrice);
+    calcPrice();
+    $("#addCart").click(()=>{ 
+      checkMove(()=>{
+        const cart = {itemId:item.id,rootId:root.id,amount:parseInt($("#amount").val())}
+        $.post("/login/addCart",cart).done((resData)=>alert(resData)).fail(()=>console.log("Ajax Fail"));
+      });
+    });
+    $("#buyItem").click(()=>{
+    item.amount = amount;
+    pay(item,totalPrice);
+  });
+
+  function updateComments(){
+    console.log(cpd);
+    $.post("/getComments", cpd.toParam()).done((resData) => {
+      const commentDiv = $("#commentDiv").empty();
+      const commentTable = $("<table>").addClass("comment-table")
+        .append("<tr><th width='500'>내용</th><th><i class='fas fa-star' style='color: #f3da35'></i>별점</th><th>작성자</th><th>작성일</th><tr>");
+      cpd.setPagingData(resData)
+      console.log(cpd);
+      if(cpd.data) {
+        cpd.data.forEach((comment) => {
+          const newRow = $("<tr>");
+          const contentCol = $("<td>").text(comment.content);
+          const scoreCol = $("<td>").text(comment.score);
+          const userNameCol = $("<td>").text(comment.userName);
+          const regDateCol = $("<td>").text(comment.regDate);
+          newRow.append(contentCol, scoreCol, userNameCol, regDateCol);
+          commentTable.append(newRow);
+        });
+      }
+      const commentInput = new CommentInput("/"+item.id);
+      console.log(commentInput);
+      commentDiv.append(commentTable,createPaging(cpd,updateComments),commentInput.div);
+    }).fail(error => console.error(error));
+  }
+});
+
+</script>
+
+</html>

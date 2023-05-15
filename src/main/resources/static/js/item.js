@@ -14,17 +14,21 @@ class ItemGrid {
     this.div = $("<div class='item-grid'></div>");
   }
 
-  addItemCell = (item) => {
+  addItemCell (item) {
     const cell = {};
     cell.div = $("<div class='itemCell'></div>").css({padding:this.padding,margin:this.margin,fontSize:this.fontSize});
     if(this.itemClick) cell.div.click(()=>this.itemClick(item.id));
     cell.div.css({width:this.cw, height:this.ch});
+    this.drawCell(cell,item);
+    this.div.append(cell.div);
+  }
+
+  drawCell(cell,item) {
     cell.image = $(`<img class='itemImg' src='/resources/images${item.imagePath}'/>`);
     cell.image.attr("alt",sliceText(item.name,20));
     cell.image.css({width:this.iw, height:this.ih});
     cell.div.append(cell.image,`<br>${sliceText(item.name,this.style.sliceText)}<br>`,
                     item.discount > 0 ? `<red>-${item.discount}%</red>`:"",` ￦${item.dcPrice.toLocaleString()}`);
-    this.div.append(cell.div);
   }
 
   setLocation = (left, top) => {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.trickle.os.dao.ItemDao;
 import com.trickle.os.dao.MenuDao;
+import com.trickle.os.vo.ItemVo;
 import com.trickle.os.vo.RootVo;
 
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,14 @@ public class PageController {
 	
 	@GetMapping("/page/content/{itemId}") 
 	public String openContent(@PathVariable long itemId, Model model, HttpSession session) {
-		model.addAttribute("item", itemDao.getItemById(itemId));
-		itemDao.updateNumView(itemId);
+		ItemVo item = itemDao.getItemById(itemId);
+		if(item == null) {
+			return "/home";
+		}
 		RootVo root = menuDao.getRootByItemId(itemId);
+		
+		model.addAttribute("item",item);
+		itemDao.updateNumView(itemId);
 		model.addAttribute("root", root);
 		
 		@SuppressWarnings("unchecked")

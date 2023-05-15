@@ -69,8 +69,13 @@ public class PagingData {
 	}
 	
 	public void addOption(String key, FilterCondition condition, Object value1, Object value2) {
-		if(option == null) option = new ArrayList<>();
 		option.add(new FilterOption(key, condition, value1, value2));
+	}
+	
+	public static void main(String[] args) {
+		PagingData p = new PagingData();
+		p.addOption("path", FilterCondition.STARTS_WITH, "/1/1");
+		System.out.println(p);
 	}
 	
 	public void addContains(String key, Object value1) {

@@ -36,7 +36,7 @@
             <td>정렬</td>
             <td>
               <select id="orderBy" onchange=changeFilter(this)>
-                <option>----------</option>
+                <option value = "">----------</option>
                 <option value = "NUM_SOLD DESC">판매인기순</option>
                 <option value = "PRICE ASC">낮은가격순</option>
                 <option value = "PRICE DESC">높은가격순</option>
@@ -117,7 +117,8 @@
       }
       pd.addOption("price",BETWEEN,min,max);  
     }
-    pd.setOrderBy($("#orderBy").attr("value"));
+    pd.setOrderBy($("#orderBy").val());
+    console.log(pd);
     if(input) updateItems();
   }
 </script>

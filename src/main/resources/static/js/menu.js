@@ -25,7 +25,7 @@ function createMenu(menuClick, rootId){
   }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
 }
 
-function createTitle(title, width, height, fontSize, link) {
+function createTitle(title, width, height, fontSize, link, background) {
   const $title = $("<h1>").css({
     "font-weight": "bold",
     "font-family": "title",
@@ -40,7 +40,7 @@ function createTitle(title, width, height, fontSize, link) {
     "flex-direction": "column",
     "height": height,
     "width": width,
-    "background": "linear-gradient(to bottom, #3a78c3, #0047b3)"
+    "background": background
   }).click(()=>location.href=link);
   const $reflection = $("<div>").css({
     "height": height,
