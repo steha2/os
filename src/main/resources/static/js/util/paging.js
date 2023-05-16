@@ -19,7 +19,7 @@ function createPaging(pd, updateFunc) {
   let startPage = pd.startPage;
   let endPage = pd.endPage;
   const drc = pd.defaultRowCount || null;
-  if(drc !== null && pd.paging === 1) {
+  if(drc !== null) {
     let select = $("<select id='rowCountSelect'>").css({width:50,"margin-right":5,height:25});
     for(i=drc; i<=drc*5; i+=drc){
       $td2.append(select);
@@ -57,6 +57,7 @@ function createPaging(pd, updateFunc) {
     let pageLink = createLink(p);
     if (p == pd.nowPage) {
         pageLink.css("cursor","default").css("color","blue");
+        pageLink.off("click");
     } else {
       addHover(pageLink);
     }

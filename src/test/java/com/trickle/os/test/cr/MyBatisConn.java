@@ -1,4 +1,4 @@
-package com.trickle.os.dao;
+package com.trickle.os.test.cr;
 
 import javax.sql.DataSource;
 
@@ -17,7 +17,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class MyBatisConn {
     private String driver ="oracle.jdbc.OracleDriver";
-    private String url="jdbc:oracle:thin:@localhost:1521:xe";
+    private String url="jdbc:oracle:thin:@192.168.0.213:1521:xe";
     private String user="os";
     private String password="1234";
 

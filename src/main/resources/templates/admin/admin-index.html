@@ -178,10 +178,9 @@
 
   function updateItemList(){
     const tbody = $("#itemList tbody").empty();
-    console.log(pd);
     $.getJSON("/getPagingItems",pd.toParam()).done((resData) => {
       pd.setPagingData(resData);
-      const cols = ["path", "id", "name", "numSold", "numStock", "regDate"];
+      const cols = ["path", "id", "name", "userId", "numView", "regDate"];
       const header = $("<tr>");
       cols.forEach(col => header.append($("<th>").text(camelToSnake(col))));
         tbody.append(header);

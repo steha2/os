@@ -22,7 +22,9 @@ WHERE ID = #{id}
 <delete id="deleteItem">
 DELETE FROM ITEMS WHERE ID = #{id}
 </delete>
-
+<delete id="deleteComment">
+DELETE FROM COMMENTS WHERE ID = #{id}
+</delete>
 <select id="getTotalRows" parameterType="map" resultType="long">
   SELECT count(*) FROM ITEMS
   WHERE PATH LIKE '${path}%'

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head>
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+</head>
+<style>
+  .contentFormTable td, .contentFormTable th, .contentFormTable{ 
+    border:1px solid;
+    border-collapse: collapse;
+    padding: 3px;
+  }
+
+  .contentFormTable {
+    width: 500px;
+  }
+
+  .contentTextArea {
+    height:200px;
+  }
+
+</style>
+<body>
+</body>
+<script>
+class ContentForm {
+  constructor(isUpdate, item, pathName) {
+    this.isUpdate = isUpdate;
+    this.pathName = pathName;
+    this.item = item;
+    this.div = $("<div>");
+    this.createForm();
+  }
+
+  createForm() {
+    const table = $("<table class='contentFormTable'>");
+    const topTr = $(`<tr><th colspan='2'>${this.isUpdate "게시글 수정" : "게시글 등록"}</th></tr>`);
+    const userNameTr = $(`<tr><td>작성자</td><td>${this.item.userName}</td></tr>`);
+    const pathNameTr = $(`<tr><td>게시판 분류</td><td>${this.pathName}</td></tr>`);
+    const titleInput = $(`<input style='width:96%'; value='${this.item.name}'>`);
+    const titleTr = $(`<tr><td>글 제목</td><td></td></tr>`).find('td:last').append(titleInput).end();
+    const contentInput = $(`<textarea>${this.item.content}</textarea>`).css({"width":"98%",resize:"none","height":"95%"});
+    const contentTr = $(`<tr><td  class='contentTextArea' colspan='2'></td></tr>`).find('td').append(contentInput).end();
+    const button = $(`<button>${this.isUpdate ? "수정" : "등록"}</button>`).click(() => {
+      this.item.content = contentInput.val();
+      this.item.name = titleInput.val();
+      $.post(this.isUpdate ? "/login/updateItem" : "/login/addItem", this.item).done((resData) => {
+        if(resData) openContent(resData.id);
+        else alert("실패");
+      }).fail(error => console.error(error));
+    });
+    const buttonTr = $(`<tr><td colspan='2'></td></tr>`).find('td').append(button).end();
+
+    table.append(topTr, userNameTr, pathNameTr, titleTr, contentTr, buttonTr);
+    this.div.append(table);
+  }
+}
+
+const form1 = new ContentForm("update", {id:1,name:"글제목이다..",content:"글내용이다.1@#ㅁ",userName:"admin"}, "T-Market");
+$("body").append(form1.div);
+</script>

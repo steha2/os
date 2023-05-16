@@ -6,8 +6,8 @@ import lombok.*;
 @Setter
 @ToString
 public class ItemVo {
-	private long id;
-	private String name, path, userId, content, imagePath, regDate, score;
+	private long id, userId;
+	private String name="", path="", userName="", content="", imagePath="", regDate, score = "";
 	private long price, numSold, numStock, numView, numComment;
 	private Long sumScore;
 	private Double avgScore;

@@ -4,15 +4,27 @@ import java.io.File;
 import java.util.List;
 import java.util.Random;
 
+import javax.sql.DataSource;
+
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.trickle.os.controller.rest.*;
 import com.trickle.os.test.Crawling;
 import com.trickle.os.test.GmSql;
+import com.trickle.os.test.cr.MyBatisConn;
 import com.trickle.os.vo.*;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
-public class T {
+import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
+
+public class DeleteD {
 	private static SqlSessionFactory factory = new MyBatisConn().sqlSessionFactory();
 	public static ItemDao ID = new ItemDao(factory);
 	public static MenuDao MD = new MenuDao(factory, ID);
@@ -23,44 +35,37 @@ public class T {
 	public static ResponseController RC = new ResponseController();
 	public static JdbcTemplate sql = GmSql.sql();
 	
+	public static String deletePath = "/1/47/48";
+	
 	public static void main(String[] args) {
 		List<RootVo> roots = MC.getMenus();
 		roots.forEach(root->{
 			System.out.println(root.getName());
-			all(root.getChilds(),1);
+			all(root.getChilds(), root,1);
 		});
+//		removeRoot(2);
+//		ID.deleteItem(31);
 	}
 	
-	public static void all(List<MenuVo> menus, int depth) {
+	public static void all(List<MenuVo> menus, RootVo root, int depth) {
 		if(menus == null) return;
 	    for (MenuVo menu : menus) {
-	        StringBuilder sb = new StringBuilder();
-	        for (int i = 0; i < depth; i++) {
-	            sb.append("  "); // 공백 2개
-	        }
-	        sb.append(menu.getName());
+	    	if(depth == 1) all(menu.getChilds(), root, 2);
+	    	
+	    	System.out.println(menu.getPath());
+	        if(!menu.getPath().equals(deletePath)) continue;
 	        List<ItemVo> items = ID.getItems(menu.getPath());
-	        
-	        Long itemCount = (long) items.size();
-	        sb.append(" (Items: ").append(itemCount).append(")");
-	        System.out.println(sb.toString());
-	        
+	        System.out.println(items);
 	        items.forEach(item->{
 	        	String ip = "/"+item.getId();
 	        	List<CommentVo> cs = ID.getComments(item.getId());
 	        	cs.forEach(c->{
-	        		
+	        		ID.deleteComment(c.getId());
 	        	});
+	        	ID.deleteItem(item.getId());
 	        });
-	        
-	        if(depth == 2 && itemCount == 0) {
-	        	System.out.println(menu.getId() + ":  뎁스2에 아이템이 없음.. 채우자! " + menu.getName());
-	        }
-	        
-	        // 자식 메뉴가 있는 경우 재귀적으로 호출하여 출력
-	        if (menu.getChilds() != null && !menu.getChilds().isEmpty()) {
-	            all(menu.getChilds(), depth + 1);
-	        }
+	        MD.deleteMenu(menu.getId());
+//	        System.out.println("dleete: " + menu);
 	    }
 	}
 	
@@ -107,12 +112,12 @@ public class T {
 					ItemVo item = new ItemVo();
 					item.setContent(t);
 					item.setName(t);
-					item.setPrice(getRandomPrice(3000, 90000, 100));
+					item.setPrice(getRandomPrice(5000, 200000, 100));
 					item.setNumStock(100);
 					item.setScore(""+getRandomPrice(1,5,1));
 					item.setImagePath(ext);
 					item.setPath(path);
-					item.setUserId("Admin");
+					item.setUserId(1);
 					ID.addItem(item);
 					System.out.println("ITEMID:" + item.getId());
 					Crawling.saveImg(s, new File(saveFile, item.getId() + ext));
@@ -130,4 +135,15 @@ public class T {
     }
     
     
+    static void removeRoot(long id) {
+    	List<RootVo> roots = MC.getMenus();
+		roots.stream().filter(root->root.getId()==id).forEach(root->{
+			root.getChilds().forEach(d1->{
+				d1.getChilds().forEach(d2->{
+					List<ItemVo> items = ID.getItems(d2.getPath());
+					items.forEach(i->ID.deleteItem(i.getId()));
+				});
+			});
+		});
+    }
 }

@@ -7,13 +7,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import com.trickle.os.dao.ItemDao;
 import com.trickle.os.dao.MenuDao;
-import com.trickle.os.vo.ItemVo;
-import com.trickle.os.vo.RootVo;
+import com.trickle.os.vo.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,8 +41,8 @@ public class PageController {
 	    }
 	    recentItems.remove(itemId);
 	    recentItems.add(0, itemId);
-	    if (recentItems.size() > 4) {
-	        recentItems = recentItems.subList(0, 4);
+	    if (recentItems.size() > 30) {
+	        recentItems = recentItems.subList(0, 30);
 	    }
         session.setAttribute("recentItems", recentItems);
 		return "/page/"+root.getType()+"/"+root.getId()+"/content-"+root.getId();
@@ -63,5 +61,30 @@ public class PageController {
 		RootVo root = menuDao.getRootByItemId(itemId); 
 		model.addAttribute("reqItemId", itemId);
 		return openPage(root.getId(), model);
+	}
+	
+
+	@GetMapping("/login/writeForm")
+	public String openWriteForm(@RequestParam String path, HttpSession session, Model model) {
+		RootVo root = menuDao.getRootByPath(path);
+		UserVo user = (UserVo) session.getAttribute("user");
+		ItemVo item = new ItemVo();
+		item.setPath(path);
+		item.setUserId(user.getId());
+		item.setUserName(user.getName());
+		model.addAttribute("item", item);
+		model.addAttribute("path", path);
+		model.addAttribute("pathName", menuDao.getPathName(path));
+		return "/page/"+root.getType()+"/"+root.getId()+"/content-write-"+root.getId();
+	}
+
+	@GetMapping("/login/updateForm")
+	public String openUpdateForm(@RequestParam String path, @RequestParam long itemId, Model model) {
+		RootVo root = menuDao.getRootByItemId(itemId);
+		model.addAttribute("pathName", menuDao.getPathName(path));
+		model.addAttribute("item", itemDao.getItemById(itemId));
+		model.addAttribute("action", "update");
+		model.addAttribute("path", path);
+		return "/page/"+root.getType()+"/"+root.getId()+"/content-write-"+root.getId();
 	}
 }

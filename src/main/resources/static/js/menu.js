@@ -54,3 +54,57 @@ function createTitle(title, width, height, fontSize, link, background) {
   });
   return $wrapper.append($title);
 }
+
+function createSelectMenu(rootId, element, selectedPath) {
+  $.getJSON("/getRootMenu/" + rootId).done((root) => {
+      const rootName = root.name;
+      console.log(root)
+      // 첫 번째 <select> 요소 생성
+      const select1 = $("<select>");
+      root.childs.forEach((menu) => {
+        const option = $("<option>").attr("value",menu.id).text(menu.name);
+        select1.append(option);
+      });
+
+      // 두 번째 <select> 요소 생성
+      const select2 = $("<select>");
+      const updateSelect2 = () => {
+        const selectedValue = select1.val();
+        const selectedChild = root.childs.find((menu) => menu.id == selectedValue);
+        select2.empty();
+        if (selectedChild && selectedChild.childs) {
+          selectedChild.childs.forEach((menu) => {
+            const option = $("<option>").attr("value",menu.id).text(menu.name);
+            select2.append(option);
+          });
+        }
+      };
+
+      // 첫 번째 <select> 변경 시 두 번째 <select> 업데이트
+      select1.on("change", updateSelect2);
+      // selectedPath에 해당하는 메뉴 선택
+      updateSelect2();
+      if (selectedPath) {
+        const pathParts = selectedPath.split("/");
+        if (pathParts.length >= 3) {
+          const selectedValue1 = pathParts[2];
+          const selectedChild1 = root.childs.find((menu) => menu.id == selectedValue1);
+          if (selectedChild1) {
+            select1.val(selectedValue1);
+            if (pathParts.length >= 4 && selectedChild1.childs) {
+              updateSelect2();
+              const selectedValue2 = pathParts[3];
+              const selectedChild2 = selectedChild1.childs.find((menu) => menu.id == selectedValue2);
+              if (selectedChild2) {
+                select2.val(selectedValue2);
+              }
+            }
+          }
+        }
+      }
+
+      // 최종 결과물 조립
+      const resultContainer = $("<div>").append(select1," / ",select2);
+      element.append(resultContainer);
+    }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+}

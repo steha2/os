@@ -112,7 +112,7 @@ table td, table th {
 
 .itemCell {
   cursor: pointer;
-  outline: 1px solid rgb(214, 199, 199);
+  outline: 1px solid rgb(235, 227, 227);
   float:left;
   text-align: center;
   box-sizing: border-box;
@@ -165,9 +165,11 @@ a:hover {
 
 #itemNavi2Wrap {
   float: left;
-  background: #eeecda;
+  background: #faf9f4;
+  white-space: nowrap; /* Prevent line breaks */
+  overflow: hidden; /* Hide overflowing text */
+  text-overflow: ellipsis; /* Display ellipsis for truncated text */
 }
-
 
 #itemsDiv{
   float: left;

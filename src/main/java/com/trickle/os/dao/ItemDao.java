@@ -10,6 +10,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import com.trickle.os.util.Debug;
 import com.trickle.os.util.ItemPaging;
 import com.trickle.os.vo.CommentVo;
 import com.trickle.os.vo.ItemVo;
@@ -43,8 +44,12 @@ public class ItemDao {
 
 	public int deleteItem(long id) {
 		ItemVo item = getItemById(id);
+		if(item == null) {
+			Debug.log("ITEM IS NULL id:" + id);
+			return -1;
+		}
 		File file = new File(resources+"/images", item.getImagePath());
-		file.delete();
+		if(file.exists()) file.delete();
 		return sqlSession.update("ItemMapper.deleteItem", id);
 	}
 	
@@ -65,9 +70,14 @@ public class ItemDao {
 		sqlSession.update("ItemMapper.updateNumView",id);
 	}
 	
-	public List<ItemVo> getRecentItems(List<Long> itemIds) {
+	public List<ItemVo> getRecentItems(long[] itemIds, int rootId, int count) {
 		List<ItemVo> result = new ArrayList<>();
-		itemIds.forEach(id->result.add(getItemById(id)));
+		for(int i=0; i<itemIds.length; i++) {
+			ItemVo item = getItemById(itemIds[i]);
+			long itemRootId = Long.parseLong(item.getPath().split("/")[1]);
+			if(itemRootId == rootId) result.add(item);
+			if(result.size() >= count) break;
+		}
 		return result;
 	}
 
@@ -82,5 +92,9 @@ public class ItemDao {
 
 	public List<CommentVo> getComments(long itemId) {
 		return sqlSession.selectList("ItemMapper.getComments",itemId);
+	}
+
+	public void deleteComment(long id) {
+		sqlSession.delete("ItemMapper.deleteComment",id);
 	}
 }

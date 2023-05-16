@@ -99,4 +99,13 @@ private final SqlSession sqlSession;
 	public int updateStyle(RootVo root) {
 		return sqlSession.update("MenuMapper.updateStyle", root);
 	}
+
+	public void deleteMenu(long id) {
+		sqlSession.delete("MenuMapper.deleteDepth1", id);
+		sqlSession.delete("MenuMapper.deleteDepth2", id);
+	}
+
+	public RootVo getRootByPath(String path) {
+		return getRootById(Long.parseLong(path.split("/")[1]));
+	}
 }

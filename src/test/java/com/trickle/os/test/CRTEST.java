@@ -73,7 +73,7 @@ class CRTEST {
 					item.setScore(""+getRandomPrice(1,5,1));
 					item.setImagePath(ext);
 					item.setPath(path);
-					item.setUserId("Admin");
+					item.setUserId(1);
 					id.addItem(item);
 					System.out.println("ITEMID:" + item.getId());
 					Crawling.saveImg(s, new File(saveFile, item.getId() + ext));

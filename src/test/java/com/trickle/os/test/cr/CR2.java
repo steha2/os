@@ -15,17 +15,17 @@ class CR2 {
 		ItemDao id = new ItemDao (new MyBatisConn().sqlSessionFactory());
 		MenuDao md = new MenuDao (new MyBatisConn().sqlSessionFactory(),id);
 		
-		int count = 5;
-		MenuVo d2 = md.getDepth2(   50   ); //검색어 
-		String add = " 관련 기사";
+		int count = 2;
+		MenuVo d2 = md.getDepth2(  64   ); //검색어 
+		String search = d2.getName() + " 웹툰 표지";
+		String add = "";
 		
 		MenuVo d1 = md.getDepth1(d2.getParentId());
 		RootVo root = md.getRootById(d1.getParentId());
 		
 //		String pathName = "/"+root.getName()+"/"+d1.getName()+"/"+d2.getName();
 		String path= "/"+root.getId()+"/"+d1.getId()+"/"+d2.getId();
-		String search = d2.getName();
-		
+//		String search = d2.getName();
 		
 		for(int c=0; c<count; c++) {
 			NaverCrawling cr = new NaverCrawling();
@@ -59,10 +59,10 @@ class CR2 {
 					item.setName(t);
 					item.setPrice(getRandomPrice(5000, 200000, 100));
 					item.setNumStock(100);
-					item.setScore(""+getRandomPrice(1,5,1));
+					item.setScore(""+getRandomPrice(1,5,1)+"."+getRandomPrice(0,9,1));
 					item.setImagePath(ext);
 					item.setPath(path);
-					item.setUserId("Admin");
+					item.setUserId(1);
 					id.addItem(item);
 					System.out.println("ITEMID:" + item.getId());
 					NaverCrawling.saveImg(s, new File(saveFile, item.getId() + ext));

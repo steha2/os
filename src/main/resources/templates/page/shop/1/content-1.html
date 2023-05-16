@@ -3,6 +3,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
 <title th:text="${root.name}"></title>
 <style>
 #itemTable{
@@ -53,7 +55,7 @@
 <div id="tabs">
   <ul>
     <li><a href="#itemDiv">상품 상세</a></li>
-    <li><a href="#commentsDiv">상품 후기</a></li>
+    <li><a href="#commentDiv">상품 후기</a></li>
   </ul>
   <div id="itemDiv">
     <table id="itemTable">
@@ -64,7 +66,7 @@
         <td>
           <table id="detailTable">
             <tr><td style="width:80px">조회수</td><td class="ra"><span th:text="${item.numView}"></span></td></tr>
-            <tr><td>별점</td><td class="ra"><span th:text="${item.avgScore}"></span></td></tr>
+            <tr><td>평점</td><td class="ra"><span th:text="${item.avgScore}"></span></td></tr>
             <tr><td>상품명</td><td><span th:text="${item.name}"></span></td></tr>
             <tr><td>남은 수량</td><td><span th:text="${item.numStock}"></span></td></tr>
             <tr><td>판매 수량</td><td><span th:text="${item.numSold}"></span></td></tr>
@@ -84,7 +86,7 @@
       <tr><td colspan="2"><hr><h2 style="text-align: center;">상품 상세정보</h2><hr><pre></pre></td></tr>
     </table>
   </div>
-  <div id="commentDiv">asd</div>
+  <div id="commentDiv"></div>
 </div>
 </body>
 </table>
@@ -128,13 +130,11 @@ $(()=>{
   });
 
   function updateComments(){
-    console.log(cpd);
     $.post("/getComments", cpd.toParam()).done((resData) => {
       const commentDiv = $("#commentDiv").empty();
       const commentTable = $("<table>").addClass("comment-table")
-        .append("<tr><th width='500'>내용</th><th><i class='fas fa-star' style='color: #f3da35'></i>별점</th><th>작성자</th><th>작성일</th><tr>");
+        .append("<tr><th width='500'>내용</th><th><i class='fas fa-star' style='color: #f3da35'></i>평점</th><th>작성자</th><th>작성일</th><tr>");
       cpd.setPagingData(resData)
-      console.log(cpd);
       if(cpd.data) {
         cpd.data.forEach((comment) => {
           const newRow = $("<tr>");
@@ -146,8 +146,7 @@ $(()=>{
           commentTable.append(newRow);
         });
       }
-      const commentInput = new CommentInput("/"+item.id);
-      console.log(commentInput);
+      const commentInput = new CommentInput("/"+item.id, updateComments);
       commentDiv.append(commentTable,createPaging(cpd,updateComments),commentInput.div);
     }).fail(error => console.error(error));
   }

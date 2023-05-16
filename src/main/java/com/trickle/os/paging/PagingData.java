@@ -24,7 +24,6 @@ public class PagingData {
 	@JsonIgnore private String columns;
 	@JsonIgnore private String tableName;
 	@JsonIgnore private String joinClause;
-	private Paging paging;
 	private List<?> data;
 	private List<FilterOption> option = new ArrayList<>();
 	
@@ -74,7 +73,10 @@ public class PagingData {
 	
 	public static void main(String[] args) {
 		PagingData p = new PagingData();
-		p.addOption("path", FilterCondition.STARTS_WITH, "/1/1");
+		p.nowPage=1;
+		p.maxPage=10;
+		p.rowCount=10;
+		p.calcPaging(101);
 		System.out.println(p);
 	}
 	
@@ -89,11 +91,17 @@ public class PagingData {
 	public void calcPaging(long totalRows) {
 		this.totalRows = totalRows;
 		totalPages = (long) Math.ceil((double) totalRows / rowCount);
-		if(this.nowPage > totalPages) this.nowPage = totalPages;
-		startPage = (this.nowPage - 1) / maxPage * maxPage + 1;
+		if(nowPage > totalPages) nowPage = totalPages;
+		startPage = (nowPage - 1) / maxPage * maxPage + 1;
 		if (startPage > totalPages) startPage = totalPages;
-		this.endPage = totalPages <= nowPage || startPage + maxPage >= totalPages ? totalPages : startPage + maxPage - 1;
+		endPage = startPage + maxPage - 1;
+		if (endPage > totalPages) {
+		    endPage = totalPages;
+		}
+		if(nowPage < startPage) nowPage = startPage;
+		if(nowPage > endPage) nowPage = endPage;
 	}
+	
 
     public long getStartRow() {
         return (nowPage - 1) * rowCount + 1;
@@ -104,11 +112,11 @@ public class PagingData {
     }
 	
 	public void setOption(String option) {
-		System.out.println((option));
+//		System.out.println(option);
 	    Gson gson = new Gson();
         Type type = new TypeToken<List<FilterOption>>(){}.getType();
         this.option = gson.fromJson(option, type);
-        System.out.println(this.option);
+//      System.out.println(this.option);
 	}
 
 	public void addColumn(String column) {

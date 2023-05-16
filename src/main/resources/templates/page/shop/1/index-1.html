@@ -46,6 +46,7 @@
 
   function updateItems() {
     contentDiv.empty();
+    console.log(pd);
     $.get("/getPagingItems",pd.toParam())
     .done((resData=>{
       pd.setPagingData(resData);
@@ -53,11 +54,6 @@
       grid.setItems(pd.data);
       contentDiv.append(grid.div,createPaging(pd,updateItems));
     })).fail(()=>console.log("Ajax Fail"));
-  }
-
-  function searchItems() {
-    pd.setSearch($(".search-input").val());
-    changeFilter(true);
   }
 
   function movePath(path, pathName) {
@@ -85,11 +81,12 @@
   }
 
   function updateRecentItems(){
-    $.get("/getRecentItems").done((resData)=>{
+    $.get(`/getRecentItems/${root.id}/4`).done((resData)=>{
+      $("#recentItems").empty().append("<h5 style='padding:5px 0px 0px 5px; margin:0px;'>최근 본 상품</h5>");
       if(resData) {
         const grid = new ItemGrid({fontSize:10, padding:"10px 5px 0px 5px", margin:"5px 5px 0px 5px"},openContent);
         grid.setItems(resData);
-        $("#recentItems").empty().append("<h5 style='padding:5px 0px 0px 5px; margin:0px;'>최근 본 상품</h5>",grid.div);
+        $("#recentItems").append(grid.div);
       }
     })
   }

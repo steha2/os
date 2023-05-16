@@ -20,7 +20,6 @@ function openLoginDialog(action){
    "<img src='/images/star.png' width='15' height='15' style='margin-left:80px;'>",
    " <a href='/user/signUpForm?isClose=true' target='_blank'>회원가입</a>");
 
-  console.log($.cookie())
   if ($.cookie("remember") === "true") {
     remember.prop("checked", true);
     nameInput.val($.cookie("name"));

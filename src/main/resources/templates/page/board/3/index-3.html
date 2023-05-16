@@ -21,12 +21,23 @@
 <script src="/js/util/paging.js"></script>
 <style>
   #itemTable {
-    width: 100%;
+    width: 99%;
+    box-sizing: border-box;
+    margin: 3px;
   }
 
   #itemTable td, #itemTable th{ 
     border-collapse: collapse;
     border: 1px solid;
+    text-align: center;
+    padding: 2px;
+  }
+
+  .itemTr{
+    cursor: pointer;
+  }
+  .itemTr:hover{
+    background: #bbb;
   }
 </style>
 </head>
@@ -35,7 +46,10 @@
     <div id="topDiv" th:include="|/page/${root.type}/${root.id}/top-${root.id}.html|"></div>
     <div id="header" th:include="|/page/${root.type}/${root.id}/header-${root.id}.html|"></div>
     <div class="content">
-      <div id="itemNavi1"></div>
+      <div id="itemNavi1">
+        <span id="navi1span" style='width:800px;'></span>
+        <span id="buttonsSpan"><button onclick="openWriteForm()">게시글 등록</button></span>
+      </div>
       <div id="contentDiv"></div>
       <div id="itemNavi2Wrap">
         <div id="recentItems"></div>
@@ -51,25 +65,25 @@
   let style = JSON.parse(root.style);
   const contentDiv = $("#contentDiv");
   let pd = new PagingData();
-
   function updateItems() {
+    if(!pd.orderBy) pd.setOrderBy("ID DESC");
     contentDiv.empty();
-    $.get("/getPagingItems",pd.toParam())
-    .done((resData=>{
+    $.get("/getPagingItems",pd.toParam()).done((resData=>{
       pd.setPagingData(resData);
-      const table = $("<table id='itemTable'>").append("<tr><th>제목</th><th>작성자</th><th>작성일</th><th>조회수</th></tr>");
-      const columns = ["name","userId","regDate","numView"];
+      const table = $("<table id='itemTable'>").append("<tr><th>번호</th><th>제목</th><th>작성자</th><th>작성일</th><th>조회수</th></tr>");
+      const columns = ["id","name","userName","regDate","numView"];
       if(resData.data) resData.data.forEach(item => {
-        let $tr = $("<tr>").click(()=>openContent(item.id));;
-        columns.forEach(c=>$tr.append($("<td>").append(item[c])));
+        item.regDate = item.regDate.split(" ")[0];
+        if(item.numComment > 0) item.name += ` [${item.numComment}]`;
+        let $tr = $("<tr class='itemTr'>").click(()=>openContent(item.id));;
+        columns.forEach(c=>{
+          $tr.append($("<td>").append(item[c]))
+          if(c==="name") $tr.find("td:last").css("textAlign","left");
+        });
+        table.append($tr);
       });
       contentDiv.append(table,createPaging(pd,updateItems));
     })).fail(()=>console.log("Ajax Fail"));
-  }
-
-  function searchItems() {
-    pd.setSearch($(".search-input").val());
-    changeFilter(true);
   }
 
   function movePath(path, pathName) {
@@ -78,7 +92,7 @@
       pathName = root.pathName;
     }
     pd.setPath(path);
-    $("#itemNavi1").empty();
+    $("#itemNavi1 #navi1span").empty();
     const sp = path.split("/");
     const spn = pathName.split("/");
     let lp = "";
@@ -86,7 +100,7 @@
     for(let i=1; i<spn.length; i++){
       lp += "/"+sp[i];
       lpn += "/"+spn[i];
-      $("#itemNavi1").append(createALink(lp,lpn,spn[i])," > ");
+      $("#itemNavi1 #navi1span").append(createALink(lp,lpn,spn[i])," > ");
     }
     updateItems();
   }
@@ -96,14 +110,19 @@
     updateRecentItems();
   }
 
+  function openWriteForm(itemId){
+    if(!itemId) checkMove(()=>contentDiv.empty().load(`/login/writeForm?path=${pd.path}`));
+    else checkMove(()=>contentDiv.empty().load(`/login/updateForm?path=${pd.path}&itemId=${itemId}`));
+  }
+
   function updateRecentItems(){
-    $.get("/getRecentItems").done((resData)=>{
+    console.log(`/getRecentItems/${root.id}/10`);
+    $.get(`/getRecentItems/${root.id}/10`).done((resData)=>{
+      $("#recentItems").empty().append("<h5 style='padding:5px 0px 0px 5px; margin:0px;'>최근 본 게시글</h5>");
       if(resData) {
-        const grid = new ItemGrid({fontSize:10, padding:"10px 5px 0px 5px", margin:"5px 5px 0px 5px"},openContent);
-        grid.setItems(resData);
-        console.log(resData);
-        $("#recentItems").empty().append("<h5 style='padding:5px 0px 0px 5px; margin:0px;'>최근 본 상품</h5>",grid.div);
-      }
+        resData.forEach(item=>$("#recentItems").append($(`<a>${sliceText(item.name,15)}</a>`)
+        .css({fontSize:12,paddingLeft:4}).click(()=>openContent(item.id)),"<br>"));
+      } 
     })
   }
 

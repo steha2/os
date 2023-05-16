@@ -22,6 +22,25 @@ public class ItemController {
 	private final ItemDao itemDao;
 	private final PagingDao pagingDao;
 	
+	@PostMapping("/login/addItem")
+	public ItemVo addItemAsLogin(ItemVo item, HttpSession session) {
+		UserVo user = (UserVo) session.getAttribute("user");
+		if(user != null) {
+			item.setUserId(user.getId());
+			if(itemDao.addItem(item) == 1) return item;
+		}
+		return null;
+	}
+	
+	@PostMapping("/login/updateItem")
+	public ItemVo updateItemAsLogin(ItemVo item, HttpSession session) {
+		UserVo user = (UserVo) session.getAttribute("user");
+		if(user != null) {
+			if(itemDao.updateItem(item) == 1) return item;
+		}
+		return null;
+	}
+	
 	@PostMapping("/addItem")
 	public String addItem(ItemVo item) {
 		if(itemDao.addItem(item) == 1) return "Success";
@@ -58,7 +77,7 @@ public class ItemController {
 		pd.addOption("path", FilterCondition.STARTS_WITH, path);
 		pd.setMaxPage(maxPage);
 		pd.setRowCount(rowCount);
-		pd.setNowPage(maxPage);
+		pd.setNowPage(nowPage);
 		pd = getPagingItems(pd);
 		ObjectMapper mapper = new ObjectMapper();
         try {
@@ -70,12 +89,12 @@ public class ItemController {
 		return null; 
 	}
 	
-	@GetMapping("/getRecentItems")
-	public List<ItemVo> getRecentItems(HttpSession session) {
+	@GetMapping("/getRecentItems/{rootId}/{count}")
+	public List<ItemVo> getRecentItems(@PathVariable int rootId, @PathVariable int count, HttpSession session) {
 		@SuppressWarnings("unchecked")
 		List<Long> itemIds = (List<Long>) session.getAttribute("recentItems");
 		if(itemIds == null) return null;
-		else return itemDao.getRecentItems(itemIds);
+		else return itemDao.getRecentItems(itemIds.subList(0, Math.min(count, itemIds.size()-1)).stream().mapToLong(Long::longValue).toArray(), rootId, count);
 	}
 	
 	@PostMapping("/getComments")
