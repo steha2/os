@@ -19,7 +19,11 @@
 		<java.version>11</java.version>
 	</properties>
 	<dependencies>
-
+	 <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt</artifactId>
+        <version>0.9.1</version>
+    </dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework/springloaded -->
 		<dependency>
 			<groupId>org.springframework</groupId>

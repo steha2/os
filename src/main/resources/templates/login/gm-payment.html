@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pay-Complate</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="/js/util/bootpay.js"></script>
+  <script src="/js/util/login-dialog.js"></script>
+  <script src="/js/util/utils.js"></script>
+  <script src="https://cdn.bootpay.co.kr/js/bootpay-3.3.1.min.js" type="application/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <title>Order Details</title>
+  <style>
+    /* CSS for center-aligning the table */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    table {
+      border:2px solid gray;
+      border-collapse: collapse;
+      width: 400px;
+      background-color: #f2f2f2;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+</body>
+<script th:inline="javascript">
+$(()=>{
+  let gmUserId = /*[[${gmUserId}]]*/ null;
+  let user = {name:gmUserId};
+  console.log(user);
+  let price = /*[[${price}]]*/ null;
+  let itemId = /*[[${itemId}]]*/ null;
+  let amount = /*[[${amount}]]*/ null;
+  let items = /*[[${items}]]*/ null;
+  let callbackUrl = /*[[${callbackUrl}]]*/ null;
+  checkMove(()=>{
+    console.log(user);
+    let table = $("<table>");
+    let tr1 = $("<tr><th colspan='2'>결제 정보</th></tr>");
+    let tr2 = $(`<tr><th>User ID</th><td>${user.id}</td></tr>`);
+    let tr3 = $(`<tr><th>User Name</th><td>${user.name}</td></tr>`);
+    let tr4 = $(`<tr><th>Price</th><td>${price.toLocaleString()} 원</td></tr>`);
+    let tr5 = $(`<tr><th>Amount</th><td>${amount} 개</td></tr>`);
+    let tr6 = $(`<tr><th>Item Id</th><td>${itemId}</td></tr>`);
+    let tr7 = $(`<tr><th>Items</th><td>${items}</td></tr>`);
+    let tr8 = $(`<tr><th colspan='2'></th></tr>`);
+    let button = $(`<button>${(price * amount).toLocaleString()} 원 결제 하기</button>`).click(()=>{
+      pay({amount:amount,name:items,dcPrice:price,id:"GM"+itemId},amount*price/10,()=>{
+        let formData = new FormData();
+        formData.append('amount', amount);
+        formData.append('userId', user.name);
+        formData.append('productId', itemId);
+        formData.append('payment', "ok");
+
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', callbackUrl);
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            alert("아이템 추가 완료");
+            window.close();
+          } else {
+            console.error('POST request failed');
+          }
+        };
+        xhr.send(formData);
+      }, false);
+    });
+    tr8.find("th").append(button);
+    table.append(tr1,tr2,tr3,tr4,tr5,tr6,tr7,tr8);
+    $("body").append(table);
+  }, user);
+})
+</script>
+</html>

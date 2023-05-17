@@ -68,7 +68,7 @@ public class MenuController {
 			File[] templateFiles = typeTemplateDir.listFiles();
 			if (templateFiles != null) {
 			    for (File templateFile : templateFiles) {
-			        String newFileName = templateFile.getName().replace(".html", "-" + root.getId() + ".html");
+			        String newFileName = templateFile.getName().replaceAll("-\\d{1,}.html", "-" + root.getId() + ".html");
 			        File newFile = new File(rootIdDir, newFileName);
 			        
 			        try {

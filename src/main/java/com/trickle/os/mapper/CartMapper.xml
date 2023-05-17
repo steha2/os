@@ -20,7 +20,7 @@ WHERE C.USER_ID = #{userId} AND C.ROOT_ID = #{rootId}
 
 <insert id="addOrder">
 	INSERT INTO ORDERS(ID, USER_ID, ITEMS, STATUS, PRICE, REQUESTED_AT, PG, PG_NAME)
-	VALUES(#{id}, #{userId}, #{items}, '결제완료', #{price}, SYSDATE, #{pg}, #{pg_name}) 
+	VALUES(#{id}, #{userId}, #{items}, '결제완료', #{price}, SYSDATE, #{pg}, #{pgName}) 
 </insert>
 
 <select id="getOrder" resultType="OrderVo">

@@ -1,5 +1,7 @@
 package com.trickle.os.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.*;
 
 @Getter
@@ -8,7 +10,7 @@ import lombok.*;
 public class UserVo {
 	private long id;
 	private String name;
-	private String password;
+	@JsonIgnore private String password;
 	private String phone;
 	private String email;
 	private long refId;

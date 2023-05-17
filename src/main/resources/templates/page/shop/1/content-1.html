@@ -126,7 +126,7 @@ $(()=>{
     });
     $("#buyItem").click(()=>{
     item.amount = amount;
-    pay(item,totalPrice);
+    checkMove(()=>pay(item,totalPrice));
   });
 
   function updateComments(){

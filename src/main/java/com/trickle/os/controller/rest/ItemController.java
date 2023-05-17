@@ -62,6 +62,11 @@ public class ItemController {
 		return itemDao.deleteItem(id) == 1 ? "Success" : "Fail";
 	}
 	
+	@GetMapping("/login/deleteItem")
+	public String deleteItemAsLogin(long id) {
+		return itemDao.deleteItem(id) == 1 ? "Success" : null;
+	}
+	
 	@GetMapping(value="/getPagingItems") 
 	public PagingData getPagingItems(PagingData pd) {
 		System.out.println(pd);
@@ -94,7 +99,7 @@ public class ItemController {
 		@SuppressWarnings("unchecked")
 		List<Long> itemIds = (List<Long>) session.getAttribute("recentItems");
 		if(itemIds == null) return null;
-		else return itemDao.getRecentItems(itemIds.subList(0, Math.min(count, itemIds.size()-1)).stream().mapToLong(Long::longValue).toArray(), rootId, count);
+		else return itemDao.getRecentItems(itemIds.stream().mapToLong(Long::longValue).toArray(), rootId, count);
 	}
 	
 	@PostMapping("/getComments")

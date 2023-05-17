@@ -65,7 +65,7 @@
       <tr><td style="width:100px">조회수</td><td><span th:text="${item.numView}"></span></td></tr>
       <tr><td>글 제목</td><td><span th:text="${item.name}"></span></td></tr>
       <tr><td>작성자</td><td th:text="${item.userName}"></td></tr>
-      <tr><td colspan="2"><div id="contentSpan" th:text="${item.content}"></div></td></tr>
+      <tr><td colspan="2"><div id="contentSpan"></div></td></tr>
     </table>
   </div>
   <div id="commentDiv"></div>
@@ -81,7 +81,7 @@ $(()=>{
   let cpd = new PagingData();
   cpd.setPath("/"+item.id);
   let style = JSON.parse(root.style);
-  // itemDiv.find("#contentSpan").append(item.content);
+  itemDiv.find("#contentSpan").append(item.content);
   if(user && item.userId === user.userId) {
     $("#contentTable").append($("<button>").text("수정").click(()=>openWriteForm(item.id)),
       $("<button>").text("삭제").click(()=>{

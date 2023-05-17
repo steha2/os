@@ -27,7 +27,8 @@ public class UserController {
     
     @GetMapping("/user/isLogin")
     @ResponseBody
-    public String isLogin(HttpSession session) {
+    public String isLogin(@RequestParam(required = false) String forceLogin, HttpSession session) {
+    	if(forceLogin != null) return "false";
     	return session.getAttribute("user") == null ? "false" : "true";
     }
     

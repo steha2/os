@@ -52,6 +52,14 @@ public class WebConfig implements WebMvcConfigurer {
 	}
 	
     @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/os/**")
+                .allowedOrigins("http://192.168.0.213:8090")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .maxAge(3600);
+    }
+	
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
         WebContentInterceptor webContentInterceptor = new WebContentInterceptor();
         webContentInterceptor.setCacheSeconds(0);

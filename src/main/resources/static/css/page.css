@@ -163,6 +163,14 @@ a:hover {
   /* background: #bdeed9; */
 }
 
+#itemNavi2Wrap div{
+  margin-top : 5px;
+  cursor:pointer;
+  white-space: nowrap; /* Prevent line breaks */
+  overflow: hidden; /* Hide overflowing text */
+  text-overflow: ellipsis; /* Display ellipsis for truncated text */
+}
+
 #itemNavi2Wrap {
   float: left;
   background: #faf9f4;

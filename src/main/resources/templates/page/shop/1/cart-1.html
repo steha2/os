@@ -75,7 +75,7 @@
       }))
       $("#totalPriceSpan").text(totalPrice.toLocaleString());
       $("#payButton").click(()=> { 
-        pay(items,totalPrice,()=>{$.get("/login/deleteCarts/"+root.id)}) 
+        checkMove(()=>pay(items,totalPrice,()=>{$.get("/login/deleteCarts/"+root.id)})); 
       });
     });
     } else {

@@ -16,8 +16,8 @@ class CR2 {
 		MenuDao md = new MenuDao (new MyBatisConn().sqlSessionFactory(),id);
 		
 		int count = 2;
-		MenuVo d2 = md.getDepth2(  64   ); //검색어 
-		String search = d2.getName() + " 웹툰 표지";
+		MenuVo d2 = md.getDepth2(    46   ); //검색어 
+		String search = d2.getName() + " 포스터";
 		String add = "";
 		
 		MenuVo d1 = md.getDepth1(d2.getParentId());
@@ -59,7 +59,7 @@ class CR2 {
 					item.setName(t);
 					item.setPrice(getRandomPrice(5000, 200000, 100));
 					item.setNumStock(100);
-					item.setScore(""+getRandomPrice(1,5,1)+"."+getRandomPrice(0,9,1));
+					item.setScore(""+getRandomPrice(1,4,1)+"."+getRandomPrice(0,9,1));
 					item.setImagePath(ext);
 					item.setPath(path);
 					item.setUserId(1);

@@ -1,14 +1,14 @@
-function checkMove(action){
+function checkMove(action, user){
   $.get("/user/isLogin").done((isLogin)=>{
-    if(isLogin === "true") {
+    if(!user && isLogin === "true") {
       doAction(action);
     } else {
-      openLoginDialog(action);
+      openLoginDialog(action,user);
     }
   });
 }
 
-function openLoginDialog(action){
+function openLoginDialog(action,user){
   const dialog = $("<div id='dialog-div' title='로그인'>")
   const inputCss = {width:240,padding:5,margin:5};
   const nameInput = $("<input type='text' placeholder='User Name'>").css(inputCss);
@@ -51,6 +51,10 @@ function openLoginDialog(action){
         $.get("/user/auth",{name:name,password:password}).done(resData=>{
           if(resData) {
             alert("로그인 성공");
+            if(user) {
+              user.id = resData.id;
+              user.name = resData.name;
+            }
             doAction(action);
             dialog.dialog("close");
             dialog.remove();
@@ -64,6 +68,11 @@ function openLoginDialog(action){
     },
     "닫기": () => (dialog.dialog("close"), dialog.remove())
   }})
+  if(user) {
+    nameInput.attr("readonly","true");
+    nameInput.val(user.name);
+    pwInput.focus();
+  }
   dialog.dialog("open");
 } 
 

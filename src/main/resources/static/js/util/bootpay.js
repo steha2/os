@@ -1,5 +1,5 @@
 function runPay(orderVo,done){
-  orderVo.pgName="신용카드";done();return;//forTest
+  // orderVo.pgName="신용카드";done();return;//forTest
   BootPay.request({
       price: orderVo.price, //실제 결제되는 가격
  
@@ -44,7 +44,7 @@ function createOrderVo(items, totalPrice, orderSeq) {
   const orderVo = {
                    pg:"nicepay",
                    method:"card",
-                   name:sliceText(items[0].name,15) + `[${items.length}] 건`,
+                   name:sliceText(items[0].name,15) + ` [${items.length}] 건`,
                    id:orderSeq,
                    price:totalPrice
                   };
@@ -60,24 +60,22 @@ function createOrderVo(items, totalPrice, orderSeq) {
   return orderVo;
 }
 
-function pay(items,totalPrice,done) {
+function pay(items,totalPrice,done, isPayComplatePage = true) {
   if(!Array.isArray(items)) items = [items];
-  checkMove(()=>{
   if(items.length !== 0 && confirm(totalPrice.toLocaleString()+"원 결제를 시작합니다.")){
-      $.get("/login/getOrderSeq").done((orderSeq)=>{
-        const orderVo = createOrderVo(items,totalPrice,orderSeq);
-        runPay(orderVo,()=>{
-          orderVo.items = JSON.stringify(orderVo.items);
-          $.post("/login/addOrder",orderVo).done(resData=>{
-            console.log(resData);
-            if(resData){
-              alert("결제 완료");
-              if(done) done();
-              location.href = "/login/payComplate/"+orderVo.id;
-            }
-          });
+    $.get("/login/getOrderSeq").done((orderSeq)=>{
+      const orderVo = createOrderVo(items,totalPrice,orderSeq);
+      runPay(orderVo,()=>{
+        orderVo.items = JSON.stringify(orderVo.items);
+        $.post("/login/addOrder",orderVo).done(resData=>{
+          console.log(resData);
+          if(resData){
+            alert("결제 완료");
+            if(done) done();
+            if(isPayComplatePage) location.href = "/login/payComplate/"+orderVo.id;
+          }
         });
-      })
-    };
-  })
+      });
+    })
+  };
 }
