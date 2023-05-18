@@ -1,0 +1,235 @@
+body {
+  font-family: "NanumSquare", sans-serif;
+  justify-content: center;
+  /* align-items: center; */
+  display: flex;
+  /* background-color: #ebe2e6; */
+}
+#container {
+  width: 1000px;
+  height: 95vh;
+  /* overflow-y: auto; */
+}
+.ui-menu {
+  width: 150px;
+}
+
+#header, .content {
+  border: 1px solid rgb(85, 85, 158);
+  box-sizing: border-box;
+}
+
+.la{text-align: right;}
+.ra{text-align: right;}
+
+#category {
+  height: 35px;
+  float: left;
+  margin-right: 20px;
+  /* background-color: rgb(225, 215, 243); */
+  font-size: 18px;
+}
+
+#menuDiv {
+  display: none;
+  position: absolute;
+  background-color: #eee;
+  top:33px;
+  z-index: 3;
+} 
+
+#category:hover + #menuDiv,
+#menuDiv:hover,
+#menuDiv:hover + #category {
+  display: block;
+}
+
+#category:not(:hover) + #menuDiv:not(:hover) {
+  display: none;
+}
+
+#navi {
+  display: inline-block;
+  /* background: #eb8181; */
+}
+
+#search-icon {
+  margin-left: 6px;
+  font-size: 25px;
+  position: relative;
+  top: 3px;
+}
+
+.search-box {
+  height: 35px;
+  width: 350px;
+  position: relative;
+}
+
+.search-input {
+  width: 200px;
+  padding: 5px;
+  box-sizing: border-box;
+  border: 2px solid rgb(108, 152, 209);
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.search-btn {
+  width: 50px;
+  padding: 7px;
+  background-color: #545dd8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.search-btn:hover {
+  background-color: #9e1d59;
+}
+
+.c{
+  display: flex;
+  flex-direction: column;
+  flex-direction: row;
+}
+
+#item-grid{
+  /* background: #a5c23e; */
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table td, table th {
+  padding:0px;
+  border: none;
+  margin: 0px;
+}
+
+#filterTable{
+  z-index: 20;
+}
+
+.itemCell, .itemCell2 {
+  cursor: pointer;
+  outline: 1px solid rgb(235, 227, 227);
+  float:left;
+  text-align: center;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+} 
+
+.itemCell:hover,  .itemCell2:hover {
+  outline: 1px solid blue;
+}
+
+.content {
+  height: auto;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 150px 700px 150px;
+  grid-template-areas:
+      "navi1 navi1 navi1"
+      "navi3 items navi2";
+  min-height: auto;
+}
+
+#navi3 {
+  grid-area: navi3;
+}
+
+a {
+  color: #036;
+  text-decoration: none;
+  transition: color 0.3s, text-decoration 0.3s;
+}
+
+a:hover {
+  color: red;
+  text-decoration: underline;
+}
+
+#itemNavi1{
+  grid-area: navi1;
+  background: hsl(247, 36%, 86%);
+  font-size: larger;
+  font-weight: 600;
+  padding: 5px;
+}
+
+#itemNavi2{
+  grid-area: navi2;
+  display: flex;
+  flex-direction: row;
+  /* background: #bdeed9; */
+}
+
+#itemNavi2Wrap div{
+  margin-top : 5px;
+  cursor:pointer;
+  white-space: nowrap; /* Prevent line breaks */
+  overflow: hidden; /* Hide overflowing text */
+  text-overflow: ellipsis; /* Display ellipsis for truncated text */
+}
+
+#itemNavi2Wrap {
+  float: left;
+  background: #faf9f4;
+  white-space: nowrap; /* Prevent line breaks */
+  overflow: hidden; /* Hide overflowing text */
+  text-overflow: ellipsis; /* Display ellipsis for truncated text */
+}
+
+#itemsDiv{
+  float: left;
+  vertical-align:top ;
+  /* background: #959c7c; */
+}
+
+#contentDiv {
+  grid-area: items;
+  float:left;
+}
+
+#minPrice, #maxPrice {
+  width:70px;
+}
+
+#paging { width: 850px; };
+
+.naviLink{
+  padding:0;
+  margin:0;
+  font-weight: bold;
+}
+
+.cancel {
+  text-decoration: line-through;
+  text-decoration-thickness: 0.1em;
+  text-decoration-color: black;
+  text-decoration-skip-ink: none;
+  display: inline-block;
+  position: relative;
+}
+.cancel:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  border-top: 0.1em solid black;
+}
+
+a{ cursor:pointer; }
+
+red {
+  color:red;
+  font-weight: bold;
+}

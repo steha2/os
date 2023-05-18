@@ -35,15 +35,14 @@
     </caption>
     <thead>
       <tr>
-        <th>Order ID</th>
-        <th>Order Name</th>
-        <th>User ID</th>
-        <th>Price</th>
-        <th>Status</th>
-        <th>Payment Gateway</th>
-        <th>PG Name</th>
-        <th>Requested At</th>
-        <th>Items</th>
+        <th>주문 번호</th>
+        <th>상품 명</th>
+        <th>유저명</th>
+        <th>가격</th>
+        <th>결제상태</th>
+        <th>PG</th>
+        <th>결제 수단</th>
+        <th>일시</th>
         <th>ItemList</th>
       </tr>
     </thead>
@@ -51,13 +50,13 @@
       <tr th:each="order : ${orderList}">
         <td th:text="${order.id}"></td>
         <td th:text="${order.name}"></td>
-        <td th:text="${order.userId}"></td>
+        <td th:text="${session.user.name}"></td>
         <td th:text="${order.price}"></td>
         <td th:text="${order.status}"></td>
         <td th:text="${order.pg}"></td>
         <td th:text="${order.pgName}"></td>
         <td th:text="${order.requestedAt}"></td>
-        <td th:text="${order.items}"></td>
+        <!-- <td th:text="${order.items}"></td> -->
         <td th:text="${order.itemList}"></td>
       </tr>
     </tbody>

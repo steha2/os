@@ -1,7 +1,6 @@
 function createMenu(menuClick, rootId){
   $.getJSON("/getRootMenu/"+rootId).done((root) => {
     const menuUl = $("<ul>");
-    $("#menudiv").empty().append(menuUl);
     console.log(root);
     if(root.childs) root.childs.forEach(d1 => {
       const li1 = $("<li>");
@@ -107,4 +106,20 @@ function createSelectMenu(rootId, element, selectedPath) {
       const resultContainer = $("<div>").append(select1," / ",select2);
       element.append(resultContainer);
     }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+}
+
+function createMenu2(menuClick, rootId){
+  $.getJSON("/getRootMenu/"+rootId).done((root) => {
+    const navi3 = $("#navi3").empty();
+    if(root.childs) root.childs.forEach(d1 => {
+      const div = $("<div style='padding:5px;outline:1px solid;margin:5px;'>");
+      const li1 = $("<div style='background:#EEE'>").html(`<a>${d1.name}</a>`).click(()=>menuClick(d1.path,d1.pathName));;
+      div.append(li1);
+      navi3.append(div);
+      if(d1.childs) d1.childs.forEach(d2=>{
+        const li2 = $(`<i class="fas fa-dot-circle fa-xs" style='margin-right:5px'><a>${d2.name}</a></i>`).click(()=>menuClick(d2.path,d2.pathName));
+        div.append(li2);
+      });
+    });
+  }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
 }

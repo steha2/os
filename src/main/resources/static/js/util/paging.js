@@ -56,7 +56,7 @@ function createPaging(pd, updateFunc) {
   for (let p = startPage; p <= endPage; p++) {
     let pageLink = createLink(p);
     if (p == pd.nowPage) {
-        pageLink.css("cursor","default").css("color","blue");
+        pageLink.css("cursor","default").css("color","red");
         pageLink.off("click");
     } else {
       addHover(pageLink);
