@@ -39,6 +39,17 @@
   .itemTr:hover{
     background: #bbb;
   }
+
+  .itemImg {
+    width : 230px;
+    height : 270px;
+  }
+  .itemCell {
+    padding: 20px;
+    margin: 15px;
+    width: 250px;
+    height: 280px;
+  }
 </style>
 </head>
 <body>
@@ -62,7 +73,7 @@
 <script th:inline="javascript">
   const root = /*[[${root}]]*/ null;
   const contentDiv = $("#contentDiv");
-  let style = JSON.parse(root.style);
+  let style = root.style ? JSON.parse(root.style) : {};
   let pd = new PagingData();
   
   function updateItems() {
@@ -105,6 +116,7 @@
 
   function openContent(itemId){
     contentDiv.empty().load(`/page/content/${itemId}`,updateRecentItems);
+    console.log("update")
   }
 
   function openWriteForm(itemId){

@@ -32,7 +32,7 @@
       const optionDefault = "-----------";
       createNavLink("home", "/home");
       createNavLink("admin", "/admin/admin-index");
-      // createNavLink("process", "/process/index");
+      createNavLink("process", "/process/index");
       const adminSelect = $("<select>");
       const pageSelect = $("<select>");
       const adminLabel = $("<label>").text(" Admin : ").click(()=>selectChange("/admin/page/",adminSelect.val())).css("cursor","pointer");

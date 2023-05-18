@@ -20,6 +20,18 @@
 <script src="/js/util/utils.js"></script>
 <script src="/js/util/paging.js"></script>
 <style>
+.itemCell {
+  font-size: 15px;
+  text-align: center;
+  padding: 20px;
+  margin: 10px;
+  width: 190px;
+  height :275px;
+}
+.itemImg {
+  width:150px;
+  height:190px;
+}
 </style>
 </head>
 <body>
@@ -40,7 +52,7 @@
 
 <script th:inline="javascript">
   const root = /*[[${root}]]*/ null;
-  let style = JSON.parse(root.style);
+  let style = root.style ? JSON.parse(root.style) : {};
   const contentDiv = $("#contentDiv");
   let pd = new PagingData();
 
@@ -84,7 +96,7 @@
     $.get(`/getRecentItems/${root.id}/4`).done((resData)=>{
       $("#recentItems").empty().append("<h5 style='padding:5px 0px 0px 5px; margin:0px;'>최근 본 상품</h5>");
       if(resData) {
-        const grid = new ItemGrid({fontSize:10, padding:"10px 5px 0px 5px", margin:"5px 5px 0px 5px"},openContent);
+        const grid = new ItemGrid({fontSize:10, padding:"10px 5px 5px 5px", margin:"5px 5px 5px 5px"},openContent);
         grid.setItems(resData);
         $("#recentItems").append(grid.div);
       }

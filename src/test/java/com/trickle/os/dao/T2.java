@@ -24,8 +24,8 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 
-public class DeleteD {
-	private static SqlSessionFactory factory = new MyBatisConn("os2").sqlSessionFactory();
+public class T2 {
+	private static SqlSessionFactory factory = new MyBatisConn().sqlSessionFactory();
 	public static ItemDao ID = new ItemDao(factory);
 	public static MenuDao MD = new MenuDao(factory, ID);
 	public static MenuController MC = new MenuController(MD);
@@ -38,17 +38,10 @@ public class DeleteD {
 	public static String deletePath = "/1/47/48";
 	
 	public static void main(String[] args) {
-//		List<RootVo> roots = MC.getMenus();
-//		roots.forEach(root->{
-//			System.out.println(root.getName());
-//			all(root.getChilds(), root,1);
-//		});
-		ID.getItems("/").forEach(item->{
-			File file = new File("d:/resources/images",item.getImagePath());
-        	if(!file.exists()) {
-        		ID.deleteItem(item.getId());
-        		System.out.println(item);
-        	}
+		List<RootVo> roots = MC.getMenus();
+		roots.forEach(root->{
+			System.out.println(root.getName());
+			all(root.getChilds(), root,1);
 		});
 //		removeRoot(2);
 //		ID.deleteItem(31);
@@ -65,14 +58,18 @@ public class DeleteD {
 	        System.out.println(items);
 	        items.forEach(item->{
 	        	String ip = "/"+item.getId();
-	        	
-//	        	List<CommentVo> cs = ID.getComments(item.getId());
-//	        	cs.forEach(c->{
-//	        		ID.deleteComment(c.getId());
-//	        	});
-//	        	ID.deleteItem(item.getId());
+	        	List<CommentVo> cs = ID.getComments(item.getId());
+	        	double totalScore = 0.0;
+	        	int count = 0;
+
+	        	for (CommentVo comment : cs) {
+	        	    totalScore += comment.getScore();
+	        	    count++;
+	        	}
+	        	double averageScore = totalScore / count;
+	        	item.setScore(String. valueOf(averageScore));
+	        	ID.updateItem(item);
 	        });
-//	        MD.deleteMenu(menu.getId());
 //	        System.out.println("dleete: " + menu);
 	    }
 	}

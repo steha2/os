@@ -133,7 +133,7 @@ $(()=>{
     $.post("/getComments", cpd.toParam()).done((resData) => {
       const commentDiv = $("#commentDiv").empty();
       const commentTable = $("<table>").addClass("comment-table")
-        .append("<tr><th width='400'>내용</th><th><i class='fas fa-star' style='color: #f3da35'></i>평점</th><th>작성자</th><th>작성일</th><tr>");
+        .append("<tr><th width='500'>내용</th><th><i class='fas fa-star' style='color: #f3da35'></i>평점</th><th>작성자</th><th>작성일</th><tr>");
       cpd.setPagingData(resData)
       if(cpd.data) {
         cpd.data.forEach((comment) => {

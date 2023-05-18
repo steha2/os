@@ -23,7 +23,7 @@ import lombok.ToString;
 public class PagingData {
 	@JsonIgnore private String columns;
 	@JsonIgnore private String tableName;
-	@JsonIgnore private String joinClause;
+	private String path;
 	private List<?> data;
 	private List<FilterOption> option = new ArrayList<>();
 	
@@ -41,7 +41,7 @@ public class PagingData {
 	@JsonIgnore
 	public String getWhereQuery() {
 		if(option.isEmpty()) return "";
-		return " WHERE " + option.stream().map(FilterOption::getQuery).collect(Collectors.joining(" AND "));
+		return option.stream().map(FilterOption::getQuery).collect(Collectors.joining(" AND "));
 	}
 	
 	public void setTable(String tableName, Class<?> clazz) {

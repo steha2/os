@@ -29,9 +29,9 @@ public class PageController {
 			return "/home";
 		}
 		RootVo root = menuDao.getRootByItemId(itemId);
+		System.out.println(root);
 		
 		model.addAttribute("item",item);
-		itemDao.updateNumView(itemId);
 		model.addAttribute("root", root);
 		
 		@SuppressWarnings("unchecked")
@@ -39,12 +39,15 @@ public class PageController {
 	    if (recentItems == null) {
 	        recentItems = new ArrayList<>();
 	    }
-	    recentItems.remove(itemId);
+	    if(recentItems.contains(itemId)) recentItems.remove(itemId);
+	    else itemDao.updateNumView(itemId);
+	    
 	    recentItems.add(0, itemId);
 	    if (recentItems.size() > 30) {
 	        recentItems = recentItems.subList(0, 30);
 	    }
         session.setAttribute("recentItems", recentItems);
+        System.out.println("/page/"+root.getType()+"/"+root.getId()+"/content-"+root.getId());
 		return "/page/"+root.getType()+"/"+root.getId()+"/content-"+root.getId();
 	}
 	

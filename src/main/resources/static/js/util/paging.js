@@ -89,7 +89,7 @@ class PagingData {
   }
 
   setPath(path) {
-    this.addOption("path",STARTS_WITH,path);
+    // this.addOption("path",STARTS_WITH,path);
     this.path = path;
   }
 
@@ -126,11 +126,12 @@ class PagingData {
   }
 
   removeOption(key, condition){
+    if(!this.option) return;
     this.option = this.option.filter(efo => !(efo.key === key && efo.condition === condition));
   }
 
   toParam(){
-    const keys = ["nowPage","rowCount","maxPage","pagingType","orderBy","option"];
+    const keys = ["nowPage","rowCount","maxPage","pagingType","orderBy","option","path"];
     const result = keys.reduce((obj, key) => {
       obj[key] = (key === "option") ? JSON.stringify(this[key]) : this[key];
       return obj;

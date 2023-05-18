@@ -28,6 +28,7 @@ public class GmSql {
 		config.setMaximumPoolSize(5);
 		config.setConnectionTimeout(30000);
 		config.setValidationTimeout(5000);
+		System.out.println("Create Data Source");
 		return new HikariDataSource(config);
 	}
 	

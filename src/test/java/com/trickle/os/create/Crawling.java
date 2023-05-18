@@ -1,4 +1,4 @@
-package com.trickle.os.test.cr;
+package com.trickle.os.create;
 
 import java.io.File;
 import java.util.List;
@@ -7,8 +7,10 @@ import java.util.Random;
 import org.junit.jupiter.api.Test;
 
 import com.trickle.os.dao.*;
+import com.trickle.os.test.cr.MyBatisConn;
+import com.trickle.os.test.cr.NaverCrawling;
 import com.trickle.os.vo.*;
-class CR2 {
+class Crawling {
 
 	//이미지를 검색해서 DB에 넣는다.
 	public static void main(String[] args) {
@@ -17,7 +19,7 @@ class CR2 {
 		
 		int count = 2;
 		MenuVo d2 = md.getDepth2(    46   ); //검색어 
-		String search = d2.getName() + " 포스터";
+		String search = d2.getName() + "";
 		String add = "";
 		
 		MenuVo d1 = md.getDepth1(d2.getParentId());

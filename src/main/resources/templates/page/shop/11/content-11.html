@@ -11,7 +11,7 @@
   table-layout: fixed;
   width:100%;
 }
-#itemTable td, pre{
+#itemTable td{
   word-wrap: break-word;
   white-space: normal;
 }
@@ -101,7 +101,7 @@ $(()=>{
   let totalPrice, amount;
   let style = JSON.parse(root.style);
   itemDiv.find("img").attr("src","/resources/images"+item.imagePath)
-  for(let i=0; i<30; i++) itemDiv.find("pre").append(JSON.stringify(item,null,2));
+  itemDiv.find("pre").append(JSON.stringify(item,null,2));
   const tabs = $("#tabs");
   tabs.tabs({
   activate: function(event, ui) {

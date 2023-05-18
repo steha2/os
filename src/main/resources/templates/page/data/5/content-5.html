@@ -57,15 +57,16 @@
 </head> 
 <div id="tabs">
   <ul>
-    <li><a href="#itemDiv">게시글</a></li>
-    <li><a href="#commentDiv">댓글</a></li>
+    <li><a href="#itemDiv">Data</a></li>
+    <li><a href="#commentDiv">Comments</a></li>
   </ul>
   <div id="itemDiv">
     <table id="contentTable">
       <tr><td style="width:100px">조회수</td><td><span th:text="${item.numView}"></span></td></tr>
       <tr><td>글 제목</td><td><span th:text="${item.name}"></span></td></tr>
       <tr><td>작성자</td><td th:text="${item.userName}"></td></tr>
-      <tr><td colspan="2"><div id="contentSpan"></div></td></tr>
+      <tr><td colspan="2"><img th:src="'/resources/images'+${item.imagePath}"/></td></tr>
+      <tr><td colspan="2"><div id="contentSpan" th:text="${item.content}"></div></td></tr>
     </table>
   </div>
   <div id="commentDiv"></div>
@@ -76,22 +77,22 @@
 $(()=>{
   const item = /*[[${item}]]*/ null;
   const root = /*[[${root}]]*/ null;
-  const user  = /*[[${session.user}]]*/ null;
+  // const user  = /*[[${session.user}]]*/ null;
   const itemDiv = $("#itemDiv");
   let cpd = new PagingData();
   cpd.setPath("/"+item.id);
   let style = JSON.parse(root.style);
-  itemDiv.find("#contentSpan").append(item.content);
-  if(user && item.userId === user.userId) {
-    $("#contentTable").append($("<button>").text("수정").click(()=>openWriteForm(item.id)),
-      $("<button>").text("삭제").click(()=>{
-        if(confirm("Confirm Delete?")) {
-          $.get("/login/deleteItem", {}).done((resData) => {
-            if(resData) movePath();
-          }).fail(error => console.error(error));
-        }
-      })).find("button").css({padding:2,margin:2})
-  }
+  // itemDiv.find("#contentSpan").append(item.content);
+  // if(user && item.userId === user.userId) {
+  //   $("#contentTable").append($("<button>").text("수정").click(()=>openWriteForm(item.id)),
+  //     $("<button>").text("삭제").click(()=>{
+  //       if(confirm("Confirm Delete?")) {
+  //         $.get("/login/deleteItem", {}).done((resData) => {
+  //           if(resData) movePath();
+  //         }).fail(error => console.error(error));
+  //       }
+  //     })).find("button").css({padding:2,margin:2})
+  // }
   const tabs = $("#tabs");
   tabs.tabs({
   activate: function(event, ui) {

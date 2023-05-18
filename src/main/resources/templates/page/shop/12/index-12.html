@@ -20,25 +20,18 @@
 <script src="/js/util/utils.js"></script>
 <script src="/js/util/paging.js"></script>
 <style>
-  #itemTable {
-    width: 99%;
-    box-sizing: border-box;
-    margin: 3px;
-  }
-
-  #itemTable td, #itemTable th{ 
-    border-collapse: collapse;
-    border: 1px solid;
-    text-align: center;
-    padding: 2px;
-  }
-
-  .itemTr{
-    cursor: pointer;
-  }
-  .itemTr:hover{
-    background: #bbb;
-  }
+.itemCell {
+  font-size: 15px;
+  text-align: center;
+  padding: 20px;
+  margin: 10px;
+  width: 190px;
+  height :275px;
+}
+.itemImg {
+  width:150px;
+  height:190px;
+}
 </style>
 </head>
 <body>
@@ -46,10 +39,7 @@
     <div id="topDiv" th:include="|/page/${root.type}/${root.id}/top-${root.id}.html|"></div>
     <div id="header" th:include="|/page/${root.type}/${root.id}/header-${root.id}.html|"></div>
     <div class="content">
-      <div id="itemNavi1">
-        <span id="navi1span" style='width:800px;'></span>
-        <span id="buttonsSpan"><button onclick="openWriteForm()">게시글 등록</button></span>
-      </div>
+      <div id="itemNavi1"></div>
       <div id="contentDiv"></div>
       <div id="itemNavi2Wrap">
         <div id="recentItems"></div>
@@ -62,27 +52,19 @@
 
 <script th:inline="javascript">
   const root = /*[[${root}]]*/ null;
-  let style = JSON.parse(root.style);
+  let style = root.style ? JSON.parse(root.style) : {};
   const contentDiv = $("#contentDiv");
   let pd = new PagingData();
+
   function updateItems() {
-    if(!pd.orderBy) pd.setOrderBy("ID DESC");
     contentDiv.empty();
-    $.get("/getPagingItems",pd.toParam()).done((resData=>{
+    console.log(pd);
+    $.get("/getPagingItems",pd.toParam())
+    .done((resData=>{
       pd.setPagingData(resData);
-      const table = $("<table id='itemTable'>").append("<tr><th>번호</th><th>제목</th><th>작성자</th><th>작성일</th><th>조회수</th></tr>");
-      const columns = ["id","name","userName","regDate","numView"];
-      if(resData.data) resData.data.forEach(item => {
-        item.regDate = item.regDate.split(" ")[0];
-        if(item.numComment > 0) item.name += ` [${item.numComment}]`;
-        let $tr = $("<tr class='itemTr'>").click(()=>openContent(item.id));;
-        columns.forEach(c=>{
-          $tr.append($("<td>").append(item[c]))
-          if(c==="name") $tr.find("td:last").css("textAlign","left");
-        });
-        table.append($tr);
-      });
-      contentDiv.append(table,createPaging(pd,updateItems));
+      const grid = new ItemGrid(style,openContent);
+      grid.setItems(pd.data);
+      contentDiv.append(grid.div,createPaging(pd,updateItems));
     })).fail(()=>console.log("Ajax Fail"));
   }
 
@@ -92,8 +74,8 @@
       pathName = pd.pathName || root.pathName;
     }
     pd.setPath(path);
-    pd.pathName = pathName;
-    $("#itemNavi1 #navi1span").empty();
+    pd.setPathName = pathName;
+    $("#itemNavi1").empty();
     const sp = path.split("/");
     const spn = pathName.split("/");
     let lp = "";
@@ -101,7 +83,7 @@
     for(let i=1; i<spn.length; i++){
       lp += "/"+sp[i];
       lpn += "/"+spn[i];
-      $("#itemNavi1 #navi1span").append(createALink(lp,lpn,spn[i])," > ");
+      $("#itemNavi1").append(createALink(lp,lpn,spn[i])," > ");
     }
     updateItems();
   }
@@ -110,18 +92,14 @@
     contentDiv.empty().load(`/page/content/${itemId}`,updateRecentItems);
   }
 
-  function openWriteForm(itemId){
-    if(!itemId) checkMove(()=>contentDiv.empty().load(`/login/writeForm?path=${pd.path}`));
-    else checkMove(()=>contentDiv.empty().load(`/login/updateForm?path=${pd.path}&itemId=${itemId}`));
-  }
-
   function updateRecentItems(){
-    $.get(`/getRecentItems/${root.id}/10`).done((resData)=>{
-      $("#recentItems").empty().append("<h5 style='padding:5px 0px 0px 5px; margin:0px;'>최근 본 게시글</h5>");
+    $.get(`/getRecentItems/${root.id}/4`).done((resData)=>{
+      $("#recentItems").empty().append("<h5 style='padding:5px 0px 0px 5px; margin:0px;'>최근 본 상품</h5>");
       if(resData) {
-        resData.forEach(item=>$("#recentItems").append($(`<a>${sliceText(item.name,15)}</a>`)
-        .css({fontSize:12,paddingLeft:4}).click(()=>openContent(item.id)),"<br>"));
-      }   
+        const grid = new ItemGrid({fontSize:10, padding:"10px 5px 5px 5px", margin:"5px 5px 5px 5px"},openContent);
+        grid.setItems(resData);
+        $("#recentItems").append(grid.div);
+      }
     })
   }
 
@@ -130,7 +108,7 @@
   }
 
   $(()=>{
-    $("#title").append(createTitle(root.name, "100%", 150, 45,"/page/"+root.id,"linear-gradient(to bottom, #78c33a, #47b300)"));
+    $("#title").append(createTitle(root.name, "100%", 150, 45,"/page/"+root.id,"linear-gradient(to bottom, #3a78c3, #0047b3)"));
     pd.setStyle(style);
     createMenu((path, pathName)=>movePath(path, pathName),root.id);
     movePath();

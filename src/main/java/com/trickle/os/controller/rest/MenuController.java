@@ -28,8 +28,10 @@ public class MenuController {
 	
 	@GetMapping("/addMenu")
 	public String addMenu(String path, String name) {
+		System.out.println(path);
 		String[] sp = path.split("/");
 		int result = 0;
+		
         if(sp.length == 1 && name.split(",").length == 2) {
         	RootVo root = new RootVo();
         	root.setName(name.split(",")[0].trim());
@@ -46,7 +48,7 @@ public class MenuController {
 		return result == 1 ? "메뉴 등록 성공" : "메뉴 등록 실패";
 	}
 	
-	public void createIndexPage(RootVo root) {
+	public long createIndexPage(RootVo root) {
 		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
     	Resource res = resolver.getResource("file:src/main/resources/templates");
     	File resDir = null;
@@ -61,11 +63,10 @@ public class MenuController {
 		if(!typeDir.exists()) typeDir.mkdir();
 		
 		File rootIdDir = new File(typeDir, String.valueOf(root.getId()));
-		if(!rootIdDir.exists()) rootIdDir.mkdir();
-		
-		File typeTemplateDir = new File(pageDir, root.getType()+"-template");
-		if(typeTemplateDir.exists()) {
-			File[] templateFiles = typeTemplateDir.listFiles();
+		File fromDir = typeDir.listFiles()[0];
+		if(fromDir.exists()) {
+			if(!rootIdDir.exists()) rootIdDir.mkdir();
+			File[] templateFiles = fromDir.listFiles();
 			if (templateFiles != null) {
 			    for (File templateFile : templateFiles) {
 			        String newFileName = templateFile.getName().replaceAll("-\\d{1,}.html", "-" + root.getId() + ".html");
@@ -79,8 +80,9 @@ public class MenuController {
 			            e.printStackTrace();
 			        }
 			    }
-			}
+			}return Long.parseLong(fromDir.getName());
 		}
+		return -1;
 	}
 	
 	@GetMapping("/updateMenuName")

@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 public class RootVo implements Comparable<RootVo>{
 	private long id;
-	private String name, type, style;
+	private String name, type, style = "";
 	private List<MenuVo> childs;
 	private List<ItemVo> items;
 	

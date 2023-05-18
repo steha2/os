@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<header>
+  <meta charset="utf-8">
+</header>
+<body>
+<style>
+  
+#filterTable {
+  position: absolute;
+  width:230px;
+  border: 1px solid;
+  right:0;
+  top:37px;
+  background: #fff;
+  visibility: hidden;
+}
+#filterTable td{
+  padding:2px;
+}
+
+</style>
+<div id="title"></div>
+<table>
+  <tr>
+    <td style="width:200px; position: relative; cursor:pointer">
+      <div id="category"><i id="search-icon" class='fas fa-list-ul'></i> Category</div><div id="menuDiv"></div>
+    </td>
+    <td style="width:500px;">
+      <div id="navi"></div>
+    </td>
+    <td style="width:300px; text-align: right; padding:2px 3px 0px 0px;">
+      <div class="search-box">
+        <table id="filterTable">
+          <tr>
+            <td>정렬</td>
+            <td>
+              <select id="orderBy" onchange=changeFilter(this)>
+                <option value = "">----------</option>
+                <option value = "NUM_SOLD DESC">조회수 순</option>
+                <option value = "REG_DATE DESC">등록일 순</option>
+              </select>
+            </td>
+          </tr>
+            <tr><td colspan="2"><button onclick=resetFilter()>Reset</button></td></tr>
+        </table>
+        <input type="text" class="search-input" placeholder="Search">
+        <button class="search-btn" onclick=searchItems()><i class="fas fa-search"></i></button>
+        <button class="search-btn" onclick=toggleFilter()><i class="fas fa-filter"></i></button>
+      </div>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
+<script>
+  function resetFilter(){
+    pd.option = [];
+    pd.setPath(root.path);
+    pd.orderBy = "";
+    movePath();
+  }
+
+  function createNaviLink(link){
+    const navi = $("#navi");
+    const a = $(`<a>${link.text}</a>`);
+    if(link.func) a.click(()=>link.func());
+    if(link.href) a.attr("href",link.href);
+    navi.append(a);
+    if(link.separator) navi.append(link.separator);
+  }
+  
+  $(()=>{
+    const links = [
+      { 
+        text:"Top Views",
+        func : () => {
+          pd.option = [];
+          pd.setPath(root.path);
+          pd.setOrderBy("NUM_VIEW DESC");
+          pd.addOption("NUM_VIEW",GREATER_THAN,1);
+          movePath();
+        }
+      },
+    ]
+
+    links.forEach(l=>createNaviLink(l));
+  })
+
+  function toggleFilter() {
+    $("#filterTable").css("visibility",
+    $("#filterTable").css("visibility") === "visible" ? "hidden" : "visible");
+  }
+
+  function searchItems() {
+    pd.setSearch($(".search-input").val());
+    changeFilter(true);
+  }
+  
+  function changeFilter(input){
+    pd.setOrderBy($("#orderBy").val());
+    console.log(pd);
+    if(input) updateItems();
+  }
+</script>

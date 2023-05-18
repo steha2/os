@@ -18,9 +18,15 @@ import com.zaxxer.hikari.HikariDataSource;
 public class MyBatisConn {
     private String driver ="oracle.jdbc.OracleDriver";
     private String url="jdbc:oracle:thin:@192.168.0.213:1521:xe";
-    private String user="os";
+    private String user="os4";
     private String password="1234";
 
+    public MyBatisConn(String user) {
+		this.user = user;
+	}
+    
+    public MyBatisConn() {}
+    
 	public DataSource initDataSource() {
 		HikariConfig config = new HikariConfig();
 		config.setDriverClassName(driver);

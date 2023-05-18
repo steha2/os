@@ -12,6 +12,7 @@ import com.trickle.os.dao.ItemDao;
 import com.trickle.os.dao.PagingDao;
 import com.trickle.os.paging.FilterCondition;
 import com.trickle.os.paging.PagingData;
+import com.trickle.os.util.Debug;
 import com.trickle.os.vo.*;
 
 import lombok.RequiredArgsConstructor;
@@ -69,17 +70,34 @@ public class ItemController {
 	
 	@GetMapping(value="/getPagingItems") 
 	public PagingData getPagingItems(PagingData pd) {
+		pd.setTable("ITEMS","NAME, SCORE, ID, PRICE, DISCOUNT, NUM_SOLD, PATH, IMAGE_PATH, USER_ID, REG_DATE, NUM_STOCK, NUM_VIEW");
+//		pd.setColumns(pd.getColumns().replace("content,", ""));
 		System.out.println(pd);
-		pd.setTable("ITEMS_WITH_SCORE",ItemVo.class);
 		pagingDao.addTotalRows(pd);
+		long t1 = System.currentTimeMillis();
 		pd.setData(pagingDao.getPagingItems(pd));
+		Debug.log(System.currentTimeMillis() - t1 + " ms");
+		System.out.println(pd);
+		System.out.println(pd.getWhereQuery());
+		return pd;
+	}
+	
+	@GetMapping(value="/getPagingItems2") 
+	public PagingData getPagingItems2(PagingData pd) {
+		pd.setTable("ITEMS_WITH_SCORE2",ItemVo.class);
+		pd.setColumns(pd.getColumns().replace("content,", ""));
+		pagingDao.addTotalRows(pd);
+		long t1 = System.currentTimeMillis();
+		pd.setData(pagingDao.getPagingItems(pd));
+		System.out.println(System.currentTimeMillis() - t1);
+		System.out.println(pd);
 		return pd;
 	}
 	
 	@RequestMapping(value="/os/getItems", produces = "text/plain; charset=utf8")
 	public String getItems(String path, long rowCount, long maxPage, long nowPage) {
 		PagingData pd = new PagingData();
-		pd.addOption("path", FilterCondition.STARTS_WITH, path);
+		pd.setPath(path);
 		pd.setMaxPage(maxPage);
 		pd.setRowCount(rowCount);
 		pd.setNowPage(nowPage);

@@ -110,18 +110,22 @@ table td, table th {
   margin: 0px;
 }
 
-.itemCell {
+#filterTable{
+  z-index: 20;
+}
+
+.itemCell, .itemCell2 {
   cursor: pointer;
   outline: 1px solid rgb(235, 227, 227);
   float:left;
   text-align: center;
   box-sizing: border-box;
-  white-space: nowrap; /* Prevent line breaks */
-  overflow: hidden; /* Hide overflowing text */
-  text-overflow: ellipsis; /* Display ellipsis for truncated text */
-}
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+} 
 
-.itemCell:hover {
+.itemCell:hover,  .itemCell2:hover {
   outline: 1px solid blue;
 }
 
