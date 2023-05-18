@@ -1,0 +1,28 @@
+{
+  "width": 750,
+  "height": 700,
+  "num": 0,
+  "colors": [
+    {
+      "contBg": "#222222",
+      "contBorder": "#333333",
+      "topBotColor": "#444444",
+      "fontColor": "#FFFFFF",
+      "subTitle": "#FFFFFF"
+    },
+    {
+      "contBg": "#FAEECB",
+      "contBorder": "#7B630F",
+      "topBotColor": "#3e270c",
+      "fontColor": "#FFFFFF",
+      "subTitle": "#000000"
+    },
+    {
+      "contBg": "#E0E0E0",
+      "contBorder": "#233353",
+      "topBotColor": "#192939",
+      "fontColor": "#FFFFFF",
+      "subTitle": "#000000"
+    }
+  ]
+}

@@ -1,58 +1,48 @@
-package com.trickle.os.create;
+package com.trickle.os.cr.util;
 
 import java.io.File;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.trickle.os.controller.rest.ItemController;
 import com.trickle.os.controller.rest.MenuController;
 import com.trickle.os.dao.ItemDao;
 import com.trickle.os.dao.MenuDao;
 import com.trickle.os.dao.PagingDao;
+import com.trickle.os.test.cr.MyBatisConn;
 import com.trickle.os.test.cr.NaverCrawling;
 import com.trickle.os.vo.ItemVo;
 import com.trickle.os.vo.MenuVo;
 import com.trickle.os.vo.RootVo;
 
-@SpringBootTest
-public class CreateMenus {
-//	private static SqlSessionFactory factory = new MyBatisConn("os2").sqlSessionFactory();
-//	public static ItemDao ID = new ItemDao(factory);
-//	public static MenuDao MD = new MenuDao(factory, ID);
-//	public static MenuController MC = new MenuController(MD);
-//	public static PagingDao PD = new PagingDao(factory);
-//	public static ItemController IC = new ItemController(ID, PD);
+public class CrTool {
+	private static SqlSessionFactory factory = new MyBatisConn("os2").sqlSessionFactory();
+	public static ItemDao ID = new ItemDao(factory);
+	public static MenuDao MD = new MenuDao(factory, ID);
+	public static MenuController MC = new MenuController(MD);
+	public static PagingDao PD = new PagingDao(factory);
+	public static ItemController IC = new ItemController(ID, PD);
 	
-	@Autowired ItemDao ID;
-	@Autowired MenuDao MD ;
-	@Autowired MenuController MC;
-	@Autowired PagingDao PD;
-	@Autowired ItemController IC;
+	public String S1 = "";
+	public String S2 = "";
 	
-	private String S1 = "";
-	private String S2 = "";
-	
-	@Test
-	void t() {
-		Scanner s = new Scanner( System.in);
-		String str = s.nextLine();
-		if(!str.equals("y")) return;
+//	void t() {
+//		Scanner s = new Scanner( System.in);
+//		String str = s.nextLine();
+//		if(!str.equals("y")) return;
 		
-		CreateMenus cm = new CreateMenus();
+//		CrTool cm = new CrTool();
 //		cm.createRoot("B-Market2", "shop", "자전거", {"산악용2"});
 //		cm.createRoot("B-Market2", "shop", "자전거", "산악용2");
 		
-		cm.createRoot("K-Music2", "score", "클래식", null);
+//		cm.createRoot("K-Music2", "score", "클래식", null);
 //		cm.createRoot("B-Market2", "board", "자전거", new String[] { "산악용2" } );
-	}
+//	}
 
 
-	public void createRoot(String rootName, String type, String d1Name, String[] d2Names) {
+	public static void createRoot(String rootName, String type, String d1Name, String[] d2Names) {
 		RootVo root = new RootVo();
 		root.setName(rootName);
 		root.setType(type);
@@ -82,21 +72,20 @@ public class CreateMenus {
 				
 				MD.addDepth2(d2);
 				
-				cr2(d2.getId());
+				cr2(d2.getId(), d2Name, 1);
 			}
 		}else {
 			cr1(d1.getId());
 		}
 	}
 
-	void cr1(long d1id) {
+	public static void cr1(long d1id) {
 
 		int count = 4;
 		int p1 = 5000, p2 = 200000;
 		MenuVo d1 = MD.getDepth1(d1id);
 
-		String search = S1 + d1.getName() + S2;
-		
+		String search = d1.getName();
 
 		RootVo root = MD.getRootById(d1.getParentId());
 
@@ -153,14 +142,13 @@ public class CreateMenus {
 		}
 	}
 	
-	void cr2(long d2id) {
+	public static void cr2(long d2id, String search, int r) {
 
-		int count = 4;
+		int count = r;
 		int p1 = 5000, p2 = 200000;
 		
 		MenuVo d2 = MD.getDepth2(d2id); // 검색어
-		String search = S1 + d2.getName() + S2;
-		
+		if(d2 == null) return;
 
 		MenuVo d1 = MD.getDepth1(d2.getParentId());
 		RootVo root = MD.getRootById(d1.getParentId());

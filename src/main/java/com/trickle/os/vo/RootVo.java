@@ -1,6 +1,7 @@
 package com.trickle.os.vo;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,11 +13,10 @@ import lombok.ToString;
 public class RootVo implements Comparable<RootVo>{
 	private long id;
 	private String name, type, style = "";
-	private List<MenuVo> childs;
+	private List<MenuVo> childs = new ArrayList<>();
 	private List<ItemVo> items;
 	
 	public void addMenu(MenuVo menu) {
-		if(childs == null) childs = new ArrayList<>();
 		menu.setPath(getPath()+"/"+menu.getId());
 		menu.setPathName(getPathName()+"/"+menu.getName());
 		childs.add(menu);

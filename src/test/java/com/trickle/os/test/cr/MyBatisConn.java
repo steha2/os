@@ -6,19 +6,16 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.stereotype.Component;
-import org.springframework.test.context.TestPropertySource;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class MyBatisConn {
     private String driver ="oracle.jdbc.OracleDriver";
-    private String url="jdbc:oracle:thin:@192.168.0.213:1521:xe";
-    private String user="os4";
+    private String url="jdbc:oracle:thin:@localhost:1521:xe";
+    private String user="os2";
     private String password="1234";
 
     public MyBatisConn(String user) {
