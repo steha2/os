@@ -1,7 +1,12 @@
 function runPay(orderVo,done){
-  // orderVo.pgName="신용카드";done();return;//forTest
+ 
+ 
+  orderVo.pgName="신용카드";done();return;//forTest
+ 
+  
+ 
   BootPay.request({
-      price: orderVo.price, //실제 결제되는 가격
+    price: orderVo.price, //실제 결제되는 가격
  
       // 관리자로그인 -> 결제설치 -> 인증키 및 보안 -> WEB Application ID
       application_id: "645b44843049c8001c9685ba",
@@ -49,6 +54,7 @@ function createOrderVo(items, totalPrice, orderSeq) {
                    price:totalPrice
                   };
   orderVo.items = [];
+  console.log(orderVo);
   items.forEach(item => {
   orderVo.items.push({
               item_name:item.name,

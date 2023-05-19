@@ -38,12 +38,29 @@
    <if test="orderBy != null and orderBy != ''">
    ORDER BY ${orderBy}
    </if>
+   <if test="orderBy == null or orderBy == ''">
+   ORDER BY REG_DATE DESC
+   </if>
+   
    ) ) 
    WHERE RN >= #{startRow}) i
    WHERE ROWNUM <![CDATA[<=]]> #{rowCount}
  </select>
 
 <select id="getPagingComments" parameterType="map" resultType="CommentVo">
-   <include refid="pagingQuery"></include>
-</select>
+ SELECT ${columns}, (SELECT NAME FROM USERS u WHERE ID = i.USER_ID) as USER_NAME
+ FROM (
+   SELECT ${columns} FROM (
+   SELECT ${columns}, ROWNUM AS RN FROM (
+   SELECT ${columns} FROM ${tableName}
+   WHERE (PATH = '/' or PATH = #{path} or PATH LIKE '${path}/%') 
+   <if test="whereQuery != null and whereQuery != ''">
+   		AND ${whereQuery}
+   </if>
+   <if test="orderBy != null and orderBy != ''">
+   ORDER BY ${orderBy}
+   </if>
+   ) ) 
+   WHERE RN >= #{startRow}) i
+   WHERE ROWNUM <![CDATA[<=]]> #{rowCount}</select>
 </mapper>

@@ -22,6 +22,11 @@ public class PageController {
 	private final MenuDao menuDao;
 	private final ItemDao itemDao;
 	
+	@GetMapping("/login/csCenter") 
+	public String csCenter(Model model) {
+		return openPage(19, model);
+	}
+	
 	@GetMapping("/page/content/{itemId}") 
 	public String openContent(@PathVariable long itemId, Model model, HttpSession session) {
 		ItemVo item = itemDao.getItemById(itemId);

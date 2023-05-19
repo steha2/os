@@ -4,11 +4,14 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ItemMapper">
 <select id="getItemById" resultType="ItemVo">
-	SELECT * FROM ITEMS WHERE ID = #{id} 
+	SELECT NAME,CONTENT,ID,PRICE,DISCOUNT,NUM_SOLD,PATH,IMAGE_PATH,SCORE,REG_DATE,NUM_STOCK,NUM_VIEW,
+	(SELECT NAME FROM USERS WHERE ID = USER_ID) AS USER_NAME,
+	(SELECT ROUND(AVG(SCORE),1) FROM COMMENTS WHERE PATH = '/' or PATH = '/${id}' or PATH LIKE '/${id}/%') AS AVG_SCORE
+	 FROM ITEMS WHERE ID = #{id} 
 </select>
 
 <select id="getItems" resultType="ItemVo">
-	SELECT * FROM ITEMS	WHERE PATH LIKE '${path}%'
+	SELECT * FROM ITEMS WHERE (PATH = '/' or PATH = #{path} or PATH LIKE '${path}/%') 
 </select>
 
 <update id="updateItem">
@@ -60,7 +63,9 @@ DELETE FROM COMMENTS WHERE ID = #{id}
 </insert>
 
 <select id="getComments" resultType="CommentVo">
-    SELECT * FROM COMMENTS WHERE PATH LIKE '/${id}%'
+    SELECT * FROM COMMENTS 
+     	WHERE (PATH = '/' or PATH = '/${id}' or PATH LIKE '/${id}/%') 
+    
 </select>
 
 <select id="getItemByName" resultType="ItemVO">

@@ -16,7 +16,7 @@ import lombok.ToString;
 @ToString
 public class OrderVo {
 	private long id, userId, price;
-	private String status="", pg="", pgName="", requestedAt, name="", items="";
+	private String status="", pg="", pgName="", requestedAt, name="상품", items="";
 	private List<OrderItem> itemList;
 	
 	public void setItems(String items) {

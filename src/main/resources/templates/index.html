@@ -10,11 +10,13 @@
     h4 { margin:0px; padding:0px }
   </style>
   <body>
-     <h1>OS-Home</h1>
+    <h1>OS-Home</h1>
 
   <h4>Site Map</h4>   
 	<ul>
-    <li> <a href="http://192.168.0.213:8090/gm-home" th:text="gm-home"></a> </li>
+    <li> <a href="http://192.168.0.213:9092/" target="_blank" th:text="Spring-home"></a> </li>
+    <li> <a href="http://192.168.0.213:8090/gm-home" target="_blank"  th:text="gm-home"></a> </li>
+    <br>
 	  <li th:each="root : ${roots}">
 	    <a th:href="|/page/${root.id}|" th:text="${root.name}"></a>
 	  </li>

@@ -40,10 +40,14 @@ public class MenuController {
     		result = menuDao.addRoot(root);
         	createIndexPage(root);
         }else{
-        	MenuVo menu = new MenuVo();
-        	menu.setParentId(Integer.parseInt(sp[sp.length-1]));
-    		menu.setName(name);
-        	result = sp.length == 2 ? menuDao.addDepth1(menu) : menuDao.addDepth2(menu);
+    		String[] ns = name.split(",");
+    		for(String n : ns) {
+    			if(n == null || n.isBlank()) continue; 
+    			MenuVo menu = new MenuVo();
+    			menu.setParentId(Integer.parseInt(sp[sp.length-1]));
+        		menu.setName(n);
+        		result = sp.length == 2 ? menuDao.addDepth1(menu) : menuDao.addDepth2(menu);
+        	}
         }
 		return result == 1 ? "메뉴 등록 성공" : "메뉴 등록 실패";
 	}

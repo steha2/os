@@ -23,7 +23,6 @@ public class MenuGrid {
 					sd2 = d2;
 					System.out.println("Selected menu id : " + d2);
 				});
-				System.out.println(button + "added" + d2.getId());
 				button.setToolTipText(d2.getPathName()  + "  " + d2.getPath());
 				panel.add(button);
 			});

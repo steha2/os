@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+</head>
+<style>
+  /* ------------------------------ 푸터 ------------------------------ */
+  .footer {
+    width: 100% !important;
+    border-top: 1px solid #ddd;
+    margin-top: 25px;
+    color: #333;
+    font-size: 11px;
+    line-height: 18px;
+    font-family: Dotum, '돋움', sans-serif;
+    letter-spacing: -1px;
+    text-align: left
+  }
+
+  /* 스마일배송 lp/srp 푸터 분기 */
+  .smiledelivery #pc-footer .footer {
+    margin-top: 0;
+  }
+
+  /* 푸터 - 공통 */
+  .footer a {
+    color: #333
+  }
+
+  .footer h2 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0)
+  }
+
+  .footer address,
+  .footer em {
+    font-style: normal
+  }
+
+  .footer address {
+    visibility: visible;
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    font-size: 11px;
+    line-height: 18px
+  }
+
+  .footer em,
+  .footer strong,
+  .footer em a,
+  .footer strong a {
+    color: #2677de
+  }
+
+  .footer small {
+    color: #aaa;
+    font-size: 100%
+  }
+
+  .footer li {
+    line-height: inherit;
+    font-weight: normal
+  }
+
+  .footer .muted {
+    color: #767676
+  }
+
+  .footer .muted a {
+    color: #767676
+  }
+
+  .footer .alpha-num {
+    font-family: Dotum, '돋움', sans-serif;
+    letter-spacing: 0
+  }
+
+  .footer .inline {
+    display: block
+  }
+
+  .footer .footer-links {
+    display: inline-block;
+    margin: 4px 14px 0 0
+  }
+
+  .footer .footer-link {
+    font-size: 12px;
+    font-weight: bold;
+    color: #333
+  }
+
+  .footer .footer-button {
+    display: inline-block;
+    vertical-align: top;
+    line-height: 0
+  }
+
+  *:first-child+html .footer .footer-button img {
+    margin-top: -3px
+  }
+
+  .footer .footer-button img {
+    margin-top: -1px
+  }
+
+  .footer .bar {
+    display: inline-block;
+    width: 1px;
+    height: 10px;
+    margin: 3px 5px 0;
+    background-color: #333;
+    vertical-align: top;
+    *margin-top: 0
+  }
+
+  /* 푸터 - 목록 */
+  .footer .footer-link-list li {
+    margin-bottom: 2px
+  }
+
+  .footer .footer-link-list strong,
+  .footer .footer-link-list strong a {
+    color: #333
+  }
+
+  .footer .footer-2col-list {
+    width: 100%
+  }
+
+  .footer .footer-2col-list:before,
+  .footer .footer-2col-list:after {
+    display: table;
+    content: ' '
+  }
+
+  .footer .footer-2col-list:after {
+    clear: both
+  }
+
+  .footer .footer-2col-list>li {
+    float: left;
+    width: 50%;
+    *width: 49.9999%
+  }
+
+  /* 푸터 - 블록 */
+  .footer .footer-block {
+    padding: 15px 20px;
+    border-top: 1px solid #ddd
+  }
+
+  .footer .footer-block-cs {
+    border-top: 0;
+    background: #f7f7f7;
+    letter-spacing: 0
+  }
+
+  .footer .footer-block-compressed {
+    padding-top: 12px;
+    padding-bottom: 9px
+  }
+
+  .footer .footer-block-compressed strong,
+  .footer .footer-block-compressed strong a {
+    color: #333
+  }
+
+  .footer .footer-container {
+    width: 980px;
+    margin: 0 auto
+  }
+
+  .footer .footer-container:before,
+  .footer .footer-container:after {
+    display: table;
+    content: ' '
+  }
+
+  .footer .footer-container:after {
+    clear: both
+  }
+
+  /* 푸터 - 섹션 */
+  .footer .footer-section {
+    float: left;
+    width: 294px
+  }
+
+  .footer .footer-section-first {
+    width: 341px
+  }
+
+  .footer .footer-section-first+.footer-section {
+    width: 343px
+  }
+
+  .footer .footer-section-first+.footer-section .footer-section-inner {
+    padding-left: 36px
+  }
+
+  .footer .footer-section-inner {
+    min-height: 97px;
+    padding: 3px 0 0 31px;
+    border-left: 1px solid #e8e8e8
+  }
+
+  .footer .footer-section-first .footer-section-inner {
+    padding-left: 0;
+    border-left: 0
+  }
+
+  .footer .footer-section h3 {
+    margin: 1px 0 8px;
+    font-size: 12px;
+    line-height: 15px;
+    font-family: Gulim, '굴림', sans-serif;
+    font-weight: bold;
+    color: #333
+  }
+
+  .footer .footer-section h3>a {
+    font-family: Gulim, '굴림', sans-serif;
+    padding-right: 8px;
+    *padding-right: 12px;
+    background: url('//pics.auction.co.kr/common/footer/link_arrow_title.gif') no-repeat 100% 2px
+  }
+
+  /* 푸터 - 인증현황 */
+  .footer .footer-auth-list>li {
+    margin: 4px 0 8px;
+    line-height: 14px
+  }
+
+  .footer .footer-auth-list a span {
+    cursor: pointer
+  }
+
+  .footer .footer-auth-list a:hover span {
+    text-decoration: underline
+  }
+
+  .footer .footer-auth-logo {
+    margin-right: 4px;
+    vertical-align: top
+  }
+
+  .footer .footer-auth-name {
+    display: inline-block;
+    vertical-align: top
+  }
+
+  /* 푸터 - 가로 목록 */
+  .footer .footer-horiz-list {
+    width: 100%;
+    line-height: 15px
+  }
+
+  .footer .footer-horiz-list:before,
+  .footer .footer-horiz-list:after {
+    display: table;
+    content: ' '
+  }
+
+  .footer .footer-horiz-list:after {
+    clear: both
+  }
+
+  .footer .footer-horiz-list>li {
+    float: left;
+    width: 163px;
+    background: url('//pics.auction.co.kr/common/footer/list_horizontal_separator.gif') no-repeat 0 1px;
+    text-align: center
+  }
+
+  .footer .footer-horiz-list>li:first-child {
+    width: 162px;
+    background: none
+  }
+
+  .footer .footer-horiz-list>li:first-child>a {
+    padding-left: 0
+  }
+
+  /* 푸터 - 카피라이트 */
+  .footer .footer-block-copyright {
+    font-size: 11px;
+    letter-spacing: -1px;
+    color: #666;
+    line-height: 17px
+  }
+
+  .footer .footer-block-copyright .footer-container {
+    background: none
+  }
+
+  .footer .footer-block-copyright strong {
+    color: #767676
+  }
+
+  .footer .footer-copyright {
+    margin-top: 6px;
+    font-family: Tahoma, sans-serif;
+    letter-spacing: 0
+  }
+
+  .footer-block-copyright .link--emphasis {
+    color: #666;
+    text-decoration: underline
+  }
+
+  /* 헤더푸터 중고장터앱 노출건 */
+  .footer .footer-wide-banner {
+    background: #c9c9c9
+  }
+
+  .footer .footer-wide-banner a {
+    display: block;
+    padding: 10px 0 0;
+    text-align: center;
+    height: 46px
+  }
+
+  .footer .footer-banner-link {
+    width: 980px;
+    margin: 0 auto
+  }
+
+  .footer .footer-banner-link a {
+    margin: 0 0 0 490px;
+    border-left: 1px dashed #fff
+  }
+
+  .footer .footer-banner-link a:first-child {
+    float: left;
+    margin: 0px;
+    width: 490px;
+    border: none
+  }
+
+  /* 모바일 버전으로 보기 버튼 노출 */
+  .footer-mobile-version {
+    width: 100%;
+    max-width: 980px;
+    margin: 30px auto 30px
+  }
+
+  .footer-mobile-version a {
+    display: block;
+    height: 116px;
+    background: url('//pics.auction.co.kr/common/bg_useragent.gif') 0 0 repeat-x;
+    border: 3px solid #cccccc;
+    text-align: center;
+    text-decoration: none
+  }
+
+  .footer-mobile-version a span {
+    padding-right: 56px;
+    background: url('//pics.auction.co.kr/homepage/2013/04/btn_mobile_go_2.gif') 100% 7px no-repeat;
+    font-size: 56px;
+    font-weight: bold;
+    color: #333333;
+    font-family: 굴림, 'Gulim';
+    line-height: 120px
+  }
+
+  /* ------------------------------ //푸터 ------------------------------ */
+</style>
+
+<body>
+  <div class="footer" role="contentinfo">
+    <div class="footer-block footer-block-cs">
+      <div class="footer-container">
+        <h2>고객센터 및 분쟁처리</h2>
+        <div class="footer-section footer-section-first">
+          <div class="footer-section-inner">
+            <h3><a th:href="@{/login/csCenter}" target="_blank">고객센터</a></h3>
+            <address>
+              <ul>
+                <li>부산시 테스트 주소 123, 4층 </li>
+                <li>Tel : <strong>1234-4567</strong> (평일 09:00 ~ 18:00)</li>
+              </ul>
+            </address>
+          </div>
+        </div>
+        <div class="footer-section ebay_info">
+          <div class="footer-section-inner">
+            <h3>주식회사 티마켓</h3>
+            <ul>
+              <li>서울특별시 테스트 주소 <span class="alpha-num">152</span> (테스트, GFC)</li>
+              <li>사업자등록번호 : <span class="alpha-num">123-45-67890 </span></li>
+              <li>통신판매업신고 : 테스트 <span class="alpha-num">12345</span>호</li>
+              <li>대표이사 : 홍길동</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-section">
+          <div class="footer-section-inner">
+            <ul>
+              <li class="alpha-num">Tel : 1234-5678</li>
+              <li class="alpha-num">Fax : 02-123-4567</li>
+              <li class="alpha-num">Mail : test@corp.t-market.co.kr</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <p class="footer-copyright" th:text="|Copyright ${root.name} Inc. All rights reserved.|"></p>
+    </div>
+  </div>
+  
+</body>
+</html>

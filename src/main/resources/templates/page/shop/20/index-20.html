@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title th:text="${root.name}"></title>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
+<link rel="stylesheet" type="text/css" href="/css/page.css">
+<script src="https://cdn.bootpay.co.kr/js/bootpay-3.3.1.min.js" type="application/javascript"></script>
+<script src="/js/util/login-dialog.js"></script>
+<script src="/js/comment.js"></script>
+<script src="/js/util/bootpay.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/item.js"></script>
+<script src="/js/util/utils.js"></script>
+<script src="/js/util/paging.js"></script>
+<style>
+.itemCell2 {
+  font-size: 15px;
+  text-align: center;
+  padding: 20px;
+  margin: 11px;
+  width: 190px;
+  height :275px;
+}
+.itemImg2 {
+  width:150px;
+  height:190px;
+}
+</style>
+</head>
+<body>
+  <div id="container">
+    <div id="topDiv" th:include="|/page/${root.type}/${root.id}/top-${root.id}.html|"></div>
+    <div id="header" th:include="|/page/${root.type}/${root.id}/header-${root.id}.html|"></div>
+    <div class="content">
+      <div id="itemNavi1"></div>
+      <div id="contentDiv"></div>
+      <div id="itemNavi2Wrap">
+        <div id="recentItems"></div>
+        <div id="itemNavi2"></div>
+      </div>
+    </div>
+    <div id="footer" th:include="|/page/${root.type}/${root.id}/footer-${root.id}.html|"></div>
+  </div>
+</body>
+
+<script th:inline="javascript">
+  const root = /*[[${root}]]*/ null;
+  let style = root.style ? JSON.parse(root.style) : {};
+  const contentDiv = $("#contentDiv");
+  let pd = new PagingData();
+
+  function updateItems() {
+    contentDiv.empty();
+    console.log(pd);
+    $.get("/getPagingItems",pd.toParam())
+    .done((resData=>{
+      pd.setPagingData(resData);
+      const grid = new ItemGrid2(openContent);
+      grid.setItems(pd.data);
+      contentDiv.append(grid.div,createPaging(pd,updateItems));
+    })).fail(()=>console.log("Ajax Fail"));
+  }
+
+  function movePath(path, pathName) {
+    if(!path) {
+      path = pd.path || root.path;
+      pathName = pd.pathName || root.pathName;
+    }
+    pd.setPath(path);
+    pd.setPathName = pathName;
+    $("#itemNavi1").empty();
+    const sp = path.split("/");
+    const spn = pathName.split("/");
+    let lp = "";
+    let lpn = "";
+    for(let i=1; i<spn.length; i++){
+      lp += "/"+sp[i];
+      lpn += "/"+spn[i];
+      $("#itemNavi1").append(createALink(lp,lpn,spn[i])," > ");
+    }
+    updateItems();
+  }
+
+  function openContent(itemId){
+    contentDiv.empty().load(`/page/content/${itemId}`,updateRecentItems);
+  }
+
+  function updateRecentItems(){
+    $.get(`/getRecentItems/${root.id}/4`).done((resData)=>{
+      $("#recentItems").empty().append("<h5 style='padding:5px 0px 0px 5px; margin:0px;'>최근 본 상품</h5>");
+      if(resData) {
+        const grid = new ItemGrid({fontSize:10, padding:"10px 5px 5px 5px", margin:"5px 5px 5px 5px"},openContent);
+        grid.setItems(resData);
+        $("#recentItems").append(grid.div);
+      }
+    })
+  }
+
+  function openCart(){
+    contentDiv.empty().load(`/login/openCart/${root.id}`);
+  }
+
+  $(()=>{
+    $("#title").append(createTitle(root.name, "100%", 150, 45,"/page/"+root.id,"linear-gradient(to bottom, #3a78c3, #0047b3)"));
+    pd.setStyle(style);
+    createMenu((path, pathName)=>movePath(path, pathName),root.id);
+    movePath();
+    changeFilter();
+    updateRecentItems();
+    const reqItemId = /*[[${reqItemId}]]*/ null;
+    if(reqItemId) openContent(reqItemId);
+  });
+
+  function createALink(path, pathName, spn){
+    const link = $(`<a class='naviLink'>${spn}</a>`);
+    link.click(()=>movePath(path,pathName));
+    return link;
+  }
+</script>
+
+</html>

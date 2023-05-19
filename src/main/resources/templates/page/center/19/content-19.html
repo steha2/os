@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title th:text="${root.name}"></title>
+<style>
+#contentTable{
+  table-layout: fixed;
+  width:100%;
+}
+#contentTable td, pre{
+  padding: 3px;
+  border:1px solid;
+  border-collapse: collapse;
+  word-wrap: break-word;
+  white-space: normal;
+}
+#detailTable td{
+  border-collapse: collapse;
+  border:1px solid;
+  padding: 5px;
+}
+.buyButton{
+  background: #ffffff;
+  color:rgb(37, 37, 37);
+  font-size: 25px;
+  font-weight: bold;
+  padding: 10px;
+  /* border-radius: 10px; */
+  cursor: pointer;
+}
+.comment-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comment-table th,
+.comment-table td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.comment-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.comment-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+#contentSpan {height: 500px;}
+</style>
+</head> 
+<div id="tabs">
+  <ul>
+    <li><a href="#itemDiv">게시글</a></li>
+    <li><a href="#commentDiv">댓글</a></li>
+  </ul>
+  <div id="itemDiv">
+    <table id="contentTable">
+      <tr><td style="width:100px">조회수</td><td><span th:text="${item.numView}"></span></td></tr>
+      <tr><td>글 제목</td><td><span th:text="${item.name}"></span></td></tr>
+      <tr><td>작성자</td><td th:text="${item.userName}"></td></tr>
+      <tr><td colspan="2"><div id="contentSpan" th:text="${item.content}"></div></td></tr>
+    </table>
+  </div>
+  <div id="commentDiv"></div>
+</div>
+</body>
+</table>
+<script th:inline="javascript">
+$(()=>{
+  const item = /*[[${item}]]*/ null;
+  const root = /*[[${root}]]*/ null;
+  const user  = /*[[${session.user}]]*/ null;
+  const itemDiv = $("#itemDiv");
+  let cpd = new PagingData();
+  cpd.setPath("/"+item.id);
+  // let style = JSON.parse(root.style);
+  // itemDiv.find("#contentSpan").append(item.content);
+  if(user && item.userId === user.userId) {
+    $("#contentTable").append($("<button>").text("수정").click(()=>openWriteForm(item.id)),
+      $("<button>").text("삭제").click(()=>{
+        if(confirm("Confirm Delete?")) {
+          $.get("/login/deleteItem", {}).done((resData) => {
+            if(resData) movePath();
+          }).fail(error => console.error(error));
+        }
+      })).find("button").css({padding:2,margin:2})
+  }
+  const tabs = $("#tabs");
+  tabs.tabs({
+  activate: function(event, ui) {
+    if(ui.newTab.index() === 1) {
+        updateComments();
+      }
+    }
+  });
+
+  function updateComments(){
+    $.post("/getComments", cpd.toParam()).done((resData) => {
+      const commentDiv = $("#commentDiv").empty();
+      const commentTable = $("<table>").addClass("comment-table")
+        .append("<tr><th width='500'>내용</th><th>작성자</th><th>작성일</th><tr>");
+      cpd.setPagingData(resData);
+      if(cpd.data) {
+        cpd.data.forEach((comment) => {
+          const $tr = $("<tr>");
+          const contentCol = $("<td>").text(comment.content);
+          const userNameCol = $("<td>").text(comment.userName);
+          const regDateCol = $("<td>").text(comment.regDate);
+          $tr.append(contentCol, userNameCol, regDateCol);
+          commentTable.append($tr);
+        });
+      }
+      const commentInput = new CommentInput("/"+item.id, updateComments);
+      commentDiv.append(commentTable,createPaging(cpd,updateComments),commentInput.div);
+    }).fail(error => console.error(error));
+  }
+});
+
+
+
+</script>
+
+</html>

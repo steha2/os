@@ -123,3 +123,26 @@ function createMenu2(menuClick, rootId){
     });
   }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
 }
+
+function createMenu3(menuClick, rootId){
+  $.getJSON("/getRootMenu/"+rootId).done((root) => {
+    const menuUl = $("<ul>");
+    if(root.childs) root.childs.forEach(d1 => {
+      const li1 = $("<li>");
+      menuUl.append(li1);
+      li1.attr("path",d1.path); 
+      li1.attr("pathName",d1.pathName); 
+      li1.append(`<div>${d1.name}</div>`);
+      if(d1.childs) d1.childs.forEach(d2=>{
+        const li2 = $(`<li><div>${d2.name}</div></li>`);
+        menuUl.append(li2);
+        li2.attr("path",d2.path);
+        li2.attr("pathName",d2.pathName);
+      });
+    });
+    menuUl.menu({delay:0, select: (event,ui)=>{
+      menuClick($(ui.item[0]).attr("path"),$(ui.item[0]).attr("pathName"));
+    }});
+    $("#menuDiv").append(menuUl);
+  }).fail((xhr, status, error) => console.error("AJAX Error: " + status + " " + error));
+}
