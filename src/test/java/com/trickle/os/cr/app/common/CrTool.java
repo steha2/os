@@ -1,4 +1,4 @@
-package com.trickle.os.cr.util;
+package com.trickle.os.cr.app.common;
 
 import java.io.File;
 import java.util.List;

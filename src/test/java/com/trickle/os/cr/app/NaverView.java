@@ -12,10 +12,10 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
 import com.trickle.os.cr.AppView;
+import com.trickle.os.cr.app.common.CrTool;
+import com.trickle.os.cr.app.common.MenuGrid;
 import com.trickle.os.cr.gui.Gui;
 import com.trickle.os.cr.gui.panel.layout.GridBagPanel;
-import com.trickle.os.cr.util.CrTool;
-import com.trickle.os.cr.util.MenuGrid;
 
 import lombok.RequiredArgsConstructor;
 

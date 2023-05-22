@@ -2,7 +2,7 @@ package com.trickle.os.cr.app;
 
 import com.trickle.os.cr.AppView;
 import com.trickle.os.cr.SubApp;
-import com.trickle.os.cr.util.CrTool;
+import com.trickle.os.cr.app.common.CrTool;
 
 public class NaverCr extends SubApp{
 	NaverView view = new NaverView(this);
