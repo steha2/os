@@ -75,23 +75,24 @@
 <script th:inline="javascript">
 $(()=>{
   const item = /*[[${item}]]*/ null;
+  console.log(item);
   const root = /*[[${root}]]*/ null;
-  const user  = /*[[${session.user}]]*/ null;
+  // const user  = /*[[${session.user}]]*/ null;
   const itemDiv = $("#itemDiv");
   let cpd = new PagingData();
   cpd.setPath("/"+item.id);
-  // let style = JSON.parse(root.style);
+  let style = JSON.parse(root.style);
   // itemDiv.find("#contentSpan").append(item.content);
-  if(user && item.userId === user.userId) {
-    $("#contentTable").append($("<button>").text("수정").click(()=>openWriteForm(item.id)),
-      $("<button>").text("삭제").click(()=>{
-        if(confirm("Confirm Delete?")) {
-          $.get("/login/deleteItem", {}).done((resData) => {
-            if(resData) movePath();
-          }).fail(error => console.error(error));
-        }
-      })).find("button").css({padding:2,margin:2})
-  }
+  // if(user && item.userId === user.userId) {
+  //   $("#contentTable").append($("<button>").text("수정").click(()=>openWriteForm(item.id)),
+  //     $("<button>").text("삭제").click(()=>{
+  //       if(confirm("Confirm Delete?")) {
+  //         $.get("/login/deleteItem", {}).done((resData) => {
+  //           if(resData) movePath();
+  //         }).fail(error => console.error(error));
+  //       }
+  //     })).find("button").css({padding:2,margin:2})
+  // }
   const tabs = $("#tabs");
   tabs.tabs({
   activate: function(event, ui) {

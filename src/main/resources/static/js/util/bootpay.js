@@ -1,7 +1,7 @@
 function runPay(orderVo,done){
  
  
-  orderVo.pgName="신용카드";done();return;//forTest
+  // orderVo.pgName="신용카드";done();return;//forTest
  
   
  

@@ -31,7 +31,7 @@ public class CartController {
 		model.addAttribute("root", root);
 		model.addAttribute("items", cartDao.getCartItems(rootId, user.getId()));
 		model.addAttribute("carts", cartDao.getCarts(rootId, user.getId()));
-		return "/page/"+root.getType()+"/"+root.getId()+"/cart-"+rootId;
+		return "/page/"+root.getType()+"/cart";
 	}
 	
 	@RequestMapping(value="/login/addCart", produces ="text/plain;charset=UTF-8")

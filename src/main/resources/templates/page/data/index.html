@@ -10,7 +10,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
-<link rel="stylesheet" type="text/css" href="/css/page2.css">
+<link rel="stylesheet" type="text/css" href="/css/page.css">
 <script src="https://cdn.bootpay.co.kr/js/bootpay-3.3.1.min.js" type="application/javascript"></script>
 <script src="/js/util/login-dialog.js"></script>
 <script src="/js/comment.js"></script>
@@ -20,74 +20,73 @@
 <script src="/js/util/utils.js"></script>
 <script src="/js/util/paging.js"></script>
 <style>
-  #itemTable {
-    width: 99%;
-    box-sizing: border-box;
-    margin: 3px;
-  }
 
-  #itemTable td, #itemTable th{ 
-    border-collapse: collapse;
-    border: 1px solid;
-    text-align: center;
-    padding: 2px;
-  }
+#contentDiv {
+ padding:5px; 
+}
 
-  .itemTr{
-    cursor: pointer;
-  }
-  .itemTr:hover{
-    background: #bbb;
-  }
+.itemCell {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  text-align: left;
+  padding: 3px;
+  width: 100%;
+  height : 36px;
+  margin-bottom: 4px;
+}
 
-  #side-menu li {
-    list-style: none;
-  }
+.itemImg {
+  width:30px;
+  height:30px;
+  margin-right: 5px;
+}
+
+.in-div{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>
 </head>
 <body>
   <div id="container">
-    <div id="topDiv" th:include="|/page/${root.type}/${root.id}/top-${root.id}.html|"></div>
-    <div id="header" th:include="|/page/${root.type}/${root.id}/header-${root.id}.html|"></div>
+    <div id="topDiv" th:include="|/page/${root.type}/top.html|"></div>
+    <div id="header" th:include="|/page/${root.type}/header.html|"></div>
     <div class="content">
       <div id="itemNavi1">
         <span id="navi1span" style='width:800px;'></span>
-        <span id="buttonsSpan"><button onclick="openWriteForm()">문의 하기</button></span>
       </div>
-      <div id="navi3"></div>
       <div id="contentDiv"></div>
       <div id="itemNavi2Wrap">
         <div id="recentItems"></div>
         <div id="itemNavi2"></div>
       </div>
     </div>
-    <div id="footer" th:include="|/page/${root.type}/${root.id}/footer-${root.id}.html|"></div>
+    <div id="footer" th:include="|/page/${root.type}/footer.html|"></div>
   </div>
 </body>
 
 <script th:inline="javascript">
   const root = /*[[${root}]]*/ null;
-  let style = root.style ? JSON.parse(root.style) : {};
   const contentDiv = $("#contentDiv");
+  let style = root.style ? JSON.parse(root.style) : {};
   let pd = new PagingData();
+  
   function updateItems() {
     if(!pd.orderBy) pd.setOrderBy("ID DESC");
     contentDiv.empty();
     $.get("/getPagingItems",pd.toParam()).done((resData=>{
       pd.setPagingData(resData);
-      const table = $("<table id='itemTable'>").append("<tr><th>번호</th><th>제목</th><th>작성자</th><th>작성일</th><th>조회수</th></tr>");
-      const columns = ["id","name","userName","regDate","numView"];
-      if(resData.data) resData.data.forEach(item => {
-        item.regDate = item.regDate.split(" ")[0];
-        if(item.numComment > 0) item.name += ` [${item.numComment}]`;
-        let $tr = $("<tr class='itemTr'>").click(()=>openContent(item.id));;
-        columns.forEach(c=>{
-          $tr.append($("<td>").append(item[c]))
-          if(c==="name") $tr.find("td:last").css("textAlign","left");
-        });
-        table.append($tr);
-      });
-      contentDiv.append(table,createPaging(pd,updateItems));
+      const grid = new ItemGrid(style,openContent);
+      grid.drawCell = (cell,item) => {
+        cell.image = $(`<img class='itemImg' src='/resources/images${item.imagePath}'/>`);
+        cell.image.attr("alt",item.name);
+        cell.image.css({width:style.iw, height:style.ih});
+        cell.div.append(cell.image,`<div class='in-div'>${item.regDate} - ${item.name}</div>`);
+      }
+      grid.setItems(pd.data);
+      contentDiv.append(grid.div,createPaging(pd,updateItems));
     })).fail(()=>console.log("Ajax Fail"));
   }
 
@@ -122,10 +121,10 @@
 
   function updateRecentItems(){
     $.get(`/getRecentItems/${root.id}/10`).done((resData)=>{
-      $("#recentItems").empty().append("<h5 style='padding:5px 0px 0px 5px; margin:0px;'>최근 본 게시글</h5>");
+      $("#recentItems").empty().append("<h5 style='padding:5px 0px 0px 5px; margin:0px;'>Recent</h5>");
       if(resData) {
-        resData.forEach(item=>$("#recentItems").append($(`<a>${sliceText(item.name,15)}</a>`)
-        .css({fontSize:12,paddingLeft:4}).click(()=>openContent(item.id)),"<br>"));
+        resData.forEach(item=>$("#recentItems").append($(`<div>${item.name}</div>`)
+        .css({boxSizing:"border-box",width:150,fontSize:12,paddingLeft:4}).click(()=>openContent(item.id))));
       }   
     })
   }
@@ -135,10 +134,9 @@
   }
 
   $(()=>{
-    $("#title").append(createTitle(root.name, "100%", 150, 45,"/page/"+root.id,"linear-gradient(to bottom, #78c33a, #47b300)"));
+    $("#title").append(createTitle(root.name, "100%", 150, 45, "/page/" + root.id, "linear-gradient(to bottom, #1a0023, #222040)"));
     pd.setStyle(style);
     createMenu((path, pathName)=>movePath(path, pathName),root.id);
-    createMenu2((path, pathName)=>movePath(path, pathName),root.id);
     movePath();
     changeFilter();
     updateRecentItems();

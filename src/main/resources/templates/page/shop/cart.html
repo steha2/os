@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T-Market</title>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
+<style>
+#itemTable td{
+  border-collapse: collapse;
+  border:1px solid;
+  padding: 5px;
+  text-align: center;
+}
+
+#itemTable th{
+  border-collapse: collapse;
+  border:1px solid;
+  padding: 5px;
+  height: 30px;
+}
+
+#itemTable {
+  width: 95%;
+  height: auto;
+  margin:20px;
+}
+
+#payButton {
+  background: #ffffff;
+  color:rgb(37, 37, 37);
+  font-size: 25px;
+  font-weight: bold;
+  padding: 5px 10px;
+  /* border-radius: 10px; */
+  cursor: pointer;
+}
+
+</style>
+</head> 
+<body>
+<div style="overflow-y: auto;">
+<table id="itemTable">
+</table>
+<div id="pay-div" style="text-align: center; margin-bottom: 30px;"><h3>총 결제 금액:
+  <span id="totalPriceSpan"></span>원 <button id="payButton">결제하기</button></h3></div>
+</div>
+</body>
+<script th:inline="javascript">
+  $(()=>{
+    const carts = /*[[${carts}]]*/ null;
+    const items = /*[[${items}]]*/ null;
+    const root = /*[[${root}]]*/ null;
+    let style = JSON.parse(root.style);
+    const table = $("#itemTable");
+    let header = $("<tr>").append("<th>이미지</th><th>상품명</th><th>수량</th><th>결재 금액</th><th>삭제</th>");
+    table.append(header);
+    let totalPrice = 0;
+    if(items.length) {
+      items.forEach(item => {
+        const cart = carts.find(c=>c.itemId === item.id);
+        item.amount = cart.amount;
+        let imgTd = $("<td>"), nameTd=$("<td>"), amountTd=$("<td>"), priceTd=$("<td>"), deleteTd=$("<td>");
+        let $tr = $("<tr>").append(imgTd,nameTd,amountTd,priceTd,deleteTd);
+        table.append($tr);
+        imgTd.append(`<img class='item-img' width='50' height='50' src='/resources/images${item.imagePath}'>`);
+        nameTd.append(sliceText(item.name,30)).css("cursor","pointer").click(()=>openContent(item.id));
+        amountTd.append(cart.amount);
+        totalPrice += cart.amount * item.dcPrice;
+        priceTd.append(`<span id='totalPrice'>${(cart.amount * item.dcPrice).toLocaleString()} 원</span>`);
+        deleteTd.append($(`<button>X</button>`).click(()=>{
+          $.get("/login/deleteCart/"+cart.cartId).done(openCart);
+        }))
+        $("#totalPriceSpan").text(totalPrice.toLocaleString());
+      });
+      $("#payButton").click(()=> { 
+        checkMove(()=>pay(items,totalPrice,()=>{$.get("/login/deleteCarts/"+root.id)})); 
+      });
+    } else {
+      $("#pay-div").html("<h3 style='width:100%;text-align:center;'>장바구니가 비었습니다.</h3>");
+    }
+  });
+</script>
+
+</html>

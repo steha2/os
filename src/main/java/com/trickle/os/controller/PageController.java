@@ -53,7 +53,7 @@ public class PageController {
 	    }
         session.setAttribute("recentItems", recentItems);
         System.out.println("/page/"+root.getType()+"/"+root.getId()+"/content-"+root.getId());
-		return "/page/"+root.getType()+"/"+root.getId()+"/content-"+root.getId();
+		return "/page/"+root.getType()+"/content";
 	}
 	
 	@GetMapping("/page/{rootId}")
@@ -61,7 +61,7 @@ public class PageController {
 		RootVo root = menuDao.getRootById(rootId);
 		model.addAttribute("root", menuDao.getRootById(rootId));
 		System.out.println("/page/"+root.getType()+"/index-"+rootId);
-		return "/page/"+root.getType()+"/"+root.getId()+"/index-"+rootId;
+		return "/page/"+root.getType()+"/index";
 	}
 	
 	@GetMapping("/page/reqItemId/{itemId}")
@@ -83,7 +83,7 @@ public class PageController {
 		model.addAttribute("item", item);
 		model.addAttribute("path", path);
 		model.addAttribute("pathName", menuDao.getPathName(path));
-		return "/page/"+root.getType()+"/"+root.getId()+"/content-write-"+root.getId();
+		return "/page/"+root.getType()+"/content-write";
 	}
 
 	@GetMapping("/login/updateForm")
@@ -93,6 +93,6 @@ public class PageController {
 		model.addAttribute("item", itemDao.getItemById(itemId));
 		model.addAttribute("action", "update");
 		model.addAttribute("path", path);
-		return "/page/"+root.getType()+"/"+root.getId()+"/content-write-"+root.getId();
+		return "/page/"+root.getType()+"/content-write";
 	}
 }

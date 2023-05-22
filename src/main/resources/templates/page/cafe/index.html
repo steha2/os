@@ -47,8 +47,8 @@
 </head>
 <body>
   <div id="container">
-    <div id="topDiv" th:include="|/page/${root.type}/${root.id}/top-${root.id}.html|"></div>
-    <div id="header" th:include="|/page/${root.type}/${root.id}/header-${root.id}.html|"></div>
+    <div id="topDiv" th:include="|/page/${root.type}/top.html|"></div>
+    <div id="header" th:include="|/page/${root.type}/header.html|"></div>
     <div class="content">
       <div id="itemNavi1">
         <span id="navi1span" style='width:800px;'></span>
@@ -61,7 +61,7 @@
         <div id="itemNavi2"></div>
       </div>
     </div>
-    <div id="footer" th:include="|/page/${root.type}/${root.id}/footer-${root.id}.html|"></div>
+    <div id="footer" th:include="|/page/${root.type}/footer.html|"></div>
   </div>
 </body>
 

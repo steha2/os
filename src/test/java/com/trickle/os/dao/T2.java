@@ -4,14 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Random;
 
-import javax.sql.DataSource;
-
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.trickle.os.controller.rest.*;
@@ -19,10 +12,6 @@ import com.trickle.os.test.Crawling;
 import com.trickle.os.test.GmSql;
 import com.trickle.os.test.cr.MyBatisConn;
 import com.trickle.os.vo.*;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
-import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 
 public class T2 {
 	private static SqlSessionFactory factory = new MyBatisConn().sqlSessionFactory();
